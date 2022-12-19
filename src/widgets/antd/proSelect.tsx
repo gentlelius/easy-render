@@ -55,10 +55,8 @@ import {
  * @returns 
  */
 const ProSelect: React.FC<ProFormSelectProps> = (props) => {
-
+    const { schema, style, value, onChange,  request, ...rest } = props;
     // 解析 props.request 
-    const request = props.request;
-    console.log(request, 'request')
     let req;
     if (request) {
         // eslint-disable-next-line no-new-func
@@ -71,7 +69,7 @@ const ProSelect: React.FC<ProFormSelectProps> = (props) => {
             )
         }
     }
-    console.log('props',    props);
+
     const params: any = {
         fieldProps: {
             filterOption: true,
@@ -86,10 +84,20 @@ const ProSelect: React.FC<ProFormSelectProps> = (props) => {
     if (req) {
         params.request = req;
     }
+    if (onChange) {
+        params.onChange = onChange;
+    }
+    if (value !== undefined) {
+        params.value = value;
+    }
+
+    console.log(params, '11pselect.prop');
     return (
-        <ProFormSelect
-            {...params}
-        />
+        <div className="fr-pro-select">
+            <ProFormSelect
+                {...params}
+            />
+        </div>
     )
 }
 

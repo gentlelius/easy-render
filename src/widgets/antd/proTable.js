@@ -338,7 +338,7 @@ const TableList = (props) => {
                     span: props.span || 6,
                 }}
                 toolBarRender={() => tools}
-                // {...props}
+                {...props}
                 request={request}
                 columns={prettyCols}
                 scroll={{
