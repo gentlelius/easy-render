@@ -1,8 +1,13 @@
 import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { Button } from 'antd';
 import ProTable from '@ant-design/pro-table';
-import umiRequest from 'umi-request';
 import { omit } from 'lodash-es';
+import dayjs from 'dayjs';
+import { aRequest } from '../../service';
+
+if (!window.dayjs) {
+    window.dayjs = dayjs;
+}
 
 const parseHideExpression = (expression, record) => {
     if (!expression) {
@@ -163,7 +168,7 @@ const TableList = (props) => {
                     // 函数单独处理
                     if (typeof otherObj.fieldProps === 'function') {
                         const fn = otherObj.fieldProps.toString();
-                        const newFieldProps = new Function(`const umiRequest = ${umiRequest};return (function ${fn})()`)
+                        const newFieldProps = new Function('form', 'config', `const aRequest = ${aRequest};return (function ${fn})(form, config)`)
                         otherObj.fieldProps = newFieldProps;
                     }
                     // 处理 onSearch
@@ -174,7 +179,7 @@ const TableList = (props) => {
                             const fn = ${fn};
                             return fn(val);
                         `.trim();
-                        const newOnSearch = new Function('umiRequest', 'val', funstr);
+                        const newOnSearch = new Function('request', 'val', funstr);
 
                         if (!newItem.fieldProps) {
                             newItem.fieldProps = {};
@@ -182,7 +187,7 @@ const TableList = (props) => {
                         newItem.fieldProps.showSearch = true;
                         newItem.fieldProps.onSearch = (val) => {
                             // todo: 防抖处理 竞态处理
-                            const p = newOnSearch(umiRequest, val);
+                            const p = newOnSearch(aRequest, val);
                             if (p instanceof Promise) {
                                 p.then((res) => {
                                     if (Array.isArray(res)) {
@@ -204,8 +209,8 @@ const TableList = (props) => {
                             const fn = ${fn};
                             return fn();
                         `.trim();
-                        const newOnInit = new Function('umiRequest', funstr);
-                        const p = newOnInit(umiRequest);
+                        const newOnInit = new Function('request', funstr);
+                        const p = newOnInit(aRequest);
                         
                         if (p instanceof Promise) {
                             p.then((res) => {
@@ -263,13 +268,13 @@ const TableList = (props) => {
     let request = useMemo(() => props.request 
         ? (params, sorter, filter) => (
             new Function(
-                'umiRequest', 
+                'request', 
                 'percentage', 
                 'getValidParams',
                 `return (${props.request})(${JSON.stringify(params)},${JSON.stringify(sorter)},${JSON.stringify(filter)})`
             )
             (
-                umiRequest, 
+                aRequest, 
                 percentage,
                 getValidParams,
             ).then(reqThen)
@@ -277,7 +282,7 @@ const TableList = (props) => {
         : (
             // 没有 request 就走默认的，默认的得传url ，没有 URL则什么都不请求
             props.url 
-                ? (params, sorter) => umiRequest(
+                ? (params, sorter) => aRequest(
                     props.url,
                     {
                         method: props.method ? 'get' : props.method.toLowerCase(),

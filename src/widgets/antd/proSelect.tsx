@@ -1,5 +1,5 @@
 import React from 'react';
-import umiRequest from 'umi-request';
+import { aRequest } from '../../service';
 import {
     ProFormSelect,
     ProFormSelectProps
@@ -62,10 +62,10 @@ const ProSelect: React.FC<ProFormSelectProps> = (props) => {
         // eslint-disable-next-line no-new-func
         req = (val: { keyWords: string }) => {
             return new Function(
-                'umiRequest',
+                'request',
                 `return (${props.request})(${JSON.stringify(val.keyWords)})`
             )(
-                umiRequest,
+                aRequest,
             )
         }
     }

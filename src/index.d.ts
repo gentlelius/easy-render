@@ -187,3 +187,5 @@ export declare function connectForm<T extends {} = any>(
 ): React.ComponentType<T>;
 
 export default FR;
+
+export declare function setBaseUrl(url: string): void;
