@@ -4,6 +4,7 @@ import ProTable from '@ant-design/pro-table';
 import { omit } from 'lodash-es';
 import dayjs from 'dayjs';
 import { aRequest } from '../../service';
+import { getValue } from '../../storage';
 
 if (!window.dayjs) {
     window.dayjs = dayjs;
@@ -271,12 +272,14 @@ const TableList = (props) => {
                 'request', 
                 'percentage', 
                 'getValidParams',
+                'getValue',
                 `return (${props.request})(${JSON.stringify(params)},${JSON.stringify(sorter)},${JSON.stringify(filter)})`
             )
             (
                 aRequest, 
                 percentage,
                 getValidParams,
+                getValue,
             ).then(reqThen)
         )
         : (

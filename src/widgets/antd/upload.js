@@ -23,7 +23,7 @@ export default function FrUpload({ action, value, onChange, uploadProps, buttonP
 
     const defaultBtnProps = {
         icon: <UploadOutlined />,
-        children: '点我选择图片上传',
+        children: '点我选择文件',
     };
 
     const btnProps = {
