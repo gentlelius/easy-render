@@ -7,6 +7,7 @@ import { aRequest } from '../../service';
 import { getValue } from '../../storage';
 
 if (!window.dayjs) {
+    // todo: 考虑占用内存情况，观察占用了多少内存
     window.dayjs = dayjs;
 }
 
@@ -237,7 +238,7 @@ const TableList = (props) => {
             });
 
         if (props.actions?.length) {
-            cols.push({
+            const dispatch = (method) => cols[method]({
                 title: '操作',
                 valueType: 'option',
                 key: 'option',
@@ -258,6 +259,12 @@ const TableList = (props) => {
                     )
                 ))
             });
+            if (props.actionsPostion === 'left') {
+                dispatch('unshift');
+            } else {
+                dispatch('push');
+            }
+            cols.push();
         }
 
         if (cols) {

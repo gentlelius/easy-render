@@ -192,6 +192,6 @@ export declare function setBaseUrl(url: string): void;
 export declare function getBaseUrl(url: string): string;
 export declare function setValue(key: string, value: any): void;
 export declare function getValue(key: string): any;
-export declare function destroy(): boolean;
+export declare function destroy(key: string): boolean;
 export declare function clearAll(): void;
 export declare function getAll(): Record<string, any>;
