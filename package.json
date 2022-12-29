@@ -1,11 +1,14 @@
 {
     "name": "react-easy-render",
-    "version": "0.0.16-release.5",
+    "version": "0.0.17-beta.7",
     "description": "easy-render",
     "scripts": {
         "prettier": "prettier --write \"**/*.{js,jsx,tsx,ts,less,md,json}\"",
         "test": "umi-test",
-        "test:coverage": "umi-test --coverage"
+        "test:coverage": "umi-test --coverage",
+        "dev": "npx father-build --watch",
+        "build": "npx father-build",
+        "pub": "npm run build && npm publish"
     },
     "main": "lib/index.js",
     "module": "es/index.js",

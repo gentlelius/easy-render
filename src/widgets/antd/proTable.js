@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
-import { Button } from 'antd';
+import { Descriptions, Button, message } from 'antd';
 import ProTable from '@ant-design/pro-table';
-import { omit } from 'lodash-es';
+import { omit, cloneDeep } from 'lodash-es';
 import dayjs from 'dayjs';
 import { aRequest } from '../../service';
 import { getValue } from '../../storage';
@@ -103,7 +103,7 @@ const TableList = (props) => {
         }
         setPrettyCols((cols) => {
             const newCols = cols.map(item => {
-                const newItem = { ...item };
+                const newItem = cloneDeep(item);
                 const options = optionsMap[newItem.dataIndex];
                 if (!newItem.fieldProps) {
                     newItem.fieldProps = {};
@@ -287,7 +287,10 @@ const TableList = (props) => {
                 percentage,
                 getValidParams,
                 getValue,
-            ).then(reqThen)
+            ).then(reqThen, (error) => {
+                message.error(error.response.data);
+                console.log(error.response.data);
+            })
         )
         : (
             // 没有 request 就走默认的，默认的得传url ，没有 URL则什么都不请求
@@ -339,7 +342,23 @@ const TableList = (props) => {
         ));
     }, [props.navs, props.navsHandler])
 
+    const mapKeyToLabel = prettyCols.reduce((pre, cur) => {
+        return Object.assign(pre, { [cur.dataIndex]: cur.title })
+    }, {});
+
     console.log('prettyCols', prettyCols);
+
+    const expandedRowRender = props.expandedRowRender ? (record) => {
+        return (
+            <Descriptions title="" >
+                {
+                    record && Object.keys(record).map(key => (
+                        <Descriptions.Item labelStyle={{fontWeight: 500}} key={key} label={mapKeyToLabel[key]}>{record[key]}</Descriptions.Item>
+                    ))
+                }
+            </Descriptions>
+        )
+    } : null;
 
     return (
         <div style={{flex: 1, overflow: 'auto'}}>
@@ -363,6 +382,7 @@ const TableList = (props) => {
                     defaultPageSize: props.defaultPageSize || 20,
                 }}
                 onChange={() => {}}
+                expandable={{expandedRowRender}}
             />
         </div>
     );
