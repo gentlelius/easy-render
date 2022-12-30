@@ -83,6 +83,13 @@ const TableList = ({
                                 <a style={{ marginLeft: 8 }}>删除</a>
                             </Popconfirm>
                         )}
+                        {
+                            props.moreBtns?.length && props.moreBtns.map(item => <a onClick={() => {
+                                if (typeof item.action === 'function') {
+                                    item.action(record);
+                                }
+                            }} style={{ marginLeft: 8 }}>{item.name}</a>)
+                        }
                         {!props.hideMove && (
                             <>
                                 <ArrowUpOutlined

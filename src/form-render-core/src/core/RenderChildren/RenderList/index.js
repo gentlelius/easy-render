@@ -27,7 +27,7 @@ const RenderList = ({ parentId, schema = {}, dataIndex = [], children = [], erro
         // TODO: listData会有不少“窟窿”，submit 的时候，listData 需要补齐 or filter
         listData = get(formData, dataPath);
     }
-
+    
     const displayList = Array.isArray(listData) ? listData : [{}];
 
     const changeList = (newList) => {

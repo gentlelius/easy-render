@@ -3,75 +3,75 @@ import * as monaco from 'monaco-editor';
 
 // @ts-ignore
 self.MonacoEnvironment = {
-	getWorkerUrl: function (_moduleId, label) {
-		if (label === 'json') {
-			return './json.worker.bundle.js';
-		}
-		if (label === 'css' || label === 'scss' || label === 'less') {
-			return './css.worker.bundle.js';
-		}
-		if (label === 'html' || label === 'handlebars' || label === 'razor') {
-			return './html.worker.bundle.js';
-		}
-		if (label === 'typescript' || label === 'javascript') {
-			return './ts.worker.bundle.js';
-		}
-		return './editor.worker.bundle.js';
-	}
+    getWorkerUrl: function (_moduleId, label) {
+        if (label === 'json') {
+            return './json.worker.bundle.js';
+        }
+        if (label === 'css' || label === 'scss' || label === 'less') {
+            return './css.worker.bundle.js';
+        }
+        if (label === 'html' || label === 'handlebars' || label === 'razor') {
+            return './html.worker.bundle.js';
+        }
+        if (label === 'typescript' || label === 'javascript') {
+            return './ts.worker.bundle.js';
+        }
+        return './editor.worker.bundle.js';
+    }
 };
 
 monaco.languages.registerCompletionItemProvider('typescript', {
-	provideCompletionItems() {
-		return {
-			suggestions: [
-				{
-					label: 'umiRequest get',
-					kind: monaco.languages.CompletionItemKind['Function'], 
-					insertText: "umiRequest(\n\t'${1}',\n\t{\n\t\tmethod: 'get',\n\t\tparams: {\n\t\t}\n\t}\n)",
-					insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-					detail: 'umiRequest get 请求'
-				}, 
-				{
-					label: 'umiRequest post',
-					kind: monaco.languages.CompletionItemKind['Function'],
-					insertText: "umiRequest(\n\t'${1}',\n\t{\n\t\tmethod: 'post',\n\t\tdata: {\n\t\t}\n\t}\n)",
-					insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-					detail: 'umiRequest post 请求'
-				},
-				{
-					label: 'config',
-					kind: monaco.languages.CompletionItemKind['Property'],
-					insertText: "{\n\tvalueType: '${1:select}',\n\tfiledProps(form, config) {\n\t\t${2}\n\t}\n}",
-					insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-					detail: 'config',
-				},
-				...createDependencyProposals(),
-			]
-		};
-	},
-	triggerCharacters: ['umi']  // 写触发提示的字符，可以有多个
+    provideCompletionItems() {
+        return {
+            suggestions: [
+                {
+                    label: 'umiRequest get',
+                    kind: monaco.languages.CompletionItemKind['Function'], 
+                    insertText: "umiRequest(\n\t'${1}',\n\t{\n\t\tmethod: 'get',\n\t\tparams: {\n\t\t}\n\t}\n)",
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    detail: 'umiRequest get 请求'
+                }, 
+                {
+                    label: 'umiRequest post',
+                    kind: monaco.languages.CompletionItemKind['Function'],
+                    insertText: "umiRequest(\n\t'${1}',\n\t{\n\t\tmethod: 'post',\n\t\tdata: {\n\t\t}\n\t}\n)",
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    detail: 'umiRequest post 请求'
+                },
+                {
+                    label: 'config',
+                    kind: monaco.languages.CompletionItemKind['Property'],
+                    insertText: "{\n\tvalueType: '${1:select}',\n\tfiledProps(form, config) {\n\t\t${2}\n\t}\n}",
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    detail: 'config',
+                },
+                ...createDependencyProposals(),
+            ]
+        };
+    },
+    triggerCharacters: ['umi']  // 写触发提示的字符，可以有多个
 });
 
 function createDependencyProposals(range, languageService = false, editor, curWord) {
-	const esKeys = [
-		'async',
-		'await',
-		'console.log(${1})',
-		'try {\n\t${1}\n} catch(e) {\n \n}',
-		'function ${1:funName}() {\n\t\n}'
-	]
-	let keys = [];
-	for (const item of esKeys) {
+    const esKeys = [
+        'async',
+        'await',
+        'console.log(${1})',
+        'try {\n\t${1}\n} catch(e) {\n \n}',
+        'function ${1:funName}() {\n\t\n}'
+    ]
+    let keys = [];
+    for (const item of esKeys) {
     	keys.push({
         	label: item,
         	kind: monaco.languages.CompletionItemKind.Keyword,
         	documentation: "",
         	insertText: item,
-			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
         	range: range
     	});
-	}
-	return [].concat(keys);
+    }
+    return [].concat(keys);
 }
 
 const identifierPattern = "([a-zA-Z_]\\w*)";	// 正则表达式定义 注意转义\\w
@@ -87,25 +87,25 @@ function getTokens(code) {
 }
 
 function createDependencyProposals2(range, languageService = false, editor, curWord) {
-	const esKeys = [
-		'async',
-		'await',
-		'console.log(${1})',
-		'try {\n\t${1}\n} catch(e) {\n \n}',
-	]
-	let keys = [];
-	for (const item of esKeys) {
+    const esKeys = [
+        'async',
+        'await',
+        'console.log(${1})',
+        'try {\n\t${1}\n} catch(e) {\n \n}',
+    ]
+    let keys = [];
+    for (const item of esKeys) {
     	keys.push({
         	label: item,
         	kind: monaco.languages.CompletionItemKind.Keyword,
         	documentation: "",
         	insertText: item,
-			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
         	range: range
     	});
-	}
+    }
     // snippets和keys的定义同上
-	let words = [];
+    let words = [];
     let tokens = getTokens(editor.getModel().getValue());
     for (const item of tokens) {
         if (item != curWord.word) {
@@ -122,37 +122,37 @@ function createDependencyProposals2(range, languageService = false, editor, curW
 }
 
 
-const Edit = (props) => {
-	const conStyle = {
-		width: props.width || 800,
-		height: props.height || 100,
-		border: '1px solid #ccc',
-	}
-	const divEl = useRef(null);
-	let editor = useRef();
+const CodeEditor = (props) => {
+    const conStyle = {
+        width: props.width || 800,
+        height: props.height || 100,
+        border: '1px solid #ccc',
+    }
+    const divEl = useRef(null);
+    let editor = useRef();
 
-	useEffect(() => {
-		if (divEl.current) {
-			editor.current = monaco.editor.create(divEl.current, {
-				...props,
-				// minimap:{ 
-				// 	enabled: false
-				// },
-			});
-		}
-		return () => {
-			editor.current.dispose();
-		};
-	}, []);
+    useEffect(() => {
+        if (divEl.current) {
+            editor.current = monaco.editor.create(divEl.current, {
+                ...props,
+                // minimap:{ 
+                // 	enabled: false
+                // },
+            });
+        }
+        return () => {
+            editor.current.dispose();
+        };
+    }, []);
 
-	useEffect(() => {
-		editor.current.onDidBlurEditorWidget((event) => {
-			const res = editor.current.getValue();
-			props.onChange(res);
-		})
-	}, [props]);
+    useEffect(() => {
+        editor.current.onDidBlurEditorWidget((event) => {
+            const res = editor.current.getValue();
+            props.onChange(res);
+        })
+    }, [props]);
 
-	return <div style={conStyle} ref={divEl}></div>;
+    return <div style={conStyle} ref={divEl}></div>;
 };
 
-export default Edit;
+export default CodeEditor;

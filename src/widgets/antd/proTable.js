@@ -91,7 +91,7 @@ const handleInitCol = (col) => {
     })
 }
 
-const TableList = (props) => {
+const Pro= (props) => {
     const actionRef = useRef();
     const [prettyCols, setPrettyCols] = useState(props.columns|| []);
     const [optionsMap, setMap] = useState({});
@@ -353,7 +353,7 @@ const TableList = (props) => {
             <Descriptions title="">
                 {
                     record && Object.keys(record).map(key => (
-                        <Descriptions.Item labelStyle={{fontWeight: 500}} key={key} label={mapKeyToLabel[key]}>{record[key]}</Descriptions.Item>
+                        <Descriptions.Item labelStyle={{fontWeight: 500,}} key={key} label={mapKeyToLabel[key]}>{record[key]}</Descriptions.Item>
                     ))
                 }
             </Descriptions>
@@ -389,7 +389,7 @@ const TableList = (props) => {
             tableAlertOptionRender: (options) => {
                 return (
                     <Space size={16}>
-                        {rowSelectionConfig.map(expanderItem => <a onClick={() => expanderItem.action(options)}>{expanderItem.label}</a>)}
+                        {rowSelectionConfig.map(expanderItem => <a onClick={() => expanderItem.action(options)}>{expanderItem.name}</a>)}
                     </Space>
                 );
             },
@@ -425,4 +425,4 @@ const TableList = (props) => {
     );
 };
 
-export default TableList;
+export default Pro;
