@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import React, { Suspense } from 'react';
 import { getWidgetName, extraSchemaList } from '../../mapping';
 import { useTools, useStore } from '../../hooks';

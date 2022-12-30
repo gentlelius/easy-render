@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
-import { Descriptions, Button, message } from 'antd';
+import { Descriptions, Space, Button, message } from 'antd';
 import ProTable from '@ant-design/pro-table';
 import { omit, cloneDeep } from 'lodash-es';
 import dayjs from 'dayjs';
@@ -350,7 +350,7 @@ const TableList = (props) => {
 
     const expandedRowRender = props.expandedRowRender ? (record) => {
         return (
-            <Descriptions title="" >
+            <Descriptions title="">
                 {
                     record && Object.keys(record).map(key => (
                         <Descriptions.Item labelStyle={{fontWeight: 500}} key={key} label={mapKeyToLabel[key]}>{record[key]}</Descriptions.Item>
@@ -359,6 +359,42 @@ const TableList = (props) => {
             </Descriptions>
         )
     } : null;
+
+    let rowSelectionProps = {};
+    if (props.rowSelectionConfig?.length) {
+        const rowSelectionConfig = props.rowSelectionConfig.map(item => {
+            const actionStr = item.action;
+            const action = new Function('options', `return (${actionStr.trim()})(options)`);
+            return {
+                ...item,
+                action,
+            }
+        });
+        rowSelectionProps = {
+            rowSelection: {
+                // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
+                // 注释该行则默认不显示下拉选项
+                // selections: [ProTable.SELECTION_ALL, ProTable.SELECTION_INVERT],
+            },
+            tableAlertRender: ({ selectedRowKeys, selectedRows, onCleanSelected }) => (
+                <Space size={24}>
+                    <span>
+                        已选 {selectedRowKeys.length} 项
+                        <a style={{ marginInlineStart: 8 }} onClick={onCleanSelected}>
+                         取消选择
+                        </a>
+                    </span>
+                </Space>
+            ),
+            tableAlertOptionRender: (options) => {
+                return (
+                    <Space size={16}>
+                        {rowSelectionConfig.map(expanderItem => <a onClick={() => expanderItem.action(options)}>{expanderItem.label}</a>)}
+                    </Space>
+                );
+            },
+        }
+    }
 
     return (
         <div style={{flex: 1, overflow: 'auto'}}>
@@ -383,6 +419,7 @@ const TableList = (props) => {
                 }}
                 onChange={() => {}}
                 expandable={{expandedRowRender}}
+                {...rowSelectionProps}
             />
         </div>
     );

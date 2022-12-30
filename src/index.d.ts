@@ -172,6 +172,8 @@ export interface FRProps {
     onValuesChange?: (changedValues: any, formData: any) => void;
     /** 隐藏的数据是否去掉，默认不去掉（false） */
     removeHiddenData?: boolean;
+    actionsHandler?: Function[],
+    navsHandler?: Function[],
 }
 
 declare const FR: React.FC<FRProps>;
