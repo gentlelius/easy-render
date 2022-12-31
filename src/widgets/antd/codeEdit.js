@@ -41,7 +41,7 @@ monaco.languages.registerCompletionItemProvider('typescript', {
                 {
                     label: 'config',
                     kind: monaco.languages.CompletionItemKind['Property'],
-                    insertText: "{\n\tvalueType: '${1:select}',\n\tfiledProps(form, config) {\n\t\t${2}\n\t}\n}",
+                    insertText: "{\n\tvalueType: '${1:select}',\n\tfieldProps(form, config) {\n\t\t${2}\n\t}\n}",
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     detail: 'config',
                 },
