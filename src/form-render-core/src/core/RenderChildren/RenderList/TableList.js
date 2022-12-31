@@ -30,10 +30,11 @@ const TableList = ({
     };
 
     const dataSource = displayList.map((item, idx) => ({ index: idx }));
-
+    const colWidth = props.colWidth || {};
     const columns = children.map((child) => {
         const item = flatten[child];
         const schema = (item?.schema) || {};
+        const keyList = child.split('.');
         return {
             dataIndex: child,
             title: schema.required ? (
@@ -44,9 +45,8 @@ const TableList = ({
             ) : (
                 schema.title
             ),
-            width: FIELD_LENGTH,
+            width: colWidth[keyList[keyList.length - 1]] || FIELD_LENGTH,
             render: (value, record, index) => {
-                // Check: record.index 似乎是antd自己会给的，不错哦
                 const childIndex = [...dataIndex, record.index];
                 return (
                     <Core
