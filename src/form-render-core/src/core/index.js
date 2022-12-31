@@ -205,7 +205,10 @@ const CoreRender = ({
             columnStyle.width = width;
             columnStyle.paddingRight = 8;
         } else if (column > 1) {
-            columnStyle.width = `calc(100% /${column})`;
+            // 提PR
+            if (!isList) {
+                columnStyle.width = `calc(100% /${column})`;
+            }
             columnStyle.paddingRight = 8;
         }
     }
