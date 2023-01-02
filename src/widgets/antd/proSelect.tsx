@@ -5,6 +5,10 @@ import {
     ProFormSelectProps
 } from "@ant-design/pro-components";
 
+type CommonProps = {
+    value: string,
+    onChange: (v) => void,
+}
 
 /**
  * 
@@ -54,8 +58,8 @@ import {
  * 
  * @returns 
  */
-const ProSelect: React.FC<ProFormSelectProps> = (props) => {
-    const { schema, style, value, onChange,  request, ...rest } = props;
+const ProSelect: React.FC<ProFormSelectProps & CommonProps> = (props) => {
+    const { value, onChange, request } = props;
     // 解析 props.request 
     let req;
     if (request) {

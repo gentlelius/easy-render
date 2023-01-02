@@ -25,18 +25,18 @@ monaco.languages.registerCompletionItemProvider('typescript', {
         return {
             suggestions: [
                 {
-                    label: 'umiRequest get',
+                    label: 'request get',
                     kind: monaco.languages.CompletionItemKind['Function'], 
-                    insertText: "umiRequest(\n\t'${1}',\n\t{\n\t\tmethod: 'get',\n\t\tparams: {\n\t\t}\n\t}\n)",
+                    insertText: "(params, sorter, filter) => {\n    return request(\n        '${1:select}',\n        {\n            method: 'get',\n            params: {\n                order: 'asc',\n                limit: params.pageSize,\n                offset: (params.current - 1) * params.pageSize,\n                ...getValidParams(params),\n\t\t\t\t${2}                \n            }\n        }\n    ).then((res) => {\n        const { success, rows, total } = res;\n        if (success) {\n            return {\n                success: true,\n                data: rows,\n                pageSize: params.pageSize,\n                current: params.current,\n                total,\n            }\n        }\n    })\n}",
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    detail: 'umiRequest get 请求'
+                    detail: 'request get 请求'
                 }, 
                 {
-                    label: 'umiRequest post',
+                    label: 'request post',
                     kind: monaco.languages.CompletionItemKind['Function'],
-                    insertText: "umiRequest(\n\t'${1}',\n\t{\n\t\tmethod: 'post',\n\t\tdata: {\n\t\t}\n\t}\n)",
+                    insertText: "(params, sorter, filter) => {\n    return request(\n        '${1:select}',\n        {\n            method: 'post',\n            data: {\n                order: 'asc',\n                limit: params.pageSize,\n                offset: (params.current - 1) * params.pageSize,\n                ...getValidParams(params),\n\t\t\t\t${2}               \n            }\n        }\n    ).then((res) => {\n        const { success, rows, total } = res;\n        if (success) {\n            return {\n                success: true,\n                data: rows,\n                pageSize: params.pageSize,\n                current: params.current,\n                total,\n            }\n        }\n    })\n}",
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    detail: 'umiRequest post 请求'
+                    detail: 'request post 请求'
                 },
                 {
                     label: 'config',
