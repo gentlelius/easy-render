@@ -5,11 +5,13 @@ import { getBaseUrl } from './storage';
 axios.defaults.timeout = 3e3;
 axios.defaults.withCredentials = true;
 
+let specialConfig = {};
+
 axios.interceptors.response.use(
     (response) => {
         const result = response.data;
         // 状态代码 2xx 的响应拦截
-        if (!result.success && result.msg) {
+        if (!result.success && result.msg && !specialConfig.ignoreError) {
             message.error(result.msg);
         }
         return result;
@@ -20,8 +22,9 @@ axios.interceptors.response.use(
     }
 );
 
-export function aRequest(path, options) {
+export function aRequest(path, options, config) {
     const baseUrl = getBaseUrl();
+    specialConfig = config || {};
     return axios({
         url: `${baseUrl || ''}${path}`,
         ...options,
