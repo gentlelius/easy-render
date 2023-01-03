@@ -76,7 +76,7 @@ const ProSelect: React.FC<ProFormSelectProps & CommonProps> = (props) => {
 
     const params: any = {
         fieldProps: {
-            filterOption: true,
+            filterOption: false,
         },
     };
     if (props.showSearch) {
@@ -95,7 +95,6 @@ const ProSelect: React.FC<ProFormSelectProps & CommonProps> = (props) => {
         params.value = value;
     }
 
-    console.log(params, '11pselect.prop');
     return (
         <div className="fr-pro-select">
             <ProFormSelect
