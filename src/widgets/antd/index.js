@@ -47,7 +47,7 @@ export const widgets = {
     list,
     map,
     multiSelect, // 下拉多选
-    number: FrNumber,
+    number: FrNumber,//(props) => <FrNumber {...props.schema.props} />
     radio,
     select,
     slider, // 带滚条的number

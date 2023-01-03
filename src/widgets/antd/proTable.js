@@ -170,7 +170,7 @@ const Pro= (props) => {
                     // 函数单独处理
                     if (typeof otherObj.fieldProps === 'function') {
                         const fn = otherObj.fieldProps.toString();
-                        const newFieldProps = new Function('form', 'config', `const aRequest = ${aRequest};return (function ${fn})(form, config)`)
+                        const newFieldProps = new Function('form', 'config', `const request = ${aRequest};return (function ${fn})(form, config)`)
                         otherObj.fieldProps = newFieldProps;
                     }
                     // 处理 onSearch
@@ -243,7 +243,7 @@ const Pro= (props) => {
                 valueType: 'option',
                 key: 'option',
                 width: props.actionsWidth || 100,
-                fixed: 'right',
+                fixed: method || 'right',
                 render: (text, record, _, tableRef) => props.actions.map((item, index) => (
                     !parseHideExpression(item.hidden, record) && (
                         <a
@@ -364,7 +364,7 @@ const Pro= (props) => {
     if (props.rowSelectionConfig?.length) {
         const rowSelectionConfig = props.rowSelectionConfig.map(item => {
             const actionStr = item.action;
-            const action = new Function('options', `return (${actionStr.trim()})(options)`);
+            const action = new Function('options', 'request', `return (${actionStr.trim()})(options)`);
             return {
                 ...item,
                 action,
@@ -389,7 +389,7 @@ const Pro= (props) => {
             tableAlertOptionRender: (options) => {
                 return (
                     <Space size={16}>
-                        {rowSelectionConfig.map(expanderItem => <a onClick={() => expanderItem.action(options)}>{expanderItem.name}</a>)}
+                        {rowSelectionConfig.map(expanderItem => <a onClick={() => expanderItem.action(options, aRequest)}>{expanderItem.name}</a>)}
                     </Space>
                 );
             },
