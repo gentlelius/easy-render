@@ -389,7 +389,7 @@ const Pro= (props) => {
             tableAlertOptionRender: (options) => {
                 return (
                     <Space size={16}>
-                        {rowSelectionConfig.map(expanderItem => <a onClick={() => expanderItem.action(options, aRequest)}>{expanderItem.name}</a>)}
+                        {rowSelectionConfig.map(expanderItem => <a key={expanderItem.name} onClick={() => expanderItem.action(options, aRequest)}>{expanderItem.name}</a>)}
                     </Space>
                 );
             },
@@ -401,7 +401,7 @@ const Pro= (props) => {
             <ProTable
                 actionRef={actionRef}
                 defaultCollapsed={false}
-                rowKey={prettyCols[0] ? prettyCols[0].key : 'id'}
+                rowKey={prettyCols[0] ? prettyCols[0].dataIndex : 'id'}
                 search={{
                     labelWidth: props.labelWidth || 80,
                     defaultCollapsed: props.defaultCollapsed || false,

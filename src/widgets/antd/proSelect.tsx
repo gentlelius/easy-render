@@ -98,6 +98,7 @@ const ProSelect: React.FC<ProFormSelectProps & CommonProps> = (props) => {
     return (
         <div className="fr-pro-select">
             <ProFormSelect
+                {...props}
                 {...params}
             />
         </div>
