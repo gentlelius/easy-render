@@ -47,6 +47,21 @@ const getValidParams = (params) => {
     return payload;
 }
 
+const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => res) => (params, sorter, filter) => (
+    new Function(
+        'request', 
+        'percentage', 
+        'getValidParams',
+        'getValue',
+        `return (${requestFnStr})(${JSON.stringify(params)},${JSON.stringify(sorter)},${JSON.stringify(filter)})`
+    )
+    (
+        aRequest, 
+        percentage,
+        getValidParams,
+        getValue,
+    ).then(thenFn, catchFn)
+)
 
 const percentage = (num) => {
     if (isNaN(num)) {
@@ -107,11 +122,6 @@ const Pro= (props) => {
             return newCols;
         });
     }, [optionsMap]);
-
-    // mock onMount
-    useEffect(() => {
-        reqThen();
-    }, []);
 
     const reqThen = useCallback(async res => {
         console.log('reqThen', res);
@@ -235,34 +245,35 @@ const Pro= (props) => {
                     delete newItem.onInit;
                     return newItem;
                 });
-        }
+            
 
-        if (props.actions?.length) {
-            const dispatch = (method) => cols[method]({
-                title: '操作',
-                valueType: 'option',
-                key: 'option',
-                width: props.actionsWidth || 100,
-                fixed: method || 'right',
-                render: (text, record, _, tableRef) => props.actions.map((item, index) => (
-                    !parseHideExpression(item.hidden, record) && (
-                        <a
-                            key={item.actionName}
-                            onClick={() => {
-                                if (typeof props.actionsHandler?.[index] === 'function') {
-                                    props.actionsHandler[index](record, tableRef);
-                                } else {
-                                    console.warn(`action ${index} is not function`);
-                                }
-                            }}
-                        >{item.actionName}</a>
-                    )
-                ))
-            });
-            if (props.actionsPostion === 'left') {
-                dispatch('unshift');
-            } else {
-                dispatch('push');
+            if (props.actions?.length) {
+                const dispatch = (method) => cols[method]({
+                    title: '操作',
+                    valueType: 'option',
+                    key: 'option',
+                    width: props.actionsWidth || 100,
+                    fixed: method || 'right',
+                    render: (text, record, _, tableRef) => props.actions.map((item, index) => (
+                        !parseHideExpression(item.hidden, record) && (
+                            <a
+                                key={item.actionName}
+                                onClick={() => {
+                                    if (typeof props.actionsHandler?.[index] === 'function') {
+                                        props.actionsHandler[index](record, tableRef);
+                                    } else {
+                                        console.warn(`action ${index} is not function`);
+                                    }
+                                }}
+                            >{item.actionName}</a>
+                        )
+                    ))
+                });
+                if (props.actionsPostion === 'left') {
+                    dispatch('unshift');
+                } else {
+                    dispatch('push');
+                }
             }
         }
 
@@ -273,24 +284,19 @@ const Pro= (props) => {
         return res;
     }, [props, prettyCols])
 
+    // mock onMount
+    useEffect(() => {
+        reqThen();
+    }, []);
+
     let request = useMemo(() => props.request 
-        ? (params, sorter, filter) => (
-            new Function(
-                'request', 
-                'percentage', 
-                'getValidParams',
-                'getValue',
-                `return (${props.request})(${JSON.stringify(params)},${JSON.stringify(sorter)},${JSON.stringify(filter)})`
-            )
-            (
-                aRequest, 
-                percentage,
-                getValidParams,
-                getValue,
-            ).then(reqThen, (error) => {
+        ? getParsedRequest(
+            props.request, 
+            reqThen,
+            (error) => {
                 message.error(error.response.data);
                 console.log(error.response.data);
-            })
+            },
         )
         : (
             // 没有 request 就走默认的，默认的得传url ，没有 URL则什么都不请求
@@ -360,23 +366,63 @@ const Pro= (props) => {
         ))
     }, [props.searchOptions, props.searchOptionsHandler]);
 
-    const mapKeyToLabel = prettyCols.reduce((pre, cur) => {
-        return Object.assign(pre, { [cur.dataIndex]: cur.title })
-    }, {});
-
     console.log('prettyCols', prettyCols);
 
     // 行展开内容
-    const expandedRowRender = props.expandedRowRender ? (record) => {
-        return (
-            <Descriptions title="">
-                {
-                    record && Object.keys(record).map(key => (
-                        <Descriptions.Item labelStyle={{fontWeight: 500,}} key={key} label={mapKeyToLabel[key]}>{record[key]}</Descriptions.Item>
-                    ))
+    const expandedRowRender = props.expandable ? (record) => {
+        
+        const mapKeyToLabel = prettyCols.reduce((pre, cur) => {
+            return Object.assign(pre, { [cur.dataIndex]: cur.title })
+        }, {});
+
+        const config = props.expandable;
+
+        if (config.sourceDataType === 'request') {
+            const requestFn = getParsedRequest(config.request);
+            return (
+                <ProTable
+                    headerTitle={false}
+                    search={false}
+                    options={false}
+                    pagination={false}
+                    request={requestFn}
+                    columns={config.tableColumn}
+                    rowKey={config.rowKey}
+                />
+            )
+        } else if (config.sourceDataType === 'record') {
+            const dataSource = Array.isArray(record[config.fieldName]) ? record[config.fieldName] : [];
+            if (config.tableColumn.length) {
+                return (
+                    <ProTable
+                        headerTitle={false}
+                        search={false}
+                        options={false}
+                        pagination={false}
+                        columns={config.tableColumn}
+                        dataSource={dataSource}
+                        rowKey={config.rowKey}
+                    />
+                );
+            } else {
+                if (dataSource[0]) {
+                    return (
+                        <ProTable
+                            headerTitle={false}
+                            search={false}
+                            options={false}
+                            pagination={false}
+                            columns={Object.keys(dataSource[0])}
+                            dataSource={dataSource}
+                            rowKey={config.rowKey}
+                        />
+                    )
+                } else {
+                    return '无内容';
                 }
-            </Descriptions>
-        )
+            }
+        }
+        return null;
     } : null;
 
     // 行选中内容
