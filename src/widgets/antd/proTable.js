@@ -93,7 +93,9 @@ const handleInitCol = (col) => {
 
 const Pro= (props) => {
     const actionRef = useRef();
+    // const formRef = useRef();
     const [prettyCols, setPrettyCols] = useState(props.columns|| []);
+    const tableVisible = useRef(false);
     const [optionsMap, setMap] = useState({});
 
     useEffect(() => {
@@ -118,78 +120,110 @@ const Pro= (props) => {
         });
     }, [optionsMap]);
 
+    useEffect(() => {
+        reqThen();
+    }, []);
+
     const reqThen = useCallback(async res => {
-        console.log('req', res);
-        if (!res?.data?.length) {
-            return res;
-        }
-        const cols = props.columns
-            // 智能宽度
-            .map(col => {
-                const key = col.dataIndex;
-                const textList = res.data.map(item => item[key]);
-                const textWidthList = textList.map(item => getTextWidth(item));
-                // 取最大宽度
-                const avgWidth = textWidthList.reduce((pre, cur) => Math.max(pre, cur));
-                // or 取第一个？
-                // const avgWidth = ~~textWidthList[0];
-                return {
-                    ...col,
-                    width: Math.max(avgWidth, col.width) + 32,
-                }
-            })
-            // 处理 record.a.b 嵌套型数据结构
-            .map(item => {
-                const keys = item.dataIndex.split('.');
-                if (keys.length < 2) {
-                    return item;
-                }
-                // render 函数处理
-                item.render = (dom, record) => {
-                    let label = record;
-                    for (const k of keys) {
-                        if (label !== undefined && label !== null) {
-                            label = label[k];
-                        } else {
-                            break;
+        console.log('reqThen', res);
+        // if (!res?.data?.length) {
+        //     return res;
+        // }
+        let cols;
+        if (res?.data?.length) {
+            cols = prettyCols
+                // 智能宽度
+                .map(col => {
+                    const key = col.dataIndex;
+                    const textList = res.data.map(item => item[key]);
+                    const textWidthList = textList.map(item => getTextWidth(item));
+                    // 取最大宽度
+                    const avgWidth = textWidthList.reduce((pre, cur) => Math.max(pre, cur));
+                    // or 取第一个？
+                    // const avgWidth = ~~textWidthList[0];
+                    return {
+                        ...col,
+                        width: Math.max(avgWidth, col.width) + 32,
+                    }
+                })
+                // 处理 record.a.b 嵌套型数据结构
+                .map(item => {
+                    const keys = item.dataIndex.split('.');
+                    if (keys.length < 2) {
+                        return item;
+                    }
+                    // render 函数处理
+                    item.render = (dom, record) => {
+                        let label = record;
+                        for (const k of keys) {
+                            if (label !== undefined && label !== null) {
+                                label = label[k];
+                            } else {
+                                break;
+                            }
                         }
+                        return label || '-';
                     }
-                    return label || '-';
-                }
-                return item;
-            })
-            // 合并 otherConfig
-            .map(item => {
-                if (!item.useOtherConfig) {
                     return item;
-                }
-                const newItem = { ...item };
-                const other = newItem.otherConfig;
-                try {
-                    const otherObj = eval('(' + other + ')');
-                    // 函数单独处理
-                    if (typeof otherObj.fieldProps === 'function') {
-                        const fn = otherObj.fieldProps.toString();
-                        const newFieldProps = new Function('form', 'config', `const request = ${aRequest};return (function ${fn})(form, config)`)
-                        otherObj.fieldProps = newFieldProps;
+                })
+        } else {
+            cols = prettyCols
+                // 合并 otherConfig
+                .map(item => {
+                    if (!item.useOtherConfig) {
+                        return item;
                     }
-                    // 处理 onSearch
-                    if (typeof otherObj.onSearch === 'function' && typeof newItem.fieldProps !== 'function') {
-                        let fn = otherObj.onSearch.toString();
-                        fn = fn.replace(/\s*(async)?\s*onSearch/, 'async function');
-                        const funstr = `
+                    const newItem = { ...item };
+                    const other = newItem.otherConfig;
+                    try {
+                        const otherObj = eval('(' + other + ')');
+                        // 函数单独处理
+                        if (typeof otherObj.fieldProps === 'function') {
+                            const fn = otherObj.fieldProps.toString();
+                            const newFieldProps = new Function('form', 'config', `const request = ${aRequest};return (function ${fn})(form, config)`)
+                            otherObj.fieldProps = newFieldProps;
+                        }
+                        // 处理 onSearch
+                        if (typeof otherObj.onSearch === 'function' && typeof newItem.fieldProps !== 'function') {
+                            let fn = otherObj.onSearch.toString();
+                            fn = fn.replace(/\s*(async)?\s*onSearch/, 'async function');
+                            const funstr = `
                             const fn = ${fn};
                             return fn(val);
                         `.trim();
-                        const newOnSearch = new Function('request', 'val', funstr);
+                            const newOnSearch = new Function('request', 'val', funstr);
 
-                        if (!newItem.fieldProps) {
-                            newItem.fieldProps = {};
-                        }
-                        newItem.fieldProps.showSearch = true;
-                        newItem.fieldProps.onSearch = (val) => {
+                            if (!newItem.fieldProps) {
+                                newItem.fieldProps = {};
+                            }
+                            newItem.fieldProps.showSearch = true;
+                            newItem.fieldProps.onSearch = (val) => {
                             // todo: 防抖处理 竞态处理
-                            const p = newOnSearch(aRequest, val);
+                                const p = newOnSearch(aRequest, val);
+                                if (p instanceof Promise) {
+                                    p.then((res) => {
+                                        if (Array.isArray(res)) {
+                                            setMap((optionsMap) => ({
+                                                ...optionsMap,
+                                                [newItem.dataIndex]: res,
+                                            }));
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                        // 处理 onInit
+                        if (typeof otherObj.onInit === 'function') {
+                        // 暂时给它设置 options，避免控制台报错
+                            let fn = otherObj.onInit.toString();
+                            fn = fn.replace(/\s*(async)?\s*onInit/, 'async function');
+                            const funstr = `
+                            const fn = ${fn};
+                            return fn();
+                        `.trim();
+                            const newOnInit = new Function('request', funstr);
+                            const p = newOnInit(aRequest);
+                        
                             if (p instanceof Promise) {
                                 p.then((res) => {
                                     if (Array.isArray(res)) {
@@ -201,41 +235,18 @@ const Pro= (props) => {
                                 });
                             }
                         }
-                    }
-                    // 处理 onInit
-                    if (typeof otherObj.onInit === 'function') {
-                        // 暂时给它设置 options，避免控制台报错
-                        let fn = otherObj.onInit.toString();
-                        fn = fn.replace(/\s*(async)?\s*onInit/, 'async function');
-                        const funstr = `
-                            const fn = ${fn};
-                            return fn();
-                        `.trim();
-                        const newOnInit = new Function('request', funstr);
-                        const p = newOnInit(aRequest);
-                        
-                        if (p instanceof Promise) {
-                            p.then((res) => {
-                                if (Array.isArray(res)) {
-                                    setMap((optionsMap) => ({
-                                        ...optionsMap,
-                                        [newItem.dataIndex]: res,
-                                    }));
-                                }
-                            });
-                        }
-                    }
                     
-                    Object.assign(newItem, otherObj);
-                } catch (error) {
-                    console.error('解析gg...\n', item, error)
-                }
-                delete newItem.otherConfig;
-                delete newItem.useOtherConfig;
-                delete newItem.onSearch;
-                delete newItem.onInit;
-                return newItem;
-            });
+                        Object.assign(newItem, otherObj);
+                    } catch (error) {
+                        console.error('解析gg...\n', item, error)
+                    }
+                    delete newItem.otherConfig;
+                    delete newItem.useOtherConfig;
+                    delete newItem.onSearch;
+                    delete newItem.onInit;
+                    return newItem;
+                });
+        }
 
         if (props.actions?.length) {
             const dispatch = (method) => cols[method]({
@@ -264,14 +275,14 @@ const Pro= (props) => {
             } else {
                 dispatch('push');
             }
-            cols.push();
         }
 
         if (cols) {
+            tableVisible.current = true;
             setPrettyCols(cols);
         }
         return res;
-    }, [props])
+    }, [props, prettyCols])
 
     let request = useMemo(() => props.request 
         ? (params, sorter, filter) => (
@@ -394,6 +405,10 @@ const Pro= (props) => {
                 );
             },
         }
+    }
+
+    if (!tableVisible.current) {
+        return <div></div>;
     }
 
     return (
