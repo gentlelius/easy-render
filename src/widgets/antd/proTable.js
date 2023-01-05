@@ -403,7 +403,7 @@ const Pro= (props) => {
                 defaultCollapsed={false}
                 rowKey={prettyCols[0] ? prettyCols[0].dataIndex : 'id'}
                 search={{
-                    labelWidth: props.labelWidth || 80,
+                    labelWidth: props.labelWidth || 'auto',
                     defaultCollapsed: props.defaultCollapsed || false,
                     span: props.span || 6,
                 }}
