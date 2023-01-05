@@ -29,6 +29,7 @@ const ExtendedWidget = ({
     watch,
     actionsHandler,
     navsHandler,
+    searchOptionsHandler,
 }) => {
     const {
         widgets,
@@ -73,6 +74,7 @@ const ExtendedWidget = ({
         ...globalProps,
         actionsHandler,
         navsHandler,
+        searchOptionsHandler,
     };
 
     if (schema.type === 'string' && typeof schema.max === 'number') {
@@ -131,6 +133,7 @@ const ExtendedWidget = ({
     if (schema.widget !== 'proTable') {
         delete finalProps.actionsHandler;
         delete finalProps.navsHandler;
+        delete finalProps.searchOptionsHandler;
     }
     return (
         <Suspense fallback={<div></div>}>

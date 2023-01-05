@@ -28,7 +28,7 @@ const RenderField = (props) => {
         displayType,
     } = props;
 
-    const { formData, flatten, actionsHandler, navsHandler, } = useStore();
+    const { formData, flatten, actionsHandler, navsHandler, searchOptionsHandler, } = useStore();
     const { debounceInput, readOnly, disabled, showValidate, validateMessages, locale, watch } = useStore2();
     const { onValuesChange, onItemChange, setEditing, touchKey, _setErrors } = useTools();
     const formDataRef = useRef();
@@ -166,7 +166,8 @@ const RenderField = (props) => {
     if (isProTableType(_schema)) {
         widgetProps.actionsHandler = actionsHandler || [];
         widgetProps.navsHandler = navsHandler || [];
-    }
+        widgetProps.searchOptionsHandler = searchOptionsHandler || [];
+    }   
 
     let titleElement = <FieldTitle {...titleProps} />;
 

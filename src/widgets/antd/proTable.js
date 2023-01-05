@@ -78,26 +78,14 @@ const getTextWidth = (text, font) => {
     return textmetrics.width;
 }
 
-const handleInitCol = (col) => {
-    const list = ['select', 'radio', 'radioButton', 'checkbook']
-    return col.map(item => {
-        if (list.includes(item.valueType) && (item.onSearch || item.onInit)) {
-            item.fieldProps = item.fieldProps || {};
-            item.fieldProps.options = item.fieldProps.options || [];
-        }
-        return {
-            ...item,
-        }
-    })
-}
-
 const Pro= (props) => {
     const actionRef = useRef();
-    // const formRef = useRef();
+    const formRef = useRef();
     const [prettyCols, setPrettyCols] = useState(props.columns|| []);
     const tableVisible = useRef(false);
     const [optionsMap, setMap] = useState({});
 
+    // 搜索表单项 options 设置
     useEffect(() => {
         // 找到改变的项，然后设置 options
         if (Object.keys(optionsMap).length === 0) {
@@ -120,6 +108,7 @@ const Pro= (props) => {
         });
     }, [optionsMap]);
 
+    // mock onMount
     useEffect(() => {
         reqThen();
     }, []);
@@ -338,8 +327,9 @@ const Pro= (props) => {
         request = null;
     }
 
-    const tools = useMemo(() => {
-        return props.navs?.map((item, index) => (
+    // nav区域的按钮组
+    const tools = useMemo(() => (
+        props.navs?.map((item, index) => (
             <Button 
                 onClick={() => {
                     if (typeof props.navsHandler?.[index] === 'function') {
@@ -350,8 +340,25 @@ const Pro= (props) => {
                 }}
                 type={item.type || 'primary'}
             >{item.navName}</Button>
-        ));
-    }, [props.navs, props.navsHandler])
+        ))
+    ), [props.navs, props.navsHandler])
+
+    // 搜索表单区域的按钮组
+    const getSearchOptions = useCallback(() => {
+        return props.searchOptions?.map((item, index) => (
+            <Button
+                key={item.name}
+                onClick={() => {
+                    if (typeof props.searchOptionsHandler?.[index] === 'function') {
+                        props.searchOptionsHandler[index](formRef.current.getFieldsValue());
+                    } else {
+                        console.warn(`searchOptions ${index} is not function`);
+                    }
+                }}
+                type={item.type || 'default'}
+            >{item.name}</Button>
+        ))
+    }, [props.searchOptions, props.searchOptionsHandler]);
 
     const mapKeyToLabel = prettyCols.reduce((pre, cur) => {
         return Object.assign(pre, { [cur.dataIndex]: cur.title })
@@ -359,6 +366,7 @@ const Pro= (props) => {
 
     console.log('prettyCols', prettyCols);
 
+    // 行展开内容
     const expandedRowRender = props.expandedRowRender ? (record) => {
         return (
             <Descriptions title="">
@@ -371,6 +379,7 @@ const Pro= (props) => {
         )
     } : null;
 
+    // 行选中内容
     let rowSelectionProps = {};
     if (props.rowSelectionConfig?.length) {
         const rowSelectionConfig = props.rowSelectionConfig.map(item => {
@@ -414,6 +423,7 @@ const Pro= (props) => {
     return (
         <div style={{flex: 1, overflow: 'auto'}}>
             <ProTable
+                formRef={formRef}
                 actionRef={actionRef}
                 defaultCollapsed={false}
                 rowKey={prettyCols[0] ? prettyCols[0].dataIndex : 'id'}
@@ -421,6 +431,12 @@ const Pro= (props) => {
                     labelWidth: props.labelWidth || 'auto',
                     defaultCollapsed: props.defaultCollapsed || false,
                     span: props.span || 6,
+                    optionRender: (searchConfig, formProps, dom) => (
+                        <div className="flex gap12">
+                            {getSearchOptions(searchConfig, formProps)}
+                            {dom}
+                        </div>
+                    )
                 }}
                 toolBarRender={() => tools}
                 {...props}

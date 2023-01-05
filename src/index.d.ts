@@ -174,6 +174,7 @@ export interface FRProps {
     removeHiddenData?: boolean;
     actionsHandler?: Function[],
     navsHandler?: Function[],
+    searchOptionsHandler?: Function[],
 }
 
 declare const FR: React.FC<FRProps>;
