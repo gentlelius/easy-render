@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
-import { Descriptions, Space, Button, message } from 'antd';
+import { Space, Button, message } from 'antd';
 import ProTable from '@ant-design/pro-table';
 import { omit, cloneDeep } from 'lodash-es';
 import dayjs from 'dayjs';
@@ -147,6 +147,9 @@ const Pro= (props) => {
                 })
                 // 处理 record.a.b 嵌套型数据结构
                 .map(item => {
+                    if (!item.dataIndex) {
+                        return item;
+                    }
                     const keys = item.dataIndex.split('.');
                     if (keys.length < 2) {
                         return item;
