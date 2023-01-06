@@ -385,7 +385,7 @@ const Pro= (props) => {
                     search={false}
                     options={false}
                     pagination={false}
-                    request={requestFn}
+                    request={() => requestFn(record)}
                     columns={config.tableColumn}
                     rowKey={config.rowKey}
                 />
