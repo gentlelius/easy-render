@@ -5,6 +5,7 @@ import { omit, cloneDeep } from 'lodash-es';
 import dayjs from 'dayjs';
 import { aRequest } from '../../service';
 import { getValue } from '../../storage';
+import { flattenObject } from '../../utils';
 
 if (!window.dayjs) {
     // todo: 考虑占用内存情况，观察占用了多少内存
@@ -53,6 +54,7 @@ const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => re
         'percentage', 
         'getValidParams',
         'getValue',
+        'flattenObject',
         `return (${requestFnStr})(${JSON.stringify(params)},${JSON.stringify(sorter)},${JSON.stringify(filter)})`
     )
     (
@@ -60,6 +62,7 @@ const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => re
         percentage,
         getValidParams,
         getValue,
+        flattenObject,
     ).then(thenFn, catchFn)
 )
 
