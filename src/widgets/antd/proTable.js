@@ -4,7 +4,7 @@ import ProTable from '@ant-design/pro-table';
 import { omit, cloneDeep } from 'lodash-es';
 import dayjs from 'dayjs';
 import { aRequest } from '../../service';
-import { getValue } from '../../storage';
+import { getAll, getValue } from '../../storage';
 import { flattenObject } from '../../utils';
 
 if (!window.dayjs) {
@@ -12,7 +12,10 @@ if (!window.dayjs) {
     window.dayjs = dayjs;
 }
 
-const parseHideExpression = (expression, record) => {
+const parseHideExpression4Action = (expression, record) => {
+    if (typeof expression === 'boolean') {
+        return expression;
+    }
     if (!expression) {
         return false;
     }
@@ -22,6 +25,31 @@ const parseHideExpression = (expression, record) => {
     }
     return false;
 }
+
+const parseHideExpression4Column = (expression, config) => {
+    if (typeof expression === 'boolean') {
+        return expression;
+    }
+    if (!expression) {
+        return false;
+    }
+    if (expression.startsWith('{{') && expression.endsWith('}}')) {
+        expression = expression.slice(2, -2);
+        return new Function('config', `
+            let flag = false;
+            try {
+                with(config) {
+                    flag = ${expression};
+                }
+            } catch(e) {
+            }
+            return flag;
+        `
+        )(config);
+    }
+    return false;
+}
+
 
 const getValidParams = (params) => {
     if (!params) {
@@ -58,7 +86,7 @@ const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => re
         `return (${requestFnStr})(${JSON.stringify(params)},${JSON.stringify(sorter)},${JSON.stringify(filter)})`
     )
     (
-        aRequest, 
+        aRequest,
         percentage,
         getValidParams,
         getValue,
@@ -128,9 +156,7 @@ const Pro= (props) => {
 
     const reqThen = useCallback(async res => {
         console.log('reqThen', res);
-        // if (!res?.data?.length) {
-        //     return res;
-        // }
+
         let cols;
         if (res?.data?.length) {
             cols = prettyCols
@@ -172,7 +198,10 @@ const Pro= (props) => {
                     return item;
                 })
         } else {
+            const config = getAll();
             cols = prettyCols
+                // 过滤掉隐藏的
+                .filter((item) => !parseHideExpression4Column(item.hidden, config))
                 // 合并 otherConfig
                 .map(item => {
                     if (!item.useOtherConfig) {
@@ -251,7 +280,6 @@ const Pro= (props) => {
                     delete newItem.onInit;
                     return newItem;
                 });
-            
 
             if (props.actions?.length) {
                 const dispatch = (method) => cols[method]({
@@ -261,7 +289,7 @@ const Pro= (props) => {
                     width: props.actionsWidth || 100,
                     fixed: method || 'right',
                     render: (text, record, _, tableRef) => props.actions.map((item, index) => (
-                        !parseHideExpression(item.hidden, record) && (
+                        !parseHideExpression4Action(item.hidden, record) && (
                             <a
                                 key={item.actionName}
                                 onClick={() => {
@@ -376,10 +404,6 @@ const Pro= (props) => {
 
     // 行展开内容
     const expandedRowRender = props.expandable ? (record) => {
-        
-        const mapKeyToLabel = prettyCols.reduce((pre, cur) => {
-            return Object.assign(pre, { [cur.dataIndex]: cur.title })
-        }, {});
 
         const config = props.expandable;
 
@@ -471,6 +495,8 @@ const Pro= (props) => {
     if (!tableVisible.current) {
         return <div></div>;
     }
+
+
 
     return (
         <div style={{flex: 1, overflow: 'auto'}}>
