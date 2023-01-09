@@ -298,7 +298,7 @@ const Pro= (props) => {
                     valueType: 'option',
                     key: 'option',
                     width: props.actionsWidth || 100,
-                    fixed: method || 'right',
+                    fixed: props.actionsPostion || 'right',
                     render: (text, record, _, tableRef) => props.actions.map((item, index) => (
                         !parseHideExpression4Action(item.hidden, record, config) && (
                             <a
