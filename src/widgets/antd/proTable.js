@@ -12,7 +12,7 @@ if (!window.dayjs) {
     window.dayjs = dayjs;
 }
 
-const parseHideExpression4Action = (expression, record) => {
+const parseHideExpression4Action = (expression, record, config) => {
     if (typeof expression === 'boolean') {
         return expression;
     }
@@ -21,7 +21,17 @@ const parseHideExpression4Action = (expression, record) => {
     }
     if (expression.startsWith('{{') && expression.endsWith('}}')) {
         expression = expression.slice(2, -2);
-        return new Function('record', `return ${expression}`)(record);
+        return new Function('record', 'config', `
+            let flag = false;
+            try {
+                with(config) {
+                    flag = ${expression};
+                }
+            } catch(e) {
+            }
+            return flag;
+        `
+        )(record, config);
     }
     return false;
 }
@@ -282,6 +292,7 @@ const Pro= (props) => {
                 });
 
             if (props.actions?.length) {
+                const config = getAll();
                 const dispatch = (method) => cols[method]({
                     title: '操作',
                     valueType: 'option',
@@ -289,7 +300,7 @@ const Pro= (props) => {
                     width: props.actionsWidth || 100,
                     fixed: method || 'right',
                     render: (text, record, _, tableRef) => props.actions.map((item, index) => (
-                        !parseHideExpression4Action(item.hidden, record) && (
+                        !parseHideExpression4Action(item.hidden, record, config) && (
                             <a
                                 key={item.actionName}
                                 onClick={() => {

@@ -201,7 +201,7 @@ function App({
             onValuesChange,
             ...form,
         }),
-        []
+        [onValuesChange]
     );
 
     useEffect(() => {
