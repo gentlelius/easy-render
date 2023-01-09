@@ -60,6 +60,9 @@ const parseHideExpression4Column = (expression, config) => {
     return false;
 }
 
+const parseHideExpression4Area = (expression, config) => {
+    return parseHideExpression4Column(expression, config);
+}
 
 const getValidParams = (params) => {
     if (!params) {
@@ -381,33 +384,37 @@ const Pro= (props) => {
     // nav区域的按钮组
     const tools = useMemo(() => (
         props.navs?.map((item, index) => (
-            <Button 
-                onClick={() => {
-                    if (typeof props.navsHandler?.[index] === 'function') {
-                        props.navsHandler[index](actionRef);
-                    } else {
-                        console.warn(`nav ${index} is not function`);
-                    }
-                }}
-                type={item.type || 'primary'}
-            >{item.navName}</Button>
+            parseHideExpression4Area(item.hidden, getAll()) && (
+                <Button 
+                    onClick={() => {
+                        if (typeof props.navsHandler?.[index] === 'function') {
+                            props.navsHandler[index](actionRef);
+                        } else {
+                            console.warn(`nav ${index} is not function`);
+                        }
+                    }}
+                    type={item.type || 'primary'}
+                >{item.navName}</Button>
+            )
         ))
     ), [props.navs, props.navsHandler])
 
     // 搜索表单区域的按钮组
     const getSearchOptions = useCallback(() => {
         return props.searchOptions?.map((item, index) => (
-            <Button
-                key={item.name}
-                onClick={() => {
-                    if (typeof props.searchOptionsHandler?.[index] === 'function') {
-                        props.searchOptionsHandler[index](formRef.current.getFieldsValue());
-                    } else {
-                        console.warn(`searchOptions ${index} is not function`);
-                    }
-                }}
-                type={item.type || 'default'}
-            >{item.name}</Button>
+            parseHideExpression4Area(item.hidden, getAll()) && (
+                <Button
+                    key={item.name}
+                    onClick={() => {
+                        if (typeof props.searchOptionsHandler?.[index] === 'function') {
+                            props.searchOptionsHandler[index](formRef.current.getFieldsValue());
+                        } else {
+                            console.warn(`searchOptions ${index} is not function`);
+                        }
+                    }}
+                    type={item.type || 'default'}
+                >{item.name}</Button>
+            )
         ))
     }, [props.searchOptions, props.searchOptionsHandler]);
 
