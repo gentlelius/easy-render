@@ -384,7 +384,7 @@ const Pro= (props) => {
     // nav区域的按钮组
     const tools = useMemo(() => (
         props.navs?.map((item, index) => (
-            parseHideExpression4Area(item.hidden, getAll()) && (
+            !parseHideExpression4Area(item.hidden, getAll()) && (
                 <Button 
                     onClick={() => {
                         if (typeof props.navsHandler?.[index] === 'function') {
@@ -402,7 +402,7 @@ const Pro= (props) => {
     // 搜索表单区域的按钮组
     const getSearchOptions = useCallback(() => {
         return props.searchOptions?.map((item, index) => (
-            parseHideExpression4Area(item.hidden, getAll()) && (
+            !parseHideExpression4Area(item.hidden, getAll()) && (
                 <Button
                     key={item.name}
                     onClick={() => {
