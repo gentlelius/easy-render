@@ -535,18 +535,18 @@ const Pro= (props) => {
                     )
                 }}
                 toolBarRender={() => tools}
-                {...props}
-                request={request}
-                columns={prettyCols}
                 scroll={{
                     x: 'max-content',
                 }}
                 pagination={{
                     defaultPageSize: props.defaultPageSize || 20,
                 }}
+                {...props}
+                columns={prettyCols}
                 onChange={() => {}}
                 expandable={{expandedRowRender}}
                 {...rowSelectionProps}
+                request={request}
             />
         </div>
     );
