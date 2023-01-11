@@ -7,6 +7,8 @@ import { aRequest } from '../../service';
 import { getAll, getValue } from '../../storage';
 import { flattenObject } from '../../utils';
 
+window.h = React.createElement;
+
 if (!window.dayjs) {
     // todo: 考虑占用内存情况，观察占用了多少内存
     window.dayjs = dayjs;
@@ -388,7 +390,7 @@ const Pro= (props) => {
                 <Button 
                     onClick={() => {
                         if (typeof props.navsHandler?.[index] === 'function') {
-                            props.navsHandler[index](actionRef);
+                            props.navsHandler[index](formRef.current.getFieldsValue(), actionRef);
                         } else {
                             console.warn(`nav ${index} is not function`);
                         }
@@ -407,7 +409,7 @@ const Pro= (props) => {
                     key={item.name}
                     onClick={() => {
                         if (typeof props.searchOptionsHandler?.[index] === 'function') {
-                            props.searchOptionsHandler[index](formRef.current.getFieldsValue());
+                            props.searchOptionsHandler[index](formRef.current.getFieldsValue(), actionRef);
                         } else {
                             console.warn(`searchOptions ${index} is not function`);
                         }
