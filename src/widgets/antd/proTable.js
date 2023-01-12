@@ -7,8 +7,6 @@ import { aRequest } from '../../service';
 import { getAll, getValue } from '../../storage';
 import { flattenObject } from '../../utils';
 
-window.h = React.createElement;
-
 if (!window.dayjs) {
     // todo: 考虑占用内存情况，观察占用了多少内存
     window.dayjs = dayjs;
@@ -107,7 +105,11 @@ const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => re
         getValue,
         flattenObject,
     ).then(thenFn, catchFn)
-)
+);
+
+const accept = (fnstr) => {
+    return new Function('getValue', 'h', `return ${fnstr}`)(getValue, React.createElement);
+}
 
 const percentage = (num) => {
     if (isNaN(num)) {
@@ -239,7 +241,7 @@ const Pro= (props) => {
                     const newItem = { ...item };
                     const other = newItem.otherConfig;
                     try {
-                        const otherObj = eval('(' + other + ')');
+                        const otherObj = accept(other);
                         // 函数单独处理
                         if (typeof otherObj.fieldProps === 'function') {
                             const fn = otherObj.fieldProps.toString();
