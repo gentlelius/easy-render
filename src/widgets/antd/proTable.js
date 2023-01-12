@@ -174,44 +174,58 @@ const Pro= (props) => {
 
         let cols;
         if (res?.data?.length) {
-            cols = prettyCols
-                // 智能宽度
-                .map(col => {
-                    const key = col.dataIndex;
-                    const textList = res.data.map(item => item[key]);
-                    const textWidthList = textList.map(item => getTextWidth(item));
-                    // 取最大宽度
-                    const avgWidth = textWidthList.reduce((pre, cur) => Math.max(pre, cur));
-                    // or 取第一个？
-                    // const avgWidth = ~~textWidthList[0];
-                    return {
-                        ...col,
-                        width: Math.max(avgWidth, col.width) + 32,
-                    }
-                })
-                // 处理 record.a.b 嵌套型数据结构
-                .map(item => {
-                    if (!item.dataIndex) {
-                        return item;
-                    }
-                    const keys = item.dataIndex.split('.');
-                    if (keys.length < 2) {
-                        return item;
-                    }
-                    // render 函数处理
-                    item.render = (dom, record) => {
-                        let label = record;
-                        for (const k of keys) {
-                            if (label !== undefined && label !== null) {
-                                label = label[k];
-                            } else {
-                                break;
-                            }
-                        }
-                        return label || '-';
-                    }
+            // 智能宽度
+            const autoWidth = (col) => {
+                if (col.valueType === 'option') {
+                    return col;
+                }
+                if (col.render) {
+                    return col;
+                }
+                if (col.width) {
+                    return col;
+                }
+                const key = col.dataIndex;
+                const textList = res.data.map(item => item[key]);
+                const textWidthList = textList.map(item => getTextWidth(item));
+                // 取最大宽度
+                const avgWidth = textWidthList.reduce((pre, cur) => Math.max(pre, cur));
+                // or 取第一个？
+                // const avgWidth = ~~textWidthList[0];
+                return {
+                    ...col,
+                    width: Math.max(avgWidth, col.width) + 32,
+                }
+            };
+            // 处理 record.a.b 嵌套型数据结构
+            const flattenField = (item) => {
+                if (!item.dataIndex) {
                     return item;
-                })
+                }
+                const keys = item.dataIndex.split('.');
+                if (keys.length < 2) {
+                    return item;
+                }
+                // render 函数处理
+                item.render = (dom, record) => {
+                    let label = record;
+                    for (const k of keys) {
+                        if (label !== undefined && label !== null) {
+                            label = label[k];
+                        } else {
+                            break;
+                        }
+                    }
+                    return label || '-';
+                }
+                return item;
+            }
+            // nothing todo
+            const noop = item => item;
+            // map start
+            cols = prettyCols
+                .map(props.widthDefault ? noop : autoWidth)
+                .map(flattenField)
         } else {
             const config = getAll();
             cols = prettyCols
@@ -296,8 +310,7 @@ const Pro= (props) => {
                     return newItem;
                 });
 
-            if (props.actions?.length) {
-                const config = getAll();
+            if (props.actions?.length && !cols.find(item => item.valueType === 'option')) {
                 const dispatch = (method) => cols[method]({
                     title: '操作',
                     valueType: 'option',
@@ -480,7 +493,10 @@ const Pro= (props) => {
     if (props.rowSelectionConfig?.length) {
         const rowSelectionConfig = props.rowSelectionConfig.map(item => {
             const actionStr = item.action;
-            const action = new Function('options', 'request', `return (${actionStr.trim()})(options)`);
+            let action = () => { console.warn('没有设置对应的事件函数，请设置')}
+            if (actionStr?.trim()) {
+                action = new Function('options', 'request', `return (${actionStr})(options)`);
+            }
             return {
                 ...item,
                 action,
@@ -516,7 +532,9 @@ const Pro= (props) => {
         return <div></div>;
     }
 
-
+    if (props.disabled) {
+        request = null;
+    }
 
     return (
         <div style={{flex: 1, overflow: 'auto'}}>

@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
 import { Upload, message, Button } from 'antd';
 
-export default function FrUpload({ action, value, name, data, onChange, uploadProps, buttonProps }) {
+export default function UploadImg({ action, value, name, data, onChange, uploadProps, buttonProps }) {
+    
+    const [fileList, setFileList] = useState(value || []);
 
     const props = {
+        listType: 'picture-card',
+        fileList,
         name: name || 'data',
         data: data,
         type: 'file',
@@ -21,6 +25,23 @@ export default function FrUpload({ action, value, name, data, onChange, uploadPr
             onChange('');
         },
         withCredentials: true,
+        onChange: ({ fileList: newFileList }) => {
+            setFileList(newFileList);
+        },
+        onPreview: async (file) => {
+            let src = file.url;
+            if (!src) {
+                src = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file.originFileObj);
+                    reader.onload = () => resolve(reader.result);
+                });
+            }
+            const image = new Image();
+            image.src = src;
+            const imgWindow = window.open(src);
+            imgWindow?.document.write(image.outerHTML);
+        },
         ...uploadProps,
     };
 
@@ -33,17 +54,12 @@ export default function FrUpload({ action, value, name, data, onChange, uploadPr
         ...defaultBtnProps,
         ...buttonProps,
     };
-
+    
     return (
         <div className="fr-upload-mod">
             <Upload {...props} className="fr-upload-file">
-                <Button {...btnProps} />
+                {fileList.length < 2 && '点击上传'}
             </Upload>
-            {value && (
-                <a href={value} target="_blank" rel="noopener noreferrer" className="fr-upload-preview">
-                    已上传地址
-                </a>
-            )}
         </div>
     );
 }

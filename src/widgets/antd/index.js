@@ -18,7 +18,8 @@ import upload from './upload';
 import proTable from './proTable';
 import proSelect from './proSelect';
 import codeEdit from './codeEdit';
-
+import uploadLazy from './upload-lazy';
+import uploadImg from './upload-img';
 // const Cascader = React.lazy(() => import('antd/es/cascader'));
 
 const { TextArea } = Input;
@@ -33,6 +34,7 @@ const FrTreeSelect = ({ style, ...rest }) => <TreeSelect style={{ width: '100%',
 //   <Cascader style={{ width: '100%', ...style }} {...rest} />
 // );
 
+// key->value 配对
 export const widgets = {
     input: Input,
     checkbox: Checkbox,
@@ -60,6 +62,8 @@ export const widgets = {
     proTable,
     proSelect,
     codeEdit,
+    uploadLazy,
+    uploadImg,
 };
 
 export const defaultWidgetNameList = Object.keys(widgets);

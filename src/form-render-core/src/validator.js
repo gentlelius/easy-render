@@ -162,6 +162,9 @@ const validateSingle = (data, schema = {}, path, options = {}) => {
     if (schema.hidden) {
         return Promise.resolve();
     }
+    if (schema.hideRules === true) {
+        return Promise.resolve();
+    }
 
     const { validateMessages = {}, locale = 'cn' } = options;
     const cn = defaultValidateMessagesCN;

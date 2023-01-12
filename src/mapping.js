@@ -10,6 +10,7 @@ export const mapping = {
     proTable: 'proTable',
     proSelect: 'proSelect',
     codeEdit: 'codeEdit',
+    uploadLazy: 'uploadLazy',
     'string:upload': 'upload',
     'string:url': 'url',
     'string:dateTime': 'date',
