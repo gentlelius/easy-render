@@ -1,12 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useMemo, useRef } from 'react';
-import { updateSchemaToNewVersion, msToTime, yymmdd } from './utils';
+import { updateSchemaToNewVersion, msToTime, yymmdd, isObjType } from './utils';
 import Core from './core';
 import Watcher from './Watcher';
 import { Ctx, StoreCtx, Store2Ctx } from './hooks';
 import './atom.less';
 import './index.less';
 import { mapping as defaultMapping } from './mapping';
+import ProTable from '../../widgets/antd/proTable';
 
 const defaultFinish = (data, errors) => {
 };
@@ -266,7 +267,7 @@ function App({
     }
 
     const rootProps = {
-        className: `fr-container ${sizeCls} ${className || ''}`,
+        className: `er-container ${sizeCls} ${className || ''}`,
     };
 
     if (style && typeof style === 'object') {
@@ -304,13 +305,32 @@ function App({
 
 export { createWidget } from './createWidget';
 
+const getProTableProps = (obj) => {
+    if (isObjType(obj)) {
+        const itemSchema = obj.properties[Object.keys(obj.properties)[0]] || {};
+        if (itemSchema.widget === 'proTable') {
+            return itemSchema.props;
+        } 
+    }
+    return null;
+}
+
 const Wrapper = (props) => {
     const { isOldVersion = true, schema, ...rest } = props || {};
     const _schema = useRef(schema);
     if (isOldVersion) {
         _schema.current = updateSchemaToNewVersion(schema);
     }
-
+    const tableProps = getProTableProps(_schema.current);
+    if (tableProps) {
+        const { actionsHandler, navsHandler, searchOptionsHandler } = props;
+        const handlers = { actionsHandler, navsHandler, searchOptionsHandler };
+        return <ProTable 
+            className="er-container" 
+            {...tableProps}
+            {...handlers}
+        />
+    }
     return <App schema={_schema.current} {...rest} />;
 };
 

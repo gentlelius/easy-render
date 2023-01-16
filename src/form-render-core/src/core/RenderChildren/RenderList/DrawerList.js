@@ -177,7 +177,7 @@ const DrawerList = ({
                 visible={showDrawer}
                 destroyOnClose // 必须要加，currentIndex不是一个state，Core不会重新渲染就跪了
             >
-                <div className="fr-container">
+                <div className="er-container">
                     <Core {...fieldsProps} />
                 </div>
             </Drawer>

@@ -554,7 +554,8 @@ const Pro= (props) => {
                             {getSearchOptions(searchConfig, formProps)}
                             {dom}
                         </div>
-                    )
+                    ),
+                    className: 'search-action',
                 }}
                 toolBarRender={() => tools}
                 scroll={{

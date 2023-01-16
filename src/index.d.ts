@@ -128,7 +128,7 @@ export interface FRProps {
     /** 表单 schema */
     schema: Schema;
     /** form单例 */
-    form: FormInstance;
+    form?: FormInstance;
     /** 组件和schema的映射规则 */
     mapping?: any;
     /** 自定义组件 */
