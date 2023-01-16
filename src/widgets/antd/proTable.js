@@ -12,6 +12,11 @@ if (!window.dayjs) {
     window.dayjs = dayjs;
 }
 
+const getSelectionDisabled = (record, expression) => {
+    const fn = new Function('record', `return ${expression}`);
+    return fn(record);
+}
+
 const parseHideExpression4Action = (expression, record, config) => {
     if (typeof expression === 'boolean') {
         return expression;
@@ -61,6 +66,10 @@ const parseHideExpression4Column = (expression, config) => {
 }
 
 const parseHideExpression4Area = (expression, config) => {
+    return parseHideExpression4Column(expression, config);
+}
+
+const parseHideExpression4Selection = (expression, config) => {
     return parseHideExpression4Column(expression, config);
 }
 
@@ -493,22 +502,29 @@ const Pro= (props) => {
     // 行选中内容
     let rowSelectionProps = {};
     if (props.rowSelectionConfig?.length) {
-        const rowSelectionConfig = props.rowSelectionConfig.map(item => {
-            const actionStr = item.action;
-            let action = () => { console.warn('没有设置对应的事件函数，请设置')}
-            if (actionStr?.trim()) {
-                action = new Function('options', 'request', `return (${actionStr})(options)`);
-            }
-            return {
-                ...item,
-                action,
-            }
-        });
+        const rowSelectionConfig = props.rowSelectionConfig
+            .filter(item => !parseHideExpression4Selection(item.hidden, getAll()))
+            .map(item => {
+                const actionStr = item.action;
+                let action = () => { console.warn('没有设置对应的事件函数，请设置')}
+                if (actionStr?.trim()) {
+                    action = new Function('options', 'request', `return (${actionStr})(options)`);
+                }
+                return {
+                    ...item,
+                    action,
+                }
+            });
         rowSelectionProps = {
             rowSelection: {
                 // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
                 // 注释该行则默认不显示下拉选项
                 // selections: [ProTable.SELECTION_ALL, ProTable.SELECTION_INVERT],
+                getCheckboxProps(record) {
+                    return {
+                        disabled: getSelectionDisabled(record, props.rowSelectionDisabled),
+                    }
+                },
             },
             tableAlertRender: ({ selectedRowKeys, selectedRows, onCleanSelected }) => (
                 <Space size={24}>
