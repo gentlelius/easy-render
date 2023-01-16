@@ -88,17 +88,20 @@ const RenderField = (props) => {
             onValuesChange({ [dataPath]: value }, formDataRef.current);
         }
 
-        validateField({
-            path: dataPath,
-            formData: formDataRef.current,
-            flatten,
-            options: {
-                locale,
-                validateMessages,
-            },
-        }).then((res) => {
-            _setErrors((errors) => removeDupErrors([...errors, ...res]));
-        });
+        // TODO：校验时机应该延迟，后面研究下提 PR
+        setTimeout(() => {
+            validateField({
+                path: dataPath,
+                formData: formDataRef.current,
+                flatten,
+                options: {
+                    locale,
+                    validateMessages,
+                },
+            }).then((res) => {
+                _setErrors((errors) => removeDupErrors([...errors, ...res]));
+            });
+        }, 0);
     };
 
     const titleProps = {
