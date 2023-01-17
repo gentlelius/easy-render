@@ -414,7 +414,7 @@ const Pro= (props) => {
                 <Button 
                     onClick={() => {
                         if (typeof props.navsHandler?.[index] === 'function') {
-                            props.navsHandler[index](formRef.current.getFieldsValue(), actionRef);
+                            props.navsHandler[index](formRef.current.getFieldsValue(), actionRef.current);
                         } else {
                             console.warn(`nav ${index} is not function`);
                         }
@@ -433,7 +433,7 @@ const Pro= (props) => {
                     key={item.name}
                     onClick={() => {
                         if (typeof props.searchOptionsHandler?.[index] === 'function') {
-                            props.searchOptionsHandler[index](formRef.current.getFieldsValue(), actionRef);
+                            props.searchOptionsHandler[index](formRef.current.getFieldsValue(), actionRef.current);
                         } else {
                             console.warn(`searchOptions ${index} is not function`);
                         }
