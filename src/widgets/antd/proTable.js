@@ -13,8 +13,16 @@ if (!window.dayjs) {
 }
 
 const getSelectionDisabled = (record, expression) => {
-    const fn = new Function('record', `return ${expression}`);
-    return fn(record);
+    if (!expression || typeof expression !== 'string') {
+        return false;
+    }
+    if (expression.startsWith('{{') && expression.endsWith('}}')) {
+        expression = expression.slice(2, -2);
+        const fn = new Function('record', `return ${expression}`);
+        return fn(record);
+    } else {
+        return false;
+    }
 }
 
 const parseHideExpression4Action = (expression, record, config) => {
