@@ -3,9 +3,8 @@ import { UploadOutlined } from '@ant-design/icons';
 import { Upload, message, Button } from 'antd';
 
 export default function UploadImg({ action, value, name, data, onChange, uploadProps, buttonProps }) {
-    
     const [fileList, setFileList] = useState(value || []);
-
+    console.log('fileList', fileList);
     const props = {
         listType: 'picture-card',
         fileList,
@@ -26,6 +25,7 @@ export default function UploadImg({ action, value, name, data, onChange, uploadP
         },
         withCredentials: true,
         onChange: ({ fileList: newFileList }) => {
+            console.log('fileList', fileList);
             setFileList(newFileList);
         },
         onPreview: async (file) => {

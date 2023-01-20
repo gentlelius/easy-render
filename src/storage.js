@@ -9,12 +9,12 @@ export function getValue(key) {
 }
 
 export function destroy(key) {
-    return delete dataMap[key];
+    dataMap[key] = undefined;
 }
 
 export function clearAll() {
     Object.keys(dataMap).forEach(key => {
-        delete dataMap[key];
+        dataMap[key] = undefined;
     });
 }
 

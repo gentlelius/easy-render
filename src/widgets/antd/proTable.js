@@ -12,14 +12,24 @@ if (!window.dayjs) {
     window.dayjs = dayjs;
 }
 
-const getSelectionDisabled = (record, expression) => {
+const getSelectionDisabled = (expression, record, config) => {
     if (!expression || typeof expression !== 'string') {
         return false;
     }
     if (expression.startsWith('{{') && expression.endsWith('}}')) {
         expression = expression.slice(2, -2);
-        const fn = new Function('record', `return ${expression}`);
-        return fn(record);
+        return new Function('record', 'config', `
+            let flag = false;
+            try {
+                with(config) {
+                    flag = ${expression};
+                }
+            } catch(e) {
+            }
+            return flag;
+        `
+        )(record, config);
+
     } else {
         return false;
     }
@@ -530,7 +540,7 @@ const Pro= (props) => {
                 // selections: [ProTable.SELECTION_ALL, ProTable.SELECTION_INVERT],
                 getCheckboxProps(record) {
                     return {
-                        disabled: getSelectionDisabled(record, props.rowSelectionDisabled),
+                        disabled: getSelectionDisabled(props.rowSelectionDisabled, record, getAll()),
                     }
                 },
             },

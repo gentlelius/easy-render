@@ -28,9 +28,9 @@ export default function UploadLazy({ value, onChange, ...rest }) {
                 <Button icon={<UploadOutlined />}>选择文件</Button>
             </Upload>
             {typeof value === 'string' && (
-                <div>
-                    <span className="ml3">已上传地址：</span>
-                    <a href={value} target="_blank" rel="noopener noreferrer" className="">{value}</a>
+                <div style={{display: 'flex'}}>
+                    <span className="ml3 flex-auto">已上传地址：</span>
+                    <a className="text-auto-over" style={{width: 180}} href={value} target="_blank" rel="noopener noreferrer">{value}</a>
                 </div>
             )}
         </div>
