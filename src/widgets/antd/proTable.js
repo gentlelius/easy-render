@@ -6,10 +6,14 @@ import dayjs from 'dayjs';
 import { aRequest } from '../../service';
 import { getAll, getValue } from '../../storage';
 import { flattenObject } from '../../utils';
+import qs from 'query-string';
 
 if (!window.dayjs) {
     // todo: 考虑占用内存情况，观察占用了多少内存
     window.dayjs = dayjs;
+}
+if (!window.qs) {
+    window.qs = qs;
 }
 
 const getSelectionDisabled = (expression, record, config) => {
@@ -346,20 +350,22 @@ const Pro= (props) => {
                     key: 'option',
                     width: props.actionsWidth || 100,
                     fixed: props.actionsPostion || 'right',
-                    render: (text, record, _, tableRef) => props.actions.map((item, index) => (
-                        !parseHideExpression4Action(item.hidden, record, config) && (
-                            <a
-                                key={item.actionName}
-                                onClick={() => {
-                                    if (typeof props.actionsHandler?.[index] === 'function') {
-                                        props.actionsHandler[index](record, tableRef);
-                                    } else {
-                                        console.warn(`action ${index} is not function`);
-                                    }
-                                }}
-                            >{item.actionName}</a>
-                        )
-                    ))
+                    render: (text, record, _, tableRef) => (
+                        props.actions.map((item, index) => (
+                            !parseHideExpression4Action(item.hidden, record, config) && (
+                                <a
+                                    key={item.actionName}
+                                    onClick={() => {
+                                        if (typeof props.actionsHandler?.[index] === 'function') {
+                                            props.actionsHandler[index](record, tableRef);
+                                        } else {
+                                            console.warn(`action ${index} is not function`);
+                                        }
+                                    }}
+                                >{item.actionName}</a>
+                            )
+                        ))
+                    )
                 });
                 if (props.actionsPostion === 'left') {
                     dispatch('unshift');
@@ -557,7 +563,11 @@ const Pro= (props) => {
             tableAlertOptionRender: (options) => {
                 return (
                     <Space size={16}>
-                        {rowSelectionConfig.map(expanderItem => <a key={expanderItem.name} onClick={() => expanderItem.action(options, aRequest)}>{expanderItem.name}</a>)}
+                        {rowSelectionConfig.map(expanderItem => <a key={expanderItem.name} onClick={() => {
+                            expanderItem.action(options, aRequest).then((res) => {
+                                res && actionRef.current.reload();
+                            })
+                        }}>{expanderItem.name}</a>)}
                     </Space>
                 );
             },
