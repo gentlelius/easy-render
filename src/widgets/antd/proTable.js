@@ -532,7 +532,7 @@ const Pro= (props) => {
                 const actionStr = item.action;
                 let action = () => { console.warn('没有设置对应的事件函数，请设置')}
                 if (actionStr?.trim()) {
-                    action = new Function('options', 'request', `return (${actionStr})(options)`);
+                    action = new Function('options', 'request', 'getValue', `return (${actionStr})(options)`);
                 }
                 return {
                     ...item,
@@ -564,8 +564,11 @@ const Pro= (props) => {
                 return (
                     <Space size={16}>
                         {rowSelectionConfig.map(expanderItem => <a key={expanderItem.name} onClick={() => {
-                            expanderItem.action(options, aRequest).then((res) => {
-                                res && actionRef.current.reload();
+                            expanderItem.action(options, aRequest, getValue).then((res) => {
+                                if (res) {
+                                    actionRef.current.reload();
+                                    actionRef.current.clearSelected();
+                                }
                             })
                         }}>{expanderItem.name}</a>)}
                     </Space>

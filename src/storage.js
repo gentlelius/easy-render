@@ -1,11 +1,22 @@
 const dataMap = {};
+const onceMap = {};
 
 export function setValue(key, value) {
     dataMap[key] = value;
 }
 
+export function setValueOnce(key, value) {
+    setValue(key ,value);
+    onceMap[key] = true;
+}
+
 export function getValue(key) {
-    return dataMap[key];
+    const value = dataMap[key];
+    if (onceMap[key]) {
+        destroy(key);
+        onceMap[key] = undefined;
+    }
+    return value;
 }
 
 export function destroy(key) {
