@@ -5,7 +5,7 @@ import { omit, cloneDeep } from 'lodash-es';
 import dayjs from 'dayjs';
 import { aRequest } from '../../service';
 import { getAll, getValue } from '../../storage';
-import { flattenObject } from '../../utils';
+import { flattenObjectAndMerge, flattenObject } from '../../utils';
 import qs from 'query-string';
 
 if (!window.dayjs) {
@@ -230,35 +230,17 @@ const Pro= (props) => {
                     width: Math.max(avgWidth, col.width) + 32,
                 }
             };
-            // 处理 record.a.b 嵌套型数据结构
-            const flattenField = (item) => {
-                if (!item.dataIndex) {
-                    return item;
-                }
-                const keys = item.dataIndex.split('.');
-                if (keys.length < 2) {
-                    return item;
-                }
-                // render 函数处理
-                item.render = (dom, record) => {
-                    let label = record;
-                    for (const k of keys) {
-                        if (label !== undefined && label !== null) {
-                            label = label[k];
-                        } else {
-                            break;
-                        }
-                    }
-                    return label || '-';
-                }
-                return item;
-            }
             // nothing todo
             const noop = item => item;
-            // map start
+            // map
             cols = prettyCols
-                .map(props.widthDefault ? noop : autoWidth)
-                .map(flattenField)
+                .map(props.widthDefault ? noop : autoWidth);
+            
+
+            // 表格 data 打平 & 合并
+            if (props.flattenAble) {
+                res.data = res.data.map(flattenObjectAndMerge)
+            }
         } else {
             const config = getAll();
             cols = prettyCols
@@ -382,7 +364,7 @@ const Pro= (props) => {
         return res;
     }, [props, prettyCols])
 
-    // mock onMount
+
     useEffect(() => {
         reqThen();
     }, []);
@@ -438,7 +420,7 @@ const Pro= (props) => {
                 <Button 
                     onClick={() => {
                         if (typeof props.navsHandler?.[index] === 'function') {
-                            props.navsHandler[index](formRef.current.getFieldsValue(), actionRef.current);
+                            props.navsHandler[index](formRef.current?.getFieldsValue(), actionRef.current);
                         } else {
                             console.warn(`nav ${index} is not function`);
                         }

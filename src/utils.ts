@@ -1,4 +1,5 @@
-/* eslint-disable indent */
+import { isString, isNumber, isBoolean, isNull, isPlainObject, isArray, isEmpty } from 'lodash-es';
+
 export function isUrl(string) {
     const protocolRE = /^(?:\w+:)?\/\/(\S+)$/;
     // const domainRE = /^[^\s\.]+\.\S{2,}$/;
@@ -46,18 +47,18 @@ export function getFormat(format) {
 }
 
 export function flattenObject(o, prefix = '', result = {}, keepNull = true) {
-    if (_.isString(o) || _.isNumber(o) || _.isBoolean(o) || (keepNull && _.isNull(o))) {
+    if (isString(o) || isNumber(o) || isBoolean(o) || (keepNull && isNull(o))) {
         result[prefix] = o;
         return result;
     }
   
-    if (_.isArray(o) || _.isPlainObject(o)) {
+    if (isArray(o) || isPlainObject(o)) {
         for (let i in o) {
             let pref = prefix;
-            if (_.isArray(o)) {
+            if (isArray(o)) {
                 pref = pref + `[${i}]`;
             } else {
-                if (_.isEmpty(prefix)) {
+                if (isEmpty(prefix)) {
                     pref = i;
                 } else {
                     pref = prefix + '.' + i;
@@ -68,4 +69,8 @@ export function flattenObject(o, prefix = '', result = {}, keepNull = true) {
         return result;
     }
     return result;
+}
+
+export function flattenObjectAndMerge(o) {
+    return Object.assign(o, flattenObject(o));
 }
