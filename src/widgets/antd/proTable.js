@@ -238,7 +238,7 @@ const Pro= (props) => {
             
 
             // 表格 data 打平 & 合并
-            if (props.flattenAble) {
+            if (!props.notFlatten) {
                 res.data = res.data.map(flattenObjectAndMerge)
             }
         } else {
