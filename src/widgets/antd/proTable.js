@@ -467,7 +467,7 @@ const Pro= (props) => {
                     pagination={false}
                     request={() => requestFn(record)}
                     columns={config.tableColumn}
-                    rowKey={config.rowKey}
+                    rowKey={config.subRowKey}
                 />
             )
         } else if (config.sourceDataType === 'record') {
@@ -481,7 +481,7 @@ const Pro= (props) => {
                         pagination={false}
                         columns={config.tableColumn}
                         dataSource={dataSource}
-                        rowKey={config.rowKey}
+                        rowKey={config.subRowKey}
                     />
                 );
             } else {
@@ -494,7 +494,7 @@ const Pro= (props) => {
                             pagination={false}
                             columns={Object.keys(dataSource[0])}
                             dataSource={dataSource}
-                            rowKey={config.rowKey}
+                            rowKey={config.subRowKey}
                         />
                     )
                 } else {
