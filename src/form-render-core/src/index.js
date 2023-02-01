@@ -305,14 +305,14 @@ function App({
 
 export { createWidget } from './createWidget';
 
-const getProTableProps = (obj) => {
+const getProTableConfig = (obj) => {
     if (isObjType(obj)) {
         const itemSchema = obj.properties[Object.keys(obj.properties)[0]] || {};
         if (itemSchema.widget === 'proTable') {
-            return itemSchema.props;
-        } 
+            return [true, itemSchema.props];
+        }
     }
-    return null;
+    return [false, null];
 }
 
 const Wrapper = (props) => {
@@ -321,8 +321,8 @@ const Wrapper = (props) => {
     if (isOldVersion) {
         _schema.current = updateSchemaToNewVersion(schema);
     }
-    const tableProps = getProTableProps(_schema.current);
-    if (tableProps) {
+    const [isProTable, tableProps] = getProTableConfig(_schema.current);
+    if (isProTable) {
         const { actionsHandler, navsHandler, searchOptionsHandler } = props;
         const handlers = { actionsHandler, navsHandler, searchOptionsHandler };
         return <ProTable 

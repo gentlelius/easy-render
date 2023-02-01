@@ -39,18 +39,72 @@ monaco.languages.registerCompletionItemProvider('typescript', {
                     detail: 'request post 请求'
                 },
                 {
-                    label: 'config',
+                    label: 'date',
                     kind: monaco.languages.CompletionItemKind['Property'],
-                    insertText: "{\n\tvalueType: '${1:select}',\n\tfieldProps(form, config) {\n\t\t${2}\n\t}\n}",
+                    insertText: pretty(`
+                        {
+                            valueType: 'date',
+                            hideInTable: true,
+                            initialValue: dayjs().subtract(30, 'day').format('YYYY-MM-DD')$0
+                        }
+                    `),
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     detail: 'config',
+                },
+                {
+                    label: 'select',
+                    kind: monaco.languages.CompletionItemKind['Property'],
+                    insertText: pretty(`
+                        {
+                            valueType: 'select',
+                            hideInTable: true,
+                            fieldProps: {
+                                $0
+                            },
+                        }
+                    `),
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    detail: 'config',
+                },
+                {
+                    label: 'options',
+                    kind: monaco.languages.CompletionItemKind['Property'],
+                    insertText: pretty(`
+                    options: [
+                        {
+                            value: $1,
+                            label: $2
+                        }$0
+                    ]
+                    `),
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    detail: 'options',
+                },
+                {
+                    label: 'item {}',
+                    kind: monaco.languages.CompletionItemKind['Property'],
+                    insertText: pretty(`
+                    {
+                        value: $1,
+                        label: $2,
+                    }$0
+                    `),
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    detail: 'options item',
                 },
                 ...createDependencyProposals(),
             ]
         };
     },
-    triggerCharacters: ['umi']  // 写触发提示的字符，可以有多个
+    triggerCharacters: ['.']  // 写触发提示的字符，可以有多个
 });
+
+function pretty(str) {
+    const arr = str.split('\n').filter(v => !!v.trim());
+    const regex = /^(\s+)/g;
+    const found = arr[0].match(regex);
+    return arr.map(v => v.replace(found, '')).join('\n');
+}
 
 function createDependencyProposals(range, languageService = false, editor, curWord) {
     const esKeys = [
@@ -73,54 +127,6 @@ function createDependencyProposals(range, languageService = false, editor, curWo
     }
     return [].concat(keys);
 }
-
-const identifierPattern = "([a-zA-Z_]\\w*)";	// 正则表达式定义 注意转义\\w
-
-function getTokens(code) {
-    let identifier = new RegExp(identifierPattern, "g");	// 注意加入参数"g"表示多次查找
-    let tokens = [];
-    let array1;
-    while ((array1 = identifier.exec(code)) !== null) {
-        tokens.push(array1[0]);
-    }
-    return Array.from(new Set(tokens));			// 去重
-}
-
-function createDependencyProposals2(range, languageService = false, editor, curWord) {
-    const esKeys = [
-        'async',
-        'await',
-        'console.log(${1})',
-        'try {\n\t${1}\n} catch(e) {\n \n}',
-    ]
-    let keys = [];
-    for (const item of esKeys) {
-    	keys.push({
-        	label: item,
-        	kind: monaco.languages.CompletionItemKind.Keyword,
-        	documentation: "",
-        	insertText: item,
-            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-        	range: range
-    	});
-    }
-    // snippets和keys的定义同上
-    let words = [];
-    let tokens = getTokens(editor.getModel().getValue());
-    for (const item of tokens) {
-        if (item != curWord.word) {
-            words.push({
-                label: item,
-                kind: monaco.languages.CompletionItemKind.Text,	// Text 没有特殊意义 这里表示基于文本&单词的补全
-                documentation: "",
-                insertText: item,
-                range: range
-            });
-        }
-    }
-    return [].concat(keys).concat(words);
-}
-
 
 const CodeEditor = (props) => {
     const conStyle = {

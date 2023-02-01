@@ -175,9 +175,10 @@ const getTextWidth = (text, font) => {
 const Pro= (props) => {
     const actionRef = useRef();
     const formRef = useRef();
-    const [prettyCols, setPrettyCols] = useState(props.columns|| []);
+    const prettyCols = useRef(props.columns);
     const tableVisible = useRef(false);
     const [optionsMap, setMap] = useState({});
+    const [, forceUpdate] = useState(0);
 
     // 搜索表单项 options 设置
     useEffect(() => {
@@ -185,21 +186,20 @@ const Pro= (props) => {
         if (Object.keys(optionsMap).length === 0) {
             return;
         }
-        setPrettyCols((cols) => {
-            const newCols = cols.map(item => {
-                const newItem = cloneDeep(item);
-                const options = optionsMap[newItem.dataIndex];
-                if (!newItem.fieldProps) {
-                    newItem.fieldProps = {};
-                }
-                // map 里面有 options 时，说明 onInit onSearch 被调用，此时应该更新 options
-                if (options) {
-                    newItem.fieldProps.options = options;
-                }
-                return newItem;
-            });
-            return newCols;
+        prettyCols.current = prettyCols.current.map(item => {
+            const newItem = cloneDeep(item);
+            const options = optionsMap[newItem.dataIndex];
+            if (!newItem.fieldProps) {
+                newItem.fieldProps = {};
+            }
+            // map 里面有 options 时，说明 onInit onSearch 被调用，此时应该更新 options
+            if (options) {
+                newItem.fieldProps.options = options;
+            }
+            return newItem;
         });
+        forceUpdate(state => state + 1);
+
     }, [optionsMap]);
 
     const reqThen = useCallback(async res => {
@@ -233,7 +233,7 @@ const Pro= (props) => {
             // nothing todo
             const noop = item => item;
             // map
-            cols = prettyCols
+            cols = prettyCols.current
                 .map(props.widthDefault ? noop : autoWidth);
             
 
@@ -243,7 +243,7 @@ const Pro= (props) => {
             }
         } else {
             const config = getAll();
-            cols = prettyCols
+            cols = prettyCols.current
                 // 过滤掉隐藏的
                 .filter((item) => !parseHideExpression4Column(item.hidden, config))
                 // 合并 otherConfig
@@ -359,10 +359,11 @@ const Pro= (props) => {
 
         if (cols) {
             tableVisible.current = true;
-            setPrettyCols(cols);
+            prettyCols.current = cols;
+            forceUpdate(state => state + 1);
         }
         return res;
-    }, [props, prettyCols])
+    }, [props])
 
 
     useEffect(() => {
@@ -450,7 +451,7 @@ const Pro= (props) => {
         ))
     }, [props.searchOptions, props.searchOptionsHandler]);
 
-    console.log('prettyCols', prettyCols);
+    console.log('prettyCols.current', prettyCols.current);
 
     // 行展开内容
     const expandedRowRender = props.expandable ? (record) => {
@@ -560,7 +561,7 @@ const Pro= (props) => {
     }
 
     if (!tableVisible.current) {
-        return <div></div>;
+        return <div>loading...</div>;
     }
 
     if (props.disabled) {
@@ -573,7 +574,7 @@ const Pro= (props) => {
                 formRef={formRef}
                 actionRef={actionRef}
                 defaultCollapsed={false}
-                rowKey={prettyCols[0] ? prettyCols[0].dataIndex : 'id'}
+                rowKey={prettyCols.current[0] ? prettyCols.current[0].dataIndex : 'id'}
                 search={{
                     labelWidth: props.labelWidth || 'auto',
                     defaultCollapsed: props.defaultCollapsed || false,
@@ -594,7 +595,7 @@ const Pro= (props) => {
                     defaultPageSize: props.defaultPageSize || 20,
                 }}
                 {...props}
-                columns={prettyCols}
+                columns={prettyCols.current}
                 onChange={() => {}}
                 expandable={{expandedRowRender}}
                 {...rowSelectionProps}
