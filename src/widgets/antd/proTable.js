@@ -261,23 +261,48 @@ const Pro= (props) => {
                             const newFieldProps = new Function('form', 'config', `const request = ${aRequest};return (function ${fn})(form, config)`)
                             otherObj.fieldProps = newFieldProps;
                         }
-                        // 处理 onSearch
-                        if (typeof otherObj.onSearch === 'function' && typeof newItem.fieldProps !== 'function') {
-                            let fn = otherObj.onSearch.toString();
-                            fn = fn.replace(/\s*(async)?\s*onSearch/, 'async function');
-                            const funstr = `
-                            const fn = ${fn};
-                            return fn(val);
-                        `.trim();
-                            const newOnSearch = new Function('request', 'val', funstr);
+                        if (!props.disabled) {
+                            // 处理 onSearch
+                            if (typeof otherObj.onSearch === 'function' && typeof newItem.fieldProps !== 'function') {
+                                let fn = otherObj.onSearch.toString();
+                                fn = fn.replace(/\s*(async)?\s*onSearch/, 'async function');
+                                const funstr = `
+                                    const fn = ${fn};
+                                    return fn(val);
+                                `.trim();
+                                const newOnSearch = new Function('request', 'val', funstr);
 
-                            if (!newItem.fieldProps) {
-                                newItem.fieldProps = {};
+                                if (!newItem.fieldProps) {
+                                    newItem.fieldProps = {};
+                                }
+                                newItem.fieldProps.showSearch = true;
+                                newItem.fieldProps.onSearch = (val) => {
+                                    // todo: 防抖处理 竞态处理
+                                    const p = newOnSearch(aRequest, val);
+                                    if (p instanceof Promise) {
+                                        p.then((res) => {
+                                            if (Array.isArray(res)) {
+                                                setMap((optionsMap) => ({
+                                                    ...optionsMap,
+                                                    [newItem.dataIndex]: res,
+                                                }));
+                                            }
+                                        });
+                                    }
+                                }
                             }
-                            newItem.fieldProps.showSearch = true;
-                            newItem.fieldProps.onSearch = (val) => {
-                            // todo: 防抖处理 竞态处理
-                                const p = newOnSearch(aRequest, val);
+                            // 处理 onInit
+                            if (typeof otherObj.onInit === 'function') {
+                                // 暂时给它设置 options，避免控制台报错
+                                let fn = otherObj.onInit.toString();
+                                fn = fn.replace(/\s*(async)?\s*onInit/, 'async function');
+                                const funstr = `
+                                    const fn = ${fn};
+                                    return fn();
+                                `.trim();
+                                const newOnInit = new Function('request', funstr);
+                                const p = newOnInit(aRequest);
+                        
                                 if (p instanceof Promise) {
                                     p.then((res) => {
                                         if (Array.isArray(res)) {
@@ -290,30 +315,6 @@ const Pro= (props) => {
                                 }
                             }
                         }
-                        // 处理 onInit
-                        if (typeof otherObj.onInit === 'function') {
-                        // 暂时给它设置 options，避免控制台报错
-                            let fn = otherObj.onInit.toString();
-                            fn = fn.replace(/\s*(async)?\s*onInit/, 'async function');
-                            const funstr = `
-                            const fn = ${fn};
-                            return fn();
-                        `.trim();
-                            const newOnInit = new Function('request', funstr);
-                            const p = newOnInit(aRequest);
-                        
-                            if (p instanceof Promise) {
-                                p.then((res) => {
-                                    if (Array.isArray(res)) {
-                                        setMap((optionsMap) => ({
-                                            ...optionsMap,
-                                            [newItem.dataIndex]: res,
-                                        }));
-                                    }
-                                });
-                            }
-                        }
-                    
                         Object.assign(newItem, otherObj);
                     } catch (error) {
                         console.error('解析gg...\n', item, error)
