@@ -175,7 +175,7 @@ const getTextWidth = (text, font) => {
 const Pro= (props) => {
     const actionRef = useRef();
     const formRef = useRef();
-    const prettyCols = useRef(props.columns);
+    const prettyCols = useRef(props.columns || []);
     const tableVisible = useRef(false);
     const [optionsMap, setMap] = useState({});
     const [, forceUpdate] = useState(0);

@@ -49,7 +49,7 @@ monaco.languages.registerCompletionItemProvider('typescript', {
                         }
                     `),
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    detail: 'config',
+                    detail: 'date',
                 },
                 {
                     label: 'select',
@@ -64,7 +64,7 @@ monaco.languages.registerCompletionItemProvider('typescript', {
                         }
                     `),
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    detail: 'config',
+                    detail: 'select',
                 },
                 {
                     label: 'options',
@@ -92,6 +92,54 @@ monaco.languages.registerCompletionItemProvider('typescript', {
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     detail: 'options item',
                 },
+                {
+                    label: 'onInit',
+                    kind: monaco.languages.CompletionItemKind['Property'],
+                    insertText: pretty(`
+                    onInit() {
+                        return request(
+                            '\${1:path}',
+                            {
+                                method: '\${2:post}',
+                                params: {$0
+                                }
+                            }
+                        ).then((res) => {
+                            const { data } = res;
+                            return data.map(item => ({
+                                value: item.$3,
+                                label: item.$4,
+                            }));
+                        });
+                    }
+                    `),
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    detail: 'onInit hook',
+                },
+                {
+                    label: 'onSearch',
+                    kind: monaco.languages.CompletionItemKind['Property'],
+                    insertText: pretty(`
+                    onSearch() {
+                        return request(
+                            '\${1:path}',
+                            {
+                                method: '\${2:post}',
+                                params: {$0
+                                }
+                            }
+                        ).then((res) => {
+                            const { data } = res;
+                            return data.map(item => ({
+                                value: item.$3,
+                                label: item.$4,
+                            }));
+                        });
+                    }
+                    `),
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    detail: 'onSearch hook',
+                },
                 ...createDependencyProposals(),
             ]
         };
@@ -110,9 +158,15 @@ function createDependencyProposals(range, languageService = false, editor, curWo
     const esKeys = [
         'async',
         'await',
-        'console.log(${1})',
-        'try {\n\t${1}\n} catch(e) {\n \n}',
-        'function ${1:funName}() {\n\t\n}'
+        'console.log($0)',
+        'try {\n\t$0\n} catch(e) {\n \n}',
+        'function ${1:funName}() {\n\t$0\n}',
+        'dayjs().subtract($1, $2)$0',
+        'dayjs().add($1, $2)$0',
+        'percentage($0)',
+        'getValidParams(${1:params})$0',
+        'getValue(\'$0\')',
+        'flattenObject($0)',
     ]
     let keys = [];
     for (const item of esKeys) {
