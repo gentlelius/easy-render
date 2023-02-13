@@ -69,7 +69,7 @@ export const validateField = ({ path, formData, flatten, options }) => {
             const singleData = get(formData, path);
             const schema = item.schema || {};
             const finalSchema = parseSchemaExpression(schema, formData, path);
-            return validateSingle(singleData, finalSchema, path, options); // is a promise
+            return validateSingle(singleData, finalSchema, path, options, formData); // is a promise
         } 
         return Promise.resolve();
         
@@ -158,7 +158,7 @@ export const validateAll = ({
         });
 };
 
-const validateSingle = (data, schema = {}, path, options = {}) => {
+const validateSingle = (data, schema = {}, path, options = {}, formData) => {
     if (schema.hidden) {
         return Promise.resolve();
     }
@@ -169,7 +169,7 @@ const validateSingle = (data, schema = {}, path, options = {}) => {
     const { validateMessages = {}, locale = 'cn' } = options;
     const cn = defaultValidateMessagesCN;
     const en = defaultValidateMessages;
-    const descriptor = getDescriptorSimple(schema, path);
+    const descriptor = getDescriptorSimple(schema, path, formData);
     // console.log('descriptor, schema, path', descriptor, schema, path, data);
     // TODO: 有些情况会出现没有rules，需要看一下，先兜底
     let validator;

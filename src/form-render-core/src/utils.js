@@ -226,34 +226,34 @@ export function isDeepEqual(param1, param2) {
 export function getFormat(format) {
     let dateFormat;
     switch (format) {
-    case 'date':
-        dateFormat = 'YYYY-MM-DD';
-        break;
-    case 'time':
-        dateFormat = 'HH:mm:ss';
-        break;
-    case 'dateTime':
-        dateFormat = 'YYYY-MM-DD HH:mm:ss';
-        break;
-    case 'week':
-        dateFormat = 'YYYY-w';
-        break;
-    case 'year':
-        dateFormat = 'YYYY';
-        break;
-    case 'quarter':
-        dateFormat = 'YYYY-Q';
-        break;
-    case 'month':
-        dateFormat = 'YYYY-MM';
-        break;
-    default:
-        // dateTime
-        if (typeof format === 'string') {
-            dateFormat = format;
-        } else {
+        case 'date':
             dateFormat = 'YYYY-MM-DD';
-        }
+            break;
+        case 'time':
+            dateFormat = 'HH:mm:ss';
+            break;
+        case 'dateTime':
+            dateFormat = 'YYYY-MM-DD HH:mm:ss';
+            break;
+        case 'week':
+            dateFormat = 'YYYY-w';
+            break;
+        case 'year':
+            dateFormat = 'YYYY';
+            break;
+        case 'quarter':
+            dateFormat = 'YYYY-Q';
+            break;
+        case 'month':
+            dateFormat = 'YYYY-MM';
+            break;
+        default:
+        // dateTime
+            if (typeof format === 'string') {
+                dateFormat = format;
+            } else {
+                dateFormat = 'YYYY-MM-DD';
+            }
     }
     return dateFormat;
 }
@@ -647,20 +647,20 @@ export const removeEmptyItemFromList = (formData) => {
     return result;
 };
 
-export const getDescriptorSimple = (schema = {}, path) => {
+export const getDescriptorSimple = (schema = {}, path, formData) => {
     let result = {};
     if (isObject(schema)) {
         if (schema.type) {
             switch (schema.type) {
-            case 'range':
-                result.type = 'array';
-                break;
-            case 'html':
-                result.type = 'string';
-                break;
-            default:
-                result.type = schema.type;
-                break;
+                case 'range':
+                    result.type = 'array';
+                    break;
+                case 'html':
+                    result.type = 'string';
+                    break;
+                default:
+                    result.type = schema.type;
+                    break;
             }
         }
         ['pattern', 'min', 'max', 'len', 'required'].forEach((key) => {
@@ -670,12 +670,12 @@ export const getDescriptorSimple = (schema = {}, path) => {
         });
 
         switch (schema.format) {
-        case 'email':
-        case 'url':
-            result.type = schema.format;
-            break;
-        default:
-            break;
+            case 'email':
+            case 'url':
+                result.type = schema.format;
+                break;
+            default:
+                break;
         }
 
         const handleRegx = (desc) => {
@@ -684,6 +684,21 @@ export const getDescriptorSimple = (schema = {}, path) => {
             }
             return desc;
         };
+
+        const handleFunString = r => {
+            if (!r.validator) {
+                return r;
+            }
+            const fun = parseFunctionString(r.validator);
+            if (fun) {
+                r.validator = (rule, value, callback, source, options) => new Function('rule', 'value', 'callback', 'source', 'options',`
+                var formData = ${JSON.stringify(formData)}
+                return (${fun})(rule, value, callback, source, options)`
+                )(rule, value, callback, source, options);
+            }
+            return r;
+        }
+
         // result be array
         if (schema.rules) {
             if (Array.isArray(schema.rules)) {
@@ -692,10 +707,14 @@ export const getDescriptorSimple = (schema = {}, path) => {
                     result = { ...result, ...requiredRule };
                 }
                 result = [result, ...schema.rules];
-                result = result.map((r) => handleRegx(r));
+                result = result
+                    .map((r) => handleRegx(r))
+                    .map(handleFunString);
             } else if (isObject(schema.rules)) {
                 result = [result, schema.rules];
-                result = result.map((r) => handleRegx(r));
+                result = result
+                    .map((r) => handleRegx(r))
+                    .map(handleFunString);
             }
         } else {
             result = [result];
