@@ -85,7 +85,7 @@ const ProSelect: React.FC<ProFormSelectProps & CommonProps> = (props) => {
     if (props.options) {
         params.options = props.options;
     }
-    if (req) {
+    if (req && !props.disabled) {
         params.request = req;
     }
     if (onChange) {

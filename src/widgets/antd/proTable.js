@@ -581,10 +581,10 @@ const Pro= (props) => {
                     defaultCollapsed: props.defaultCollapsed || false,
                     span: props.span || 6,
                     optionRender: (searchConfig, formProps, dom) => (
-                        <div className="flex gap12">
-                            {getSearchOptions(searchConfig, formProps)}
-                            {dom}
-                        </div>
+                        [
+                            ...getSearchOptions(searchConfig, formProps),
+                            ...dom,
+                        ]
                     ),
                     className: 'search-action',
                 }}
