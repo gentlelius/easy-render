@@ -148,7 +148,7 @@ const percentage = (num) => {
     }
     const number = +num;
     if (number) {
-        return number * 100 + '%';
+        return (number * 100).toFixed(2) + '%';
     } else {
         return '0%';
     }
@@ -435,7 +435,7 @@ const Pro= (props) => {
 
     // 搜索表单区域的按钮组
     const getSearchOptions = useCallback(() => {
-        return props.searchOptions?.map((item, index) => (
+        return Array.isArray(props.searchOptions) ? props.searchOptions.map((item, index) => (
             !parseHideExpression4Area(item.hidden, getAll()) && (
                 <Button
                     key={item.name}
@@ -449,7 +449,7 @@ const Pro= (props) => {
                     type={item.type || 'default'}
                 >{item.name}</Button>
             )
-        ))
+        )) : []
     }, [props.searchOptions, props.searchOptionsHandler]);
 
     console.log('prettyCols.current', prettyCols.current);
