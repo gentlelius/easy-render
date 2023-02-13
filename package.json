@@ -1,6 +1,6 @@
 {
     "name": "react-easy-render",
-    "version": "0.0.17-beta.61",
+    "version": "0.0.17-beta.62",
     "description": "easy-render",
     "scripts": {
         "prettier": "prettier --write \"**/*.{js,jsx,tsx,ts,less,md,json}\"",
