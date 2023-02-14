@@ -127,19 +127,16 @@ export const validateAll = ({
 }) => {
     const paths = dataToKeys(formData);
     const allPaths = getAllPaths(paths, flatten);
-    // console.log(formData, dataToKeys(formData), 'dataToKeysdataToKeys');
-    // console.log('allPaths', allPaths);
     const promiseArray = allPaths.map((path) => {
-        const { id, dataIndex } = destructDataPath(path);
+        const { id } = destructDataPath(path);
         if (flatten[id] || flatten[`${id}[]`]) {
             const item = flatten[id] || flatten[`${id}[]`];
             const singleData = get(formData, path);
             const schema = item.schema || {};
             const finalSchema = parseSchemaExpression(schema, formData, path);
-            return validateSingle(singleData, finalSchema, path, options); // is a promise
+            return validateSingle(singleData, finalSchema, path, options, formData); // is a promise
         } 
         return Promise.resolve();
-        
     });
 
     return allPromiseFinish(promiseArray)

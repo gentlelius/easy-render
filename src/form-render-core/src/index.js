@@ -50,35 +50,18 @@ function App({
     globalProps = {},
     ...rest
 }) {
-    try {
-        const _ = form.submit;
-    } catch (error) {
-        console.error('form 为必填 props，<FormRender /> 没有接收到 form 属性!');
+    if (!form.submit) {
+        throw Error('没有传入 form 属性')
     }
     const _column = (schema?.column) || column;
     const {
-        onItemChange,
-        setEditing,
-        touchKey,
-        setValueByPath,
-        getSchemaByPath,
-        setSchemaByPath,
-        setSchema,
-        setValues,
-        getValues,
-        resetFields,
-        submit,
         endValidating,
         endSubmitting,
         setErrorFields,
-        removeErrorField,
-        removeTouched,
-        changeTouchedKeys,
         syncStuff,
         logOnMount,
         logOnSubmit,
         setFirstMount,
-        _setErrors,
         ...valuesThatWillChange
     } = form;
 

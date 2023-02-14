@@ -294,42 +294,40 @@ const useForm = (props) => {
                 locale: localeRef.current,
                 validateMessages: validateMessagesRef.current,
             },
-        })
-            .then((errors) => {
-                setState({ errorFields: errors });
+        }).then((errors) => {
+            setState({ errorFields: errors });
 
-                const _errors = sortedUniqBy([...(errors || []), ..._outErrorFields.current], (item) => item.name);
+            const _errors = sortedUniqBy([...(errors || []), ..._outErrorFields.current], (item) => item.name);
 
-                if (typeof beforeFinishRef.current === 'function') {
-                    return Promise.resolve(
-                        processData(_data.current, _finalFlatten.current, removeHiddenDataRef.current)
-                    ).then((res) => {
-                        setState({
-                            isValidating: true,
-                            isSubmitting: false,
-                            outsideValidating: true,
-                            submitData: res,
-                        });
-                        return { data: res, errors: _errors };
-                    });
-                }
-
+            if (typeof beforeFinishRef.current === 'function') {
                 return Promise.resolve(
                     processData(_data.current, _finalFlatten.current, removeHiddenDataRef.current)
                 ).then((res) => {
                     setState({
-                        isValidating: false,
-                        isSubmitting: true,
+                        isValidating: true,
+                        isSubmitting: false,
+                        outsideValidating: true,
                         submitData: res,
                     });
                     return { data: res, errors: _errors };
                 });
-            })
-            .catch((err) => {
-                // 不应该走到这边的
-                console.log('submit error:', err);
-                return err;
+            }
+
+            return Promise.resolve(
+                processData(_data.current, _finalFlatten.current, removeHiddenDataRef.current)
+            ).then((res) => {
+                setState({
+                    isValidating: false,
+                    isSubmitting: true,
+                    submitData: res,
+                });
+                return { data: res, errors: _errors };
             });
+        }).catch((err) => {
+            // 不应该走到这边的
+            console.log('submit error:', err);
+            return err;
+        });
     };
 
     const resetFields = (options) => {
