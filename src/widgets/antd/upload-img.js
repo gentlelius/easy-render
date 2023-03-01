@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
 import { Upload, message, Button } from 'antd';
 
-export default function UploadImg({ action, value, name, data, onChange, uploadProps, buttonProps }) {
+export default function UploadImg({ action, value, name, data, onChange, uploadProps, buttonProps, maxCount = 1 }) {
     const [fileList, setFileList] = useState(value || []);
     console.log('fileList', fileList);
     const props = {
-        listType: 'picture-card',
+        maxCount,
+        listType: 'picture',
         fileList,
         name: name || 'data',
         data: data,
@@ -53,9 +54,10 @@ export default function UploadImg({ action, value, name, data, onChange, uploadP
     };
     
     return (
-        <div className="fr-upload-mod">
-            <Upload {...props} className="fr-upload-file">
-                {fileList.length < 2 && '点击上传'}
+        <div>
+            <Upload {...props}>
+                {/* {fileList.length < maxCount && '点击上传'} */}
+                <Button icon={<UploadOutlined />}>上传</Button>
             </Upload>
         </div>
     );
