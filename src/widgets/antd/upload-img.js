@@ -19,15 +19,12 @@ export default function UploadImg({ action, value, name, data, onChange, uploadP
             } else if (info.file.status === 'error') {
                 message.error(`${info.file.name} 上传失败`);
             }
+            setFileList(info.fileList);
         },
         onRemove() {
             onChange('');
         },
         withCredentials: true,
-        onChange: ({ fileList: newFileList }) => {
-            console.log('fileList', fileList);
-            setFileList(newFileList);
-        },
         onPreview: async (file) => {
             let src = file.url;
             if (!src) {
