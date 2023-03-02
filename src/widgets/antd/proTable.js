@@ -261,8 +261,9 @@ const Pro= (props) => {
                             const newFieldProps = new Function('form', 'config', `const request = ${aRequest};return (function ${fn})(form, config)`)
                             otherObj.fieldProps = newFieldProps;
                         }
+                        Object.assign(newItem, otherObj);
                         if (!props.disabled) {
-                            // 处理 onSearch
+                            // 处理 onSearch，如果 有声明 fieldProps 为函数，则忽略 onSearch
                             if (typeof otherObj.onSearch === 'function' && typeof newItem.fieldProps !== 'function') {
                                 let fn = otherObj.onSearch.toString();
                                 fn = fn.replace(/\s*(async)?\s*onSearch/, 'async function');
