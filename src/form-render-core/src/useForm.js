@@ -324,7 +324,6 @@ const useForm = (props) => {
                 return { data: res, errors: _errors };
             });
         }).catch((err) => {
-            // 不应该走到这边的
             console.log('submit error:', err);
             return err;
         });
