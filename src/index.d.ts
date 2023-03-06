@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { RuleItem } from 'async-validator';
+import { EvnetType } from './event';
 
 interface SchemaBase {
     type: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'range' | 'html';
@@ -199,3 +200,4 @@ export declare function getValue(key: string): any;
 export declare function destroy(key: string): boolean;
 export declare function clearAll(): void;
 export declare function getAll(): Record<string, any>;
+export declare function getEvent(): EvnetType;

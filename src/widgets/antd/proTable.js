@@ -4,9 +4,10 @@ import ProTable from '@ant-design/pro-table';
 import { omit, cloneDeep } from 'lodash-es';
 import dayjs from 'dayjs';
 import { aRequest } from '../../service';
-import { getAll, getValue } from '../../storage';
+import { getAll, getValue, getEvent } from '../../storage';
 import { flattenObjectAndMerge, flattenObject } from '../../utils';
 import qs from 'query-string';
+import jsep from 'jsep';
 
 if (!window.dayjs) {
     // todo: 考虑占用内存情况，观察占用了多少内存
@@ -63,6 +64,23 @@ const parseHideExpression4Action = (expression, record, config) => {
     return false;
 }
 
+const traverseAstAndGetIdentifier = (ast, collection = []) => {
+    if (ast.type === 'Identifier') {
+        if (collection.includes(ast.name)) {
+            return collection;
+        }
+        collection.push(ast.name);
+        return collection;
+    }
+    if (ast.type === 'BinaryExpression' || ast.type === 'LogicalExpression') {
+        traverseAstAndGetIdentifier(ast.left, collection);
+        traverseAstAndGetIdentifier(ast.right, collection);
+    } else if (ast.type === 'UnaryExpression') {
+        traverseAstAndGetIdentifier(ast.argument, collection);
+    }
+    return collection;
+}
+
 const parseHideExpression4Column = (expression, config) => {
     if (typeof expression === 'boolean') {
         return expression;
@@ -70,8 +88,12 @@ const parseHideExpression4Column = (expression, config) => {
     if (!expression) {
         return false;
     }
+    config = cloneDeep(config);
     if (expression.startsWith('{{') && expression.endsWith('}}')) {
         expression = expression.slice(2, -2);
+        const ast = jsep(expression)
+        const collection = traverseAstAndGetIdentifier(ast);
+        config = collection.filter(name => !config.hasOwnProperty(name)).reduce((pre, cur) => ({...pre, [cur]: undefined}), config)
         return new Function('config', `
             let flag = false;
             try {
@@ -79,6 +101,7 @@ const parseHideExpression4Column = (expression, config) => {
                     flag = ${expression};
                 }
             } catch(e) {
+                console.log(e);
             }
             return flag;
         `
@@ -118,6 +141,40 @@ const getValidParams = (params) => {
         }
     });
     return payload;
+}
+
+const getPolling = (expression, config) => {
+
+    if (!expression) {
+        return undefined;
+    }
+
+    if (!isNaN(expression)) {
+        return +expression;
+    }
+
+    config = cloneDeep(config);
+
+    if (expression.startsWith('{{') && expression.endsWith('}}')) {
+        expression = expression.slice(2, -2);
+        const ast = jsep(expression)
+        const collection = traverseAstAndGetIdentifier(ast);
+        config = collection.filter(name => !config.hasOwnProperty(name)).reduce((pre, cur) => ({...pre, [cur]: undefined}), config)
+        return new Function('config', `
+            let flag = undefined;
+
+            try {
+                with(config) {
+                    flag = ${expression};
+                }
+            } catch(e) {
+                console.log(e);
+            }
+            return flag;
+        `
+        )(config);
+    }
+    return undefined;
 }
 
 const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => res) => (params, sorter, filter) => (
@@ -178,7 +235,7 @@ const Pro= (props) => {
     const prettyCols = useRef(props.columns || []);
     const tableVisible = useRef(false);
     const [optionsMap, setMap] = useState({});
-    const [, forceUpdate] = useState(0);
+    const [code, forceUpdate] = useState(0);
 
     // 搜索表单项 options 设置
     useEffect(() => {
@@ -204,8 +261,52 @@ const Pro= (props) => {
 
     const reqThen = useCallback(async res => {
         console.log('reqThen', res);
+        const config = getAll();
 
         let cols;
+
+        const renderActions = () => {
+            if (!props.actions?.length) {
+                return;
+            }
+            const dispatch = (method) => cols[method]({
+                title: '操作',
+                valueType: 'option',
+                key: 'option',
+                width: props.actionsWidth || 100,
+                fixed: props.actionsPostion || 'right',
+                render: (text, record, _, tableRef) => (
+                    props.actions.map((item, index) => (
+                        !parseHideExpression4Action(item.hidden, record, config) && (
+                            <a
+                                key={item.actionName}
+                                onClick={() => {
+                                    if (typeof props.actionsHandler?.[index] === 'function') {
+                                        props.actionsHandler[index](record, tableRef);
+                                    } else {
+                                        console.warn(`action ${index} is not function`);
+                                    }
+                                }}
+                            >{item.actionName}</a>
+                        )
+                    ))
+                )
+            });
+            // 再次更新
+            if (cols.find(item => item.valueType === 'option')) {
+                if (props.actionsPostion === 'left') {
+                    cols.shift();
+                } else {
+                    cols.pop();
+                }
+            }
+            if (props.actionsPostion === 'left') {
+                dispatch('unshift');
+            } else {
+                dispatch('push');
+            }
+        }
+
         if (res?.data?.length) {
             // 智能宽度
             const autoWidth = (col) => {
@@ -242,7 +343,6 @@ const Pro= (props) => {
                 res.data = res.data.map(flattenObjectAndMerge)
             }
         } else {
-            const config = getAll();
             cols = prettyCols.current
                 // 过滤掉隐藏的
                 .filter((item) => !parseHideExpression4Column(item.hidden, config))
@@ -326,38 +426,10 @@ const Pro= (props) => {
                     delete newItem.onInit;
                     return newItem;
                 });
-
-            if (props.actions?.length && !cols.find(item => item.valueType === 'option')) {
-                const dispatch = (method) => cols[method]({
-                    title: '操作',
-                    valueType: 'option',
-                    key: 'option',
-                    width: props.actionsWidth || 100,
-                    fixed: props.actionsPostion || 'right',
-                    render: (text, record, _, tableRef) => (
-                        props.actions.map((item, index) => (
-                            !parseHideExpression4Action(item.hidden, record, config) && (
-                                <a
-                                    key={item.actionName}
-                                    onClick={() => {
-                                        if (typeof props.actionsHandler?.[index] === 'function') {
-                                            props.actionsHandler[index](record, tableRef);
-                                        } else {
-                                            console.warn(`action ${index} is not function`);
-                                        }
-                                    }}
-                                >{item.actionName}</a>
-                            )
-                        ))
-                    )
-                });
-                if (props.actionsPostion === 'left') {
-                    dispatch('unshift');
-                } else {
-                    dispatch('push');
-                }
-            }
         }
+
+        // 渲染 actions 区域
+        renderActions();
 
         if (cols) {
             tableVisible.current = true;
@@ -370,6 +442,14 @@ const Pro= (props) => {
 
     useEffect(() => {
         reqThen();
+        const event = getEvent();
+        const handleValueChange = () => {
+            forceUpdate(state => state + 1);
+        }
+        event.on('valueChange', handleValueChange);
+        return () => {
+            event.off('valueChange', handleValueChange);
+        }
     }, []);
 
     let request = useMemo(() => props.request 
@@ -432,7 +512,7 @@ const Pro= (props) => {
                 >{item.navName}</Button>
             )
         ))
-    ), [props.navs, props.navsHandler])
+    ), [props.navs, props.navsHandler, code])
 
     // 搜索表单区域的按钮组
     const getSearchOptions = useCallback(() => {
@@ -570,6 +650,8 @@ const Pro= (props) => {
         request = null;
     }
 
+    const polling = getPolling(props.polling, getAll());
+    console.log(typeof polling, '1polling');
     return (
         <div style={{flex: 1, overflow: 'auto'}}>
             <ProTable
@@ -602,6 +684,7 @@ const Pro= (props) => {
                 expandable={{expandedRowRender}}
                 {...rowSelectionProps}
                 request={request}
+                polling={polling}
             />
         </div>
     );

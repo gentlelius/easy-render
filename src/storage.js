@@ -1,8 +1,17 @@
+import Event from './event';
+
+const event = new Event();
+
 const dataMap = {};
 const onceMap = {};
 
+export function getEvent() {
+    return event;
+}
+
 export function setValue(key, value) {
     dataMap[key] = value;
+    event.emit('valueChange', value);
 }
 
 export function setValueOnce(key, value) {
