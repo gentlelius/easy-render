@@ -10,7 +10,6 @@ import qs from 'query-string';
 import jsep from 'jsep';
 import { Decimal } from 'decimal.js';
 
-
 if (!window.dayjs) {
     // todo: 考虑占用内存情况，观察占用了多少内存
     window.dayjs = dayjs;
@@ -211,16 +210,23 @@ const accept = (fnstr) => {
     return new Function('getValue', 'h', `return ${fnstr}`)(getValue, React.createElement);
 }
 
-const percentage = (num) => {
+const thousandths = (num) => String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+const precision = (num, precision = 2) => {
     if (isNaN(num)) {
         return '-';
     }
     const number = +num;
-    if (number) {
-        return (number * 100).toFixed(2) + '%';
-    } else {
-        return '0%';
+    return thousandths(number.toFixed(precision));
+}
+
+const percentage = (num, precisionCount) => {
+    if (isNaN(num)) {
+        return '-';
     }
+    const number = +num;
+    const n = (number * 100).toFixed(precisionCount);
+    return thousandths(`${n}%`);
 }
 
 let context = null;
@@ -430,16 +436,12 @@ const Pro= (props) => {
                         }
                         // precision
                         if (typeof newItem.precision === 'number') {
-                            newItem.render = (text) => {
-                                if (typeof text === 'number') {
-                                    return text.toFixed(newItem.precision);
-                                }
-                                return text;
-                            }
+                            newItem.render = (text) => precision(text, newItem.precision);
                         }
                         // percentage
                         if (newItem.percentage) {
-                            newItem.render = (text) => percentage(text);
+                            const precisionCount = typeof newItem.precision === 'number' ? newItem.precision : 2;
+                            newItem.render = (text) => percentage(text, precisionCount);
                         }
                         Object.assign(newItem, otherObj);
                     } catch (error) {
