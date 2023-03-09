@@ -8,6 +8,8 @@ import { getAll, getValue, getEvent } from '../../storage';
 import { flattenObjectAndMerge, flattenObject } from '../../utils';
 import qs from 'query-string';
 import jsep from 'jsep';
+import { Decimal } from 'decimal.js';
+
 
 if (!window.dayjs) {
     // todo: 考虑占用内存情况，观察占用了多少内存
@@ -15,6 +17,14 @@ if (!window.dayjs) {
 }
 if (!window.qs) {
     window.qs = qs;
+}
+
+Number.prototype.toFixed = function(precision) {
+    return new Decimal(this).toFixed(precision);
+}
+
+const genID = (n) => {
+    return Math.random().toString(36).slice(3, n + 3)
 }
 
 const getSelectionDisabled = (expression, record, config) => {
@@ -184,6 +194,7 @@ const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => re
         'getValidParams',
         'getValue',
         'flattenObject',
+        'genID',
         `return (${requestFnStr})(${JSON.stringify(params)},${JSON.stringify(sorter)},${JSON.stringify(filter)})`
     )
     (
@@ -192,6 +203,7 @@ const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => re
         getValidParams,
         getValue,
         flattenObject,
+        genID,
     ).then(thenFn, catchFn)
 );
 
@@ -260,7 +272,7 @@ const Pro= (props) => {
     }, [optionsMap]);
 
     const reqThen = useCallback(async res => {
-        console.log('reqThen', res);
+        // console.log('reqThen', res);
         const config = getAll();
 
         let cols;
@@ -458,7 +470,6 @@ const Pro= (props) => {
             reqThen,
             (error) => {
                 message.error(error.response.data);
-                console.log(error.response.data);
             },
         )
         : (
@@ -575,7 +586,7 @@ const Pro= (props) => {
                             search={false}
                             options={false}
                             pagination={false}
-                            columns={Object.keys(dataSource[0])}
+                            columns={Object.keys(dataSource[0]).map(key => ({ title: key, dataIndex: key}))}
                             dataSource={dataSource}
                             rowKey={config.subRowKey}
                         />
@@ -651,7 +662,6 @@ const Pro= (props) => {
     }
 
     const polling = getPolling(props.polling, getAll());
-    console.log(typeof polling, '1polling');
     return (
         <div style={{flex: 1, overflow: 'auto'}}>
             <ProTable

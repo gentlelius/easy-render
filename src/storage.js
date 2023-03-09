@@ -9,9 +9,15 @@ export function getEvent() {
     return event;
 }
 
+let timeout = null;
 export function setValue(key, value) {
     dataMap[key] = value;
-    event.emit('valueChange', value);
+    if (timeout) {
+        clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => {
+        event.emit('valueChange', dataMap);
+    }, 20);
 }
 
 export function setValueOnce(key, value) {

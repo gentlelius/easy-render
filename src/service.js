@@ -13,11 +13,14 @@ axios.interceptors.response.use(
         // 状态代码 2xx 的响应拦截
         if (!result.success && result.msg && !specialConfig.ignoreError) {
             message.error(result.msg);
+            return Promise.reject(result);
         }
         return result;
     },
     error => {
-        message.error(error.message);
+        if (!specialConfig.ignoreError) {
+            message.error(error.message);
+        }
         return Promise.reject(error)
     }
 );
@@ -29,5 +32,5 @@ export function aRequest(path, options, config) {
         url: `${baseUrl || ''}${path}`,
         ...options,
         withCredentials: true,
-    })
+    });
 }
