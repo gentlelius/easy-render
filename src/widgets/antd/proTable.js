@@ -437,6 +437,10 @@ const Pro= (props) => {
                                 return text;
                             }
                         }
+                        // percentage
+                        if (newItem.percentage) {
+                            newItem.render = (text) => percentage(text);
+                        }
                         Object.assign(newItem, otherObj);
                     } catch (error) {
                         console.error('解析gg...\n', item, error)
