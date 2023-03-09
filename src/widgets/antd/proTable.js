@@ -428,6 +428,15 @@ const Pro= (props) => {
                                 }
                             }
                         }
+                        // precision
+                        if (typeof newItem.precision === 'number') {
+                            newItem.render = (text) => {
+                                if (typeof text === 'number') {
+                                    return text.toFixed(newItem.precision);
+                                }
+                                return text;
+                            }
+                        }
                         Object.assign(newItem, otherObj);
                     } catch (error) {
                         console.error('解析gg...\n', item, error)
@@ -437,7 +446,7 @@ const Pro= (props) => {
                     delete newItem.onSearch;
                     delete newItem.onInit;
                     return newItem;
-                });
+                })
         }
 
         // 渲染 actions 区域
