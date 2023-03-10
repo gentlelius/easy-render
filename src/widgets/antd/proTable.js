@@ -22,6 +22,25 @@ Number.prototype.toFixed = function(precision) {
     return new Decimal(this).toFixed(precision);
 }
 
+const thousandths = (num) => String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+const precision = (num, precision = 2) => {
+    if (isNaN(num)) {
+        return '-';
+    }
+    const number = +num;
+    return thousandths(number.toFixed(precision));
+}
+
+const percentage = (num, precisionCount = 2) => {
+    if (isNaN(num)) {
+        return '-';
+    }
+    const number = +num;
+    const n = (number * 100).toFixed(precisionCount);
+    return thousandths(`${n}%`);
+}
+
 const genID = (n) => {
     return Math.random().toString(36).slice(3, n + 3)
 }
@@ -207,26 +226,18 @@ const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => re
 );
 
 const accept = (fnstr) => {
-    return new Function('getValue', 'h', `return ${fnstr}`)(getValue, React.createElement);
-}
-
-const thousandths = (num) => String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
-const precision = (num, precision = 2) => {
-    if (isNaN(num)) {
-        return '-';
-    }
-    const number = +num;
-    return thousandths(number.toFixed(precision));
-}
-
-const percentage = (num, precisionCount) => {
-    if (isNaN(num)) {
-        return '-';
-    }
-    const number = +num;
-    const n = (number * 100).toFixed(precisionCount);
-    return thousandths(`${n}%`);
+    return new Function(
+        'getValue',
+        'h',
+        'percentage',
+        'precision',
+        `return ${fnstr}`
+    )(
+        getValue,
+        React.createElement,
+        percentage,
+        precision,
+    );
 }
 
 let context = null;
