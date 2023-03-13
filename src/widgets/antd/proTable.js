@@ -209,6 +209,7 @@ const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => re
     new Function(
         'request', 
         'percentage', 
+        'precision',
         'getValidParams',
         'getValue',
         'flattenObject',
@@ -218,6 +219,7 @@ const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => re
     (
         aRequest,
         percentage,
+        precision,
         getValidParams,
         getValue,
         flattenObject,
