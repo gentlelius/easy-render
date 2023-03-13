@@ -45,7 +45,7 @@ const TableList = ({
             ) : (
                 schema.title
             ),
-            width: colWidth[keyList[keyList.length - 1]] || FIELD_LENGTH,
+            width: schema.width || colWidth[keyList[keyList.length - 1]] || FIELD_LENGTH,
             render: (value, record, index) => {
                 const childIndex = [...dataIndex, record.index];
                 return (
