@@ -160,9 +160,7 @@ const RenderField = (props) => {
                 <div className={contentClass} style={contentStyle}>
                     <ExtendedWidget {...widgetProps} />
                     <Extra {...widgetProps} />
-                    {
-                        _readOnly || _disabled ? null : <ErrorMessage {...messageProps} />
-                    }
+                    <ErrorMessage {...messageProps} />
                 </div>
             </>
         );
@@ -180,9 +178,6 @@ const RenderField = (props) => {
             <div style={{ display: 'flex' }}>
                 {titleElement}
                 <ErrorMessage {...messageProps} />
-                {
-                    _readOnly || _disabled ? null : <ErrorMessage {...messageProps} />
-                }
             </div>
         );
         return (
@@ -198,10 +193,7 @@ const RenderField = (props) => {
             <div className={`${contentClass} ${hideTitle ? 'fr-content-no-title' : ''}`} style={contentStyle}>
                 <ExtendedWidget {...widgetProps} />
                 <Extra {...widgetProps} />
-                {readOnly}{disabled}
-                {
-                    _readOnly || _disabled ? null : <ErrorMessage {...messageProps} />
-                }
+                <ErrorMessage {...messageProps} />
             </div>
         </>
     );

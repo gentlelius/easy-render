@@ -297,7 +297,7 @@ const Pro= (props) => {
         let cols;
 
         const renderActions = () => {
-            if (!props.actions?.length) {
+            if (!props.actions?.length || props.hiddenActions) {
                 return;
             }
             const dispatch = (method) => cols[method]({
