@@ -51,6 +51,7 @@ const TableList = ({
                 return (
                     <Core
                         hideTitle={true}
+                        hideErrorWhenNil={true}
                         displayType="inline"
                         key={index.toString()}
                         id={child}

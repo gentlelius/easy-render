@@ -26,6 +26,7 @@ const Core = ({
     dataIndex = [], // 数据来源是数组的第几个index，上层每有一个list，就push一个index
     hideTitle = false,
     hideValidation = false,
+    hideErrorWhenNil = false,
     debugCss,
     ...rest
 }) => {
@@ -84,6 +85,7 @@ const Core = ({
         dependValues,
         hideTitle,
         hideValidation,
+        hideErrorWhenNil,
         debugCss,
         schema,
         displayType,
@@ -105,6 +107,7 @@ const CoreRender = ({
     dataPath,
     hideTitle,
     hideValidation,
+    hideErrorWhenNil,
     debugCss,
     schema,
     _value,
@@ -250,6 +253,7 @@ const CoreRender = ({
         displayType: _displayType,
         hideTitle,
         hideValidation,
+        hideErrorWhenNil,
     };
 
     const objChildren = (

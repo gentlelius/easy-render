@@ -700,7 +700,7 @@ const Pro= (props) => {
                 search={{
                     labelWidth: props.labelWidth || 'auto',
                     defaultCollapsed: props.defaultCollapsed || false,
-                    span: props.span || 3,
+                    span: props.span || 6,
                     optionRender: (searchConfig, formProps, dom) => (
                         [
                             ...getSearchOptions(searchConfig, formProps),

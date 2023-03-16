@@ -24,6 +24,7 @@ const RenderField = (props) => {
         children,
         errorFields = [],
         hideTitle,
+        hideErrorWhenNil,
         displayType,
     } = props;
 
@@ -160,7 +161,11 @@ const RenderField = (props) => {
                 <div className={contentClass} style={contentStyle}>
                     <ExtendedWidget {...widgetProps} />
                     <Extra {...widgetProps} />
-                    <ErrorMessage {...messageProps} />
+                    {
+                        hideErrorWhenNil && !hasError ? null : (
+                            <ErrorMessage {...messageProps} />
+                        )
+                    }
                 </div>
             </>
         );
@@ -177,7 +182,11 @@ const RenderField = (props) => {
         titleElement = (
             <div style={{ display: 'flex' }}>
                 {titleElement}
-                <ErrorMessage {...messageProps} />
+                {
+                    hideErrorWhenNil && !hasError ? null : (
+                        <ErrorMessage {...messageProps} />
+                    )
+                }
             </div>
         );
         return (
@@ -193,7 +202,11 @@ const RenderField = (props) => {
             <div className={`${contentClass} ${hideTitle ? 'fr-content-no-title' : ''}`} style={contentStyle}>
                 <ExtendedWidget {...widgetProps} />
                 <Extra {...widgetProps} />
-                <ErrorMessage {...messageProps} />
+                {
+                    hideErrorWhenNil && !hasError ? null : (
+                        <ErrorMessage {...messageProps} />
+                    )
+                }
             </div>
         </>
     );
