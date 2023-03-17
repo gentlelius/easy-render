@@ -458,7 +458,7 @@ const Pro= (props) => {
                         }
                         Object.assign(newItem, otherObj);
                     } catch (error) {
-                        console.error('解析gg...\n', item, error)
+                        console.error('请检查 JSON 配置是否有误，借助于 JSON 格式化查看工具更有效', item, error)
                     }
                     delete newItem.otherConfig;
                     delete newItem.useOtherConfig;
@@ -698,6 +698,7 @@ const Pro= (props) => {
                 defaultCollapsed={false}
                 rowKey={prettyCols.current[0] ? prettyCols.current[0].dataIndex : 'id'}
                 search={{
+                    className: 'er-search-action',
                     labelWidth: props.labelWidth || 'auto',
                     defaultCollapsed: props.defaultCollapsed || false,
                     span: props.span || 6,
