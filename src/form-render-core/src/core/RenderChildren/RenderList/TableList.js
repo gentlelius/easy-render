@@ -19,7 +19,7 @@ const TableList = ({
     listData,
     changeList,
 }) => {
-    const { props = {}, itemProps = {} } = schema;
+    const { props = {}, itemProps = {}, disabled} = schema;
     const { buttons, ...columnProps } = itemProps;
     const { pagination = {}, ...rest } = props;
 
@@ -63,7 +63,8 @@ const TableList = ({
         };
     });
 
-    if (!props.hideDelete || !props.hideAdd || !props.hideCopy || !props.hideMove) {
+
+    if ((!props.hideDelete || !props.hideAdd || !props.hideCopy || !props.hideMove) && !disabled) {
         columns.push({
             title: '操作',
             key: '$action',
@@ -112,7 +113,7 @@ const TableList = ({
     return (
         <>
             <div className="w-100 mb2 tr">
-                {!props.hideAdd && (
+                {!props.hideAdd && !disabled && (
                     <Button type="primary" size="small" onClick={addItem}>
                         新增
                     </Button>
