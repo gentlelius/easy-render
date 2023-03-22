@@ -77,6 +77,7 @@ const ProSelect: React.FC<ProFormSelectProps & CommonProps> = (props) => {
     const params: any = {
         fieldProps: {
             filterOption: false,
+            placeholder: null,
         },
     };
     if (props.showSearch) {

@@ -155,7 +155,7 @@ const CoreRender = ({
                 if (schema.title) {
                     labelClass += ' fr-label-list';
                 }
-                containerClass += ' fr-field-column';
+                containerClass += _displayType === 'column' ? ' fr-field-column' : '';
             }
             break;
         case 'boolean':
@@ -223,7 +223,7 @@ const CoreRender = ({
             : 110; // 默认是 110px 的长度
 
     let labelStyle = { width: _labelWidth };
-    if (isComplex || _displayType === 'column') {
+    if (isObj || _displayType === 'column') {
         labelStyle = { flexGrow: 1 };
     }
 
