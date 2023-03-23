@@ -22,14 +22,17 @@ Number.prototype.toFixed = function(precision) {
     return new Decimal(this).toFixed(precision);
 }
 
-const thousandths = (num) => String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+const thousandths = (num) => num.toLo //String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-const precision = (num, precision = 2) => {
+const precision = (num, precision = 2, ignoreZero = false) => {
     if (isNaN(num)) {
         return '-';
     }
     const number = +num;
-    return thousandths(number.toFixed(precision));
+    if (ignoreZero) {
+        return Number(Number(number.toFixed(precision)).toString()).toLocaleString();
+    }
+    return Number(number.toFixed(precision)).toLocaleString(undefined, {minimumFractionDigits: precision})
 }
 
 const percentage = (num, precisionCount = 2) => {
