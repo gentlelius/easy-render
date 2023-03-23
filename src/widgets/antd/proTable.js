@@ -10,13 +10,13 @@ import qs from 'query-string';
 import jsep from 'jsep';
 import { Decimal } from 'decimal.js';
 
-if (!window.dayjs) {
-    // todo: 考虑占用内存情况，观察占用了多少内存
-    window.dayjs = dayjs;
-}
-if (!window.qs) {
-    window.qs = qs;
-}
+// if (!window.dayjs) {
+//     // todo: 考虑占用内存情况，观察占用了多少内存
+//     window.dayjs = dayjs;
+// }
+// if (!window.qs) {
+//     window.qs = qs;
+// }
 
 Number.prototype.toFixed = function(precision) {
     return new Decimal(this).toFixed(precision);
@@ -214,6 +214,8 @@ const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => re
         'getValue',
         'flattenObject',
         'genID',
+        'dayjs',
+        'qs',
         `return (${requestFnStr})(${JSON.stringify(params)},${JSON.stringify(sorter)},${JSON.stringify(filter)})`
     )
     (
@@ -224,6 +226,8 @@ const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => re
         getValue,
         flattenObject,
         genID,
+        dayjs,
+        qs,
     ).then(thenFn, catchFn)
 );
 
@@ -233,12 +237,16 @@ const accept = (fnstr) => {
         'h',
         'percentage',
         'precision',
+        'dayjs',
+        'qs',
         `return ${fnstr}`
     )(
         getValue,
         React.createElement,
         percentage,
         precision,
+        dayjs,
+        qs,
     );
 }
 
