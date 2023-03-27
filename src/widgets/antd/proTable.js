@@ -30,9 +30,10 @@ const precision = (num, precision = 2, ignoreZero = false) => {
     }
     const number = +num;
     if (ignoreZero) {
-        return Number(Number(number.toFixed(precision)).toString()).toLocaleString();
+        return number.toLocaleString('zh', {style: 'decimal', maximumFractionDigits: precision, minimumFractionDigits: 0});
+    } else {
+        return number.toLocaleString('zh', {style: 'decimal', maximumFractionDigits: precision, minimumFractionDigits: precision});
     }
-    return Number(number.toFixed(precision)).toLocaleString(undefined, {minimumFractionDigits: precision})
 }
 
 const percentage = (num, precisionCount = 2) => {
