@@ -214,7 +214,7 @@ const getPolling = (expression, config) => {
     return undefined;
 }
 
-const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => res) => (params, sorter, filter) => (
+const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => console.error(res)) => (params, sorter, filter) => (
     new Function(
         'request', 
         'percentage', 
@@ -607,6 +607,9 @@ const Pro= (props) => {
                     request={() => requestFn(record)}
                     columns={config.tableColumn}
                     rowKey={config.subRowKey}
+                    scroll={{
+                        x: 'max-content',
+                    }}
                 />
             )
         } else if (config.sourceDataType === 'record') {
@@ -621,6 +624,9 @@ const Pro= (props) => {
                         columns={config.tableColumn}
                         dataSource={dataSource}
                         rowKey={config.subRowKey}
+                        scroll={{
+                            x: 'max-content',
+                        }}
                     />
                 );
             } else {
@@ -634,6 +640,9 @@ const Pro= (props) => {
                             columns={Object.keys(dataSource[0]).map(key => ({ title: key, dataIndex: key}))}
                             dataSource={dataSource}
                             rowKey={config.subRowKey}
+                            scroll={{
+                                x: 'max-content',
+                            }}
                         />
                     )
                 } else {
