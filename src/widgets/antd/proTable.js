@@ -49,12 +49,20 @@ const genID = (n) => {
     return Math.random().toString(36).slice(3, n + 3)
 }
 
+const getSafeConfig = (config, expression) => {
+    const ast = jsep(expression)
+    const collection = traverseAstAndGetIdentifier(ast);
+    config = collection.filter(name => !config.hasOwnProperty(name)).reduce((pre, cur) => ({...pre, [cur]: undefined}), config)
+    return config;
+}
+
 const getSelectionDisabled = (expression, record, config) => {
     if (!expression || typeof expression !== 'string') {
         return false;
     }
     if (expression.startsWith('{{') && expression.endsWith('}}')) {
         expression = expression.slice(2, -2);
+        config = getSafeConfig(config, expression);
         return new Function('record', 'config', `
             let flag = false;
             try {
@@ -81,6 +89,7 @@ const parseHideExpression4Action = (expression, record, config) => {
     }
     if (expression.startsWith('{{') && expression.endsWith('}}')) {
         expression = expression.slice(2, -2);
+        config = getSafeConfig(config, expression);
         return new Function('record', 'config', `
             let flag = false;
             try {
@@ -123,9 +132,7 @@ const parseHideExpression4Column = (expression, config) => {
     config = cloneDeep(config);
     if (expression.startsWith('{{') && expression.endsWith('}}')) {
         expression = expression.slice(2, -2);
-        const ast = jsep(expression)
-        const collection = traverseAstAndGetIdentifier(ast);
-        config = collection.filter(name => !config.hasOwnProperty(name)).reduce((pre, cur) => ({...pre, [cur]: undefined}), config)
+        config = getSafeConfig(config, expression);
         return new Function('config', `
             let flag = false;
             try {
@@ -189,9 +196,7 @@ const getPolling = (expression, config) => {
 
     if (expression.startsWith('{{') && expression.endsWith('}}')) {
         expression = expression.slice(2, -2);
-        const ast = jsep(expression)
-        const collection = traverseAstAndGetIdentifier(ast);
-        config = collection.filter(name => !config.hasOwnProperty(name)).reduce((pre, cur) => ({...pre, [cur]: undefined}), config)
+        config = getSafeConfig(config, expression);
         return new Function('config', `
             let flag = undefined;
 
