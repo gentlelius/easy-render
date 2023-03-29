@@ -41,7 +41,7 @@ const RenderField = (props) => {
     // 补上这个class，会自动让下面所有的展示ui变红！
     const contentClass = hasError && showValidate ? `${_contentClass  } ant-form-item-has-error` : _contentClass;
 
-    const contentStyle = {};
+    const contentStyle = props.contentStyle;
 
     const debouncedSetEditing = useDebouncedCallback(setEditing, 350);
 

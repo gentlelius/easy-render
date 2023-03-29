@@ -42,7 +42,7 @@ const Core = ({
     const parentPath = getParentPath(dataPath);
     const _value = getValueByPath(formData, dataPath);
     let schema = clone(item.schema);
-    const {dependencies} = schema;
+    const {dependencies, contentStyle} = schema;
     const dependValues = [];
     let rootValue;
 
@@ -75,7 +75,7 @@ const Core = ({
 
     // 真正有效的label宽度需要从现在所在item开始一直往上回溯（设计成了继承关系），找到的第一个有值的 ui:labelWidth
     const effectiveLabelWidth = getParentProps('labelWidth', id, flatten) || labelWidth;
-
+ 
     const dataProps = {
         id,
         item, // 如果直接传了item，就不用id去取item, 暂时是内部属性，不外用
@@ -95,6 +95,7 @@ const Core = ({
         errorFields,
         effectiveLabelWidth,
         allTouched,
+        contentStyle,
         ...rest,
     };
     return <CoreRender {...dataProps} />;
@@ -115,6 +116,7 @@ const CoreRender = ({
     displayType,
     column,
     labelWidth,
+    contentStyle,
     readOnly,
     errorFields,
     effectiveLabelWidth,
@@ -248,6 +250,7 @@ const CoreRender = ({
         labelClass,
         labelStyle,
         contentClass,
+        contentStyle,
         errorFields,
         // 层级间可使用的字段
         displayType: _displayType,

@@ -5,6 +5,7 @@ import { useTools, useStore } from '../../hooks';
 import { transformProps } from '../../createWidget';
 
 import { isObjType, isListType, isObject } from '../../utils';
+import { omit } from 'lodash-es';
 
 const ErrorSchema = (schema) => (
     <div>
@@ -135,10 +136,14 @@ const ExtendedWidget = ({
         delete finalProps.navsHandler;
         delete finalProps.searchOptionsHandler;
     }
+
+    // delete finalProps.schema;
+    // delete finalProps.addons;
+
     return (
-        <Suspense fallback={<div></div>}>
+        <Suspense fallback={<div>render error</div>}>
             <div className="fr-item-wrapper justify-center">
-                <Widget className="self-start" {...finalProps}  />
+                <Widget className="self-start" {...omit(finalProps, ['addons', 'schema', 'contentStyle'])}  />
             </div>
         </Suspense>
     );
