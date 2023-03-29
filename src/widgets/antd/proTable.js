@@ -419,7 +419,7 @@ const Pro= (props) => {
                                     const fn = ${fn};
                                     return fn(val);
                                 `.trim();
-                                const newOnSearch = new Function('request', 'val', funstr);
+                                const newOnSearch = new Function('request', 'getValue', 'val', funstr);
 
                                 if (!newItem.fieldProps) {
                                     newItem.fieldProps = {};
@@ -427,7 +427,7 @@ const Pro= (props) => {
                                 newItem.fieldProps.showSearch = true;
                                 newItem.fieldProps.onSearch = (val) => {
                                     // todo: 防抖处理 竞态处理
-                                    const p = newOnSearch(aRequest, val);
+                                    const p = newOnSearch(aRequest, getValue, val);
                                     if (p instanceof Promise) {
                                         p.then((res) => {
                                             if (Array.isArray(res)) {
@@ -449,8 +449,8 @@ const Pro= (props) => {
                                     const fn = ${fn};
                                     return fn();
                                 `.trim();
-                                const newOnInit = new Function('request', funstr);
-                                const p = newOnInit(aRequest);
+                                const newOnInit = new Function('request', 'getValue', funstr);
+                                const p = newOnInit(aRequest, getValue);
                         
                                 if (p instanceof Promise) {
                                     p.then((res) => {
