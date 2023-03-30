@@ -430,6 +430,7 @@ const Pro= (props) => {
             if (!props.actions?.length || props.hiddenActions) {
                 return;
             }
+            const config = getAll();
             const dispatch = (method) => cols[method]({
                 title: '操作',
                 valueType: 'option',
