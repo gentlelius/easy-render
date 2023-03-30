@@ -152,7 +152,7 @@ const CoreRender = ({
             }
             break;
         case 'array':
-        // list 有两种展示形式！
+            // list 有两种展示形式！
             if (isList) {
                 if (schema.title) {
                     labelClass += ' fr-label-list';

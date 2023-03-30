@@ -4,7 +4,7 @@ import ProTable from '@ant-design/pro-table';
 import { omit, cloneDeep } from 'lodash-es';
 import dayjs from 'dayjs';
 import { aRequest } from '../../service';
-import { getAll, getValue, getEvent } from '../../storage';
+import { getAll, getValue, getEvent, setValue } from '../../storage';
 import { flattenObjectAndMerge, flattenObject } from '../../utils';
 import qs from 'query-string';
 import jsep from 'jsep';
@@ -291,6 +291,7 @@ const Pro= (props) => {
         if (Object.keys(optionsMap).length === 0) {
             return;
         }
+        console.log('pretty changes');
         prettyCols.current = prettyCols.current.map(item => {
             const newItem = cloneDeep(item);
             const options = optionsMap[newItem.dataIndex];
@@ -307,10 +308,122 @@ const Pro= (props) => {
 
     }, [optionsMap]);
 
-    const reqThen = useCallback(async res => {
-        // console.log('reqThen', res);
+    const getColumn = () => {
         const config = getAll();
+        console.log('get column');
+        return prettyCols.current
+            // 过滤掉隐藏的
+            .filter((item) => !parseHideExpression4Column(item.hidden, config))
+            // 合并 otherConfig
+            // eslint-disable-next-line complexity
+            .map(item => {
+                if (!item.useOtherConfig) {
+                    return item;
+                }
+                const newItem = { ...item };
+                const other = newItem.otherConfig;
+                try {
+                    const otherObj = accept(other);
+                    // 函数单独处理
+                    if (typeof otherObj.fieldProps === 'function') {
+                        const fn = otherObj.fieldProps.toString();
+                        const newFieldProps = new Function('form', 'config', `const request = ${aRequest};return (function ${fn})(form, config)`)
+                        otherObj.fieldProps = newFieldProps;
+                    }
+                    Object.assign(newItem, otherObj);
+                    if (!props.disabled) {
+                        // 处理 onSearch，如果 有声明 fieldProps 为函数，则忽略 onSearch
+                        if (typeof otherObj.onSearch === 'function' && typeof newItem.fieldProps !== 'function') {
+                            let fn = otherObj.onSearch.toString();
+                            fn = fn.replace(/\s*(async)?\s*onSearch/, 'async function');
+                            const funstr = `
+                            const fn = ${fn};
+                            return fn(val);
+                        `.trim();
+                            const newOnSearch = new Function('request', 'getValue', 'val', funstr);
 
+                            if (!newItem.fieldProps) {
+                                newItem.fieldProps = {};
+                            }
+                            newItem.fieldProps.showSearch = true;
+                            newItem.fieldProps.onSearch = (val) => {
+                                // todo: 防抖处理 竞态处理
+                                const p = newOnSearch(aRequest, getValue, val);
+                                if (p instanceof Promise) {
+                                    p.then((res) => {
+                                        if (Array.isArray(res)) {
+                                            setMap((optionsMap) => ({
+                                                ...optionsMap,
+                                                [newItem.dataIndex]: res,
+                                            }));
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                        // 处理 onInit
+                        if (typeof otherObj.onInit === 'function') {
+                            // 暂时给它设置 options，避免控制台报错
+                            let fn = otherObj.onInit.toString();
+                            fn = fn.replace(/\s*(async)?\s*onInit/, 'async function');
+                            const funstr = `
+                                const fn = ${fn};
+                                return fn();
+                            `.trim();
+                            const newOnInit = new Function('request', 'getValue', funstr);
+                            const p = newOnInit(aRequest, getValue);
+                
+                            if (p instanceof Promise) {
+                                p.then((res) => {
+                                    if (Array.isArray(res)) {
+                                        setMap((optionsMap) => ({
+                                            ...optionsMap,
+                                            [newItem.dataIndex]: res,
+                                        }));
+                                    }
+                                });
+                            }
+                        }
+                        // 处理 onChange
+                        if (typeof otherObj.onChange === 'function') {
+                            let fn = otherObj.onChange.toString();
+                            fn = fn.replace(/\s*(async)?\s*onChange/, 'function');
+                            const funstr = `
+                                const fn = ${fn};
+                                return fn(val);
+                            `.trim();
+                            const newOnChange = new Function('request', 'getValue', 'setValue', 'val', funstr);
+                            if (!newItem.fieldProps) {
+                                newItem.fieldProps = {};
+                            }
+                            newItem.fieldProps.onChange = (val) => {
+                                newOnChange(aRequest, getValue, setValue, val);
+                            }
+                        }
+                    }
+                    // precision
+                    if (typeof newItem.precision === 'number') {
+                        newItem.render = (text) => precision(text, newItem.precision);
+                    }
+                    // percentage
+                    if (newItem.percentage) {
+                        const precisionCount = typeof newItem.precision === 'number' ? newItem.precision : 2;
+                        newItem.render = (text) => percentage(text, precisionCount);
+                    }
+                    Object.assign(newItem, otherObj);
+                } catch (error) {
+                    console.error('请检查 JSON 配置是否有误，借助于 JSON 格式化查看工具更有效', item, error)
+                }
+                // delete newItem.otherConfig;
+                // delete newItem.useOtherConfig;
+                delete newItem.onSearch;
+                delete newItem.onInit;
+                return newItem;
+            });
+    }
+
+    const reqThen = useCallback(async res => {
+        
         let cols;
 
         const renderActions = () => {
@@ -391,98 +504,7 @@ const Pro= (props) => {
                 res.data = res.data.map(flattenObjectAndMerge)
             }
         } else {
-            cols = prettyCols.current
-                // 过滤掉隐藏的
-                .filter((item) => !parseHideExpression4Column(item.hidden, config))
-                // 合并 otherConfig
-                .map(item => {
-                    if (!item.useOtherConfig) {
-                        return item;
-                    }
-                    const newItem = { ...item };
-                    const other = newItem.otherConfig;
-                    try {
-                        const otherObj = accept(other);
-                        // 函数单独处理
-                        if (typeof otherObj.fieldProps === 'function') {
-                            const fn = otherObj.fieldProps.toString();
-                            const newFieldProps = new Function('form', 'config', `const request = ${aRequest};return (function ${fn})(form, config)`)
-                            otherObj.fieldProps = newFieldProps;
-                        }
-                        Object.assign(newItem, otherObj);
-                        if (!props.disabled) {
-                            // 处理 onSearch，如果 有声明 fieldProps 为函数，则忽略 onSearch
-                            if (typeof otherObj.onSearch === 'function' && typeof newItem.fieldProps !== 'function') {
-                                let fn = otherObj.onSearch.toString();
-                                fn = fn.replace(/\s*(async)?\s*onSearch/, 'async function');
-                                const funstr = `
-                                    const fn = ${fn};
-                                    return fn(val);
-                                `.trim();
-                                const newOnSearch = new Function('request', 'getValue', 'val', funstr);
-
-                                if (!newItem.fieldProps) {
-                                    newItem.fieldProps = {};
-                                }
-                                newItem.fieldProps.showSearch = true;
-                                newItem.fieldProps.onSearch = (val) => {
-                                    // todo: 防抖处理 竞态处理
-                                    const p = newOnSearch(aRequest, getValue, val);
-                                    if (p instanceof Promise) {
-                                        p.then((res) => {
-                                            if (Array.isArray(res)) {
-                                                setMap((optionsMap) => ({
-                                                    ...optionsMap,
-                                                    [newItem.dataIndex]: res,
-                                                }));
-                                            }
-                                        });
-                                    }
-                                }
-                            }
-                            // 处理 onInit
-                            if (typeof otherObj.onInit === 'function') {
-                                // 暂时给它设置 options，避免控制台报错
-                                let fn = otherObj.onInit.toString();
-                                fn = fn.replace(/\s*(async)?\s*onInit/, 'async function');
-                                const funstr = `
-                                    const fn = ${fn};
-                                    return fn();
-                                `.trim();
-                                const newOnInit = new Function('request', 'getValue', funstr);
-                                const p = newOnInit(aRequest, getValue);
-                        
-                                if (p instanceof Promise) {
-                                    p.then((res) => {
-                                        if (Array.isArray(res)) {
-                                            setMap((optionsMap) => ({
-                                                ...optionsMap,
-                                                [newItem.dataIndex]: res,
-                                            }));
-                                        }
-                                    });
-                                }
-                            }
-                        }
-                        // precision
-                        if (typeof newItem.precision === 'number') {
-                            newItem.render = (text) => precision(text, newItem.precision);
-                        }
-                        // percentage
-                        if (newItem.percentage) {
-                            const precisionCount = typeof newItem.precision === 'number' ? newItem.precision : 2;
-                            newItem.render = (text) => percentage(text, precisionCount);
-                        }
-                        Object.assign(newItem, otherObj);
-                    } catch (error) {
-                        console.error('请检查 JSON 配置是否有误，借助于 JSON 格式化查看工具更有效', item, error)
-                    }
-                    delete newItem.otherConfig;
-                    delete newItem.useOtherConfig;
-                    delete newItem.onSearch;
-                    delete newItem.onInit;
-                    return newItem;
-                })
+            cols = getColumn();
         }
 
         // 渲染 actions 区域
@@ -501,6 +523,7 @@ const Pro= (props) => {
         reqThen();
         const event = getEvent();
         const handleValueChange = () => {
+            prettyCols.current = getColumn();
             forceUpdate(state => state + 1);
         }
         event.on('valueChange', handleValueChange);
@@ -525,7 +548,7 @@ const Pro= (props) => {
                     {
                         method: props.method ? 'get' : props.method.toLowerCase(),
                         params: {
-                        // sort: '',
+                            // sort: '',
                             order: 'asc',
                             limit: params.pageSize,
                             offset: (params.current - 1) * params.pageSize,
@@ -716,6 +739,7 @@ const Pro= (props) => {
     }
 
     const polling = getPolling(props.polling, getAll());
+
     return (
         <div style={{flex: 1, overflow: 'auto'}}>
             <ProTable
