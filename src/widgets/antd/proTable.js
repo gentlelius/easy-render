@@ -22,8 +22,6 @@ Number.prototype.toFixed = function(precision) {
     return new Decimal(this).toFixed(precision);
 }
 
-const thousandths = (num) => num.toLo //String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
 const precision = (num, precision = 2, ignoreZero = false) => {
     if (isNaN(num)) {
         return '-';
@@ -41,8 +39,7 @@ const percentage = (num, precisionCount = 2) => {
         return '-';
     }
     const number = +num;
-    const n = (number * 100).toFixed(precisionCount);
-    return thousandths(`${n}%`);
+    return precision(number * 100, precisionCount) + '%';;
 }
 
 const genID = (n) => {
