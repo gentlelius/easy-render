@@ -211,7 +211,7 @@ const CoreRender = ({
             columnStyle.paddingRight = 8;
         } else if (column > 1) {
             // 提PR
-            if (!isList) {
+            if (!isList && schema.$id.indexOf('.') === -1) {
                 columnStyle.width = `calc(100% /${column})`;
             }
             columnStyle.paddingRight = 8;

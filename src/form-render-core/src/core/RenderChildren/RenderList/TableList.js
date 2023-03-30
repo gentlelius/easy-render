@@ -112,7 +112,7 @@ const TableList = ({
 
     return (
         <>
-            <div className="w-100 mb2 tr">
+            <div className="w-100 mb2 tl">
                 {!props.hideAdd && !disabled && (
                     <Button type="primary" size="small" onClick={addItem}>
                         新增

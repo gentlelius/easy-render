@@ -173,7 +173,7 @@ const getValidParams = (params) => {
         }
         // 解析 obj.description 字段，摘掉 description
         const list = key.split('.');
-        if (list.length === 2 && list[1] === 'description') {
+        if (list.length === 2) {
             const val = payload[key];
             delete payload[key];
             payload[list[0]] = val;
