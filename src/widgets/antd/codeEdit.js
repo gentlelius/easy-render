@@ -167,10 +167,12 @@ function createDependencyProposals(range, languageService = false, editor, curWo
         'getValidParams(${1:params})$0',
         'getValue(\'$0\')',
         'setValue(\'$0\')',
-        'precision(\'$0\')',
+        'precision($0)',
         'genID(\'$0\')',
         'flattenObject($0)',
         'then(() => {\n\t$0\n})',
+        'Promise.then(() => $0})',
+        'setTimeOut(() => $0, $1)',
     ]
     let keys = [];
     for (const item of esKeys) {

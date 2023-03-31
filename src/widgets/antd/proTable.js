@@ -744,7 +744,7 @@ const Pro= (props) => {
                 formRef={formRef}
                 actionRef={actionRef}
                 defaultCollapsed={false}
-                rowKey={prettyCols.current[0] ? prettyCols.current[0].dataIndex : 'id'}
+                rowKey={'id'}
                 search={{
                     className: 'er-search-action',
                     labelWidth: props.labelWidth || 'auto',

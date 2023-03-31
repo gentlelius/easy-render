@@ -157,7 +157,10 @@ const CoreRender = ({
                 if (schema.title) {
                     labelClass += ' fr-label-list';
                 }
-                containerClass += _displayType === 'column' ? ' fr-field-column' : '';
+                if (_displayType === 'column') {
+                    containerClass += ' fr-field-column';
+                    labelClass += ' fr-label-column';
+                }
             }
             break;
         case 'boolean':
