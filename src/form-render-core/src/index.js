@@ -10,6 +10,8 @@ import { mapping as defaultMapping } from './mapping';
 import ProTable from '../../widgets/antd/proTable';
 
 const defaultFinish = (data, errors) => {
+    console.log(data, errors);
+    console.warn('你没有实现 onFinish')
 };
 
 export { default as useForm } from './useForm';

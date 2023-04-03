@@ -21,7 +21,7 @@ export default function UploadImg({ action, value, name, data, onChange, uploadP
                         file.url = file.response.data.filepath;
                     } else {
                         file.status = 'error';
-                        message.error(lang.t('上传失败'));
+                        message.error('上传失败');
                     }
                 }
                 return file;

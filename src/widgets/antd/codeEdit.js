@@ -173,6 +173,7 @@ function createDependencyProposals(range, languageService = false, editor, curWo
         'then(() => {\n\t$0\n})',
         'Promise.then(() => $0})',
         'setTimeOut(() => $0, $1)',
+        'onChange(val) {\n\t$0\n}',
     ]
     let keys = [];
     for (const item of esKeys) {

@@ -178,8 +178,9 @@ const validateSingle = (data, schema = {}, path, options = {}, formData) => {
     const messageFeed = locale === 'en' ? en : cn;
     merge(messageFeed, validateMessages);
     validator.messages(messageFeed);
+    const trimData = typeof data === 'string' ? data.trim() : data;
     return validator
-        .validate({ [path]: data })
+        .validate({ [path]: trimData })
         .then((res) => [{ field: path, message: null }])
         .catch(({ errors, fields }) => errors);
 };
