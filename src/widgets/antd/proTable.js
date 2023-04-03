@@ -313,7 +313,7 @@ const Pro= (props) => {
             .map(oldItem => {
                 const item = {...oldItem};
                 // 文本框去空格
-                if (!item.valueType || ['text', 'textarea'].includes(res.valueType)) {
+                if (!item.valueType || ['text', 'textarea'].includes(item.valueType)) {
                     if (item.formItemProps) {
                         item.formItemProps['getValueFromEvent'] = (e) => {
                             return e.target?.value.trim();
