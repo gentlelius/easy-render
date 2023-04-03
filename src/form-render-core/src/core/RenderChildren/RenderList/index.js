@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import React from 'react';
 import { get } from 'lodash-es';
 import { useStore, useTools } from '../../../hooks';
@@ -28,7 +29,7 @@ const RenderList = ({ parentId, schema = {}, dataIndex = [], children = [], erro
         listData = get(formData, dataPath);
     }
     
-    const displayList = Array.isArray(listData) ? listData : [{}];
+    const displayList = Array.isArray(listData) ? listData : [];
 
     const changeList = (newList) => {
         onItemChange(dataPath, newList);
@@ -98,7 +99,6 @@ const RenderList = ({ parentId, schema = {}, dataIndex = [], children = [], erro
         dataIndex: [...dataIndex, idx],
         ...extraProps,
     });
-
     const displayProps = {
         displayList,
         changeList,
@@ -119,25 +119,25 @@ const RenderList = ({ parentId, schema = {}, dataIndex = [], children = [], erro
     };
 
     switch (renderWidget) {
-    case 'list0':
-    case 'cardList':
-        return <CardList {...displayProps} />;
-    case 'list1':
-    case 'simpleList':
-        return <SimpleList {...displayProps} />;
-    case 'list2':
-    case 'tableList':
-        return <TableList {...displayProps} />;
-    case 'list3':
-    case 'drawerList':
-        return <DrawerList {...displayProps} />;
-    case 'list4':
-    case 'virtualList':
-        return <VirtualList {...displayProps} />;
-    case 'tabList':
-        return <TabList {...displayProps} />;
-    default:
-        return <CardList {...displayProps} />;
+        case 'list0':
+        case 'cardList':
+            return <CardList {...displayProps} />;
+        case 'list1':
+        case 'simpleList':
+            return <SimpleList {...displayProps} />;
+        case 'list2':
+        case 'tableList':
+            return <TableList {...displayProps} />;
+        case 'list3':
+        case 'drawerList':
+            return <DrawerList {...displayProps} />;
+        case 'list4':
+        case 'virtualList':
+            return <VirtualList {...displayProps} />;
+        case 'tabList':
+            return <TabList {...displayProps} />;
+        default:
+            return <CardList {...displayProps} />;
     }
 };
 

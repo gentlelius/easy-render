@@ -1,6 +1,7 @@
+/* eslint-disable indent */
 /* eslint-disable complexity */
 /* eslint-disable no-param-reassign */
-import { get, set, cloneDeep, isEmpty } from 'lodash-es';
+import { get, set, cloneDeep, isEmpty, functionsIn } from 'lodash-es';
 
 export function getParamByName(name, url = window.location.href) {
     // eslint-disable-next-line no-useless-escape
@@ -112,6 +113,10 @@ export function isObjType(schema) {
 // TODO: to support case that item is not an object
 export function isListType(schema) {
     return schema && schema.type === 'array' && isObjType(schema.items) && schema.enum === undefined;
+}
+
+function isNotFill(schema) {
+    return schema && schema.notFill;
 }
 
 // TODO: more tests to make sure weird & wrong schema won't crush
@@ -743,7 +748,7 @@ export const generateDataSkeleton = (schema, formData) => {
     } else if (schema.default !== undefined) {
         result = clone(schema.default);
     } else if (isListType(schema)) {
-        result = [generateDataSkeleton(schema.items)];
+        result = isNotFill(schema) ? [] : [generateDataSkeleton(schema.items)];
     } else if (schema.type === 'boolean' && !schema.widget) {
         // result = false;
         result = undefined;
