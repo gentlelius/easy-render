@@ -11,8 +11,8 @@ axios.interceptors.response.use(
     (response) => {
         const result = response.data;
         // 状态代码 2xx 的响应拦截
-        if (!result.success && result.msg && !specialConfig.ignoreError) {
-            message.error(result.msg);
+        if (!result.success && !specialConfig.ignoreError) {
+            message.error(result.msg || result.message);
             return Promise.reject(result);
         }
         return result;
