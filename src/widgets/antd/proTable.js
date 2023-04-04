@@ -309,25 +309,6 @@ const Pro= (props) => {
         const config = getAll();
         console.log('get column');
         return prettyCols.current
-            // 去空格
-            .map(oldItem => {
-                const item = {...oldItem};
-                // 文本框去空格
-                if (!item.valueType || ['text', 'textarea'].includes(item.valueType)) {
-                    if (item.formItemProps) {
-                        item.formItemProps['getValueFromEvent'] = (e) => {
-                            return e.target?.value.trim();
-                        };
-                    } else {
-                        item['formItemProps'] = {
-                            getValueFromEvent: (e) => {
-                                return e.target?.value.trim();
-                            },
-                        };
-                    }
-                }
-                return item;
-            })
             // 过滤掉隐藏的
             .filter((item) => !parseHideExpression4Column(item.hidden, config))
             // 合并 otherConfig
@@ -435,6 +416,25 @@ const Pro= (props) => {
                 delete newItem.onSearch;
                 delete newItem.onInit;
                 return newItem;
+            })
+            // 去空格
+            .map(oldItem => {
+                const item = {...oldItem};
+                // 文本框去空格
+                if (!item.valueType || ['text', 'textarea'].includes(item.valueType)) {
+                    if (item.formItemProps) {
+                        item.formItemProps['getValueFromEvent'] = (e) => {
+                            return e.target?.value.trim();
+                        };
+                    } else {
+                        item['formItemProps'] = {
+                            getValueFromEvent: (e) => {
+                                return e.target?.value.trim();
+                            },
+                        };
+                    }
+                }
+                return item;
             });
     }
 
