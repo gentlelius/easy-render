@@ -24,7 +24,23 @@ import uploadImg from './upload-img';
 
 const { TextArea } = Input;
 
-const FrNumber = ({ style, ...rest }) => <InputNumber style={{ width: '100%', ...style }} {...rest} />;
+const FrNumber = ({ style, ...rest }) => {
+    let formatterProps;
+    if (rest.thousand) {
+        delete rest.thousand;
+        formatterProps = {
+            formatter: (value) => `${value}`.replace(/(?<!\.\d*)(?<=\d)(?=(\d{3})+(?!\d))/g, ','),
+            parser: (value) => value.replace(/(,*)/g, '')
+        }
+    }
+    return (
+        <InputNumber
+            style={{ width: '100%', ...style }} 
+            {...rest}
+            {...formatterProps}
+        />
+    )
+};
 
 const FrTextArea = ({ autoSize, ...rest }) => <TextArea autoSize={autoSize ? autoSize : { minRows: 3 }} {...rest} />;
 

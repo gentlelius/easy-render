@@ -67,6 +67,19 @@ monaco.languages.registerCompletionItemProvider('typescript', {
                     detail: 'select',
                 },
                 {
+                    label: 'render',
+                    kind: monaco.languages.CompletionItemKind['Property'],
+                    insertText: pretty(`
+                        {
+                            render(value, row) {
+                                return $1
+                            }$0
+                        }
+                    `),
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    detail: 'render',
+                },
+                {
                     label: 'options',
                     kind: monaco.languages.CompletionItemKind['Property'],
                     insertText: pretty(`
@@ -174,6 +187,7 @@ function createDependencyProposals(range, languageService = false, editor, curWo
         'Promise.then(() => $0})',
         'setTimeOut(() => $0, $1)',
         'onChange(val) {\n\t$0\n}',
+        `h('$0', {}, $1)`,
     ]
     let keys = [];
     for (const item of esKeys) {
