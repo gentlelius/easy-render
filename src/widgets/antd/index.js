@@ -20,6 +20,7 @@ import proSelect from './proSelect';
 import codeEdit from './codeEdit';
 import uploadLazy from './upload-lazy';
 import uploadImg from './upload-img';
+import { isNil } from 'lodash-es';
 // const Cascader = React.lazy(() => import('antd/es/cascader'));
 
 const { TextArea } = Input;
@@ -33,6 +34,8 @@ const FrNumber = ({ style, ...rest }) => {
             parser: (value) => value.replace(/(,*)/g, '')
         }
     }
+    // max 默认为 1e14 - 1（99999999999999）
+    rest.max = isNil(rest.max) ? 1e14 - 1 : rest.max;
     return (
         <InputNumber
             style={{ width: '100%', ...style }} 
