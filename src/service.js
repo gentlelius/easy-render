@@ -10,6 +10,9 @@ let specialConfig = {};
 axios.interceptors.response.use(
     (response) => {
         const result = response.data;
+        if (result.success !== false) {
+            result.success = true;
+        }
         // 状态代码 2xx 的响应拦截
         if (!result.success && !specialConfig.ignoreError) {
             message.error(result.msg || result.message);
