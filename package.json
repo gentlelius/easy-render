@@ -40,7 +40,7 @@
     "peerDependencies": {
         "@ant-design/icons": "^4.0.2",
         "@ant-design/pro-components": ">=2.3.47",
-        "antd": ">=4.23.0",
+        "antd": ">=5",
         "rc-field-form": "^1.22.0",
         "react": ">=16.9.0",
         "react-dom": ">=16.9.0"
