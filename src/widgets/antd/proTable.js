@@ -783,10 +783,10 @@ const Pro= (props) => {
                 }}
                 pagination={{
                     defaultPageSize: props.defaultPageSize || 20,
+                    showSizeChanger: true
                 }}
                 {...props}
                 columns={prettyCols.current}
-                onChange={() => {}}
                 expandable={{expandedRowRender}}
                 {...rowSelectionProps}
                 request={request}
