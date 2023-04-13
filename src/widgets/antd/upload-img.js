@@ -4,7 +4,7 @@ import { Upload, message, Button } from 'antd';
 
 export default function UploadImg({ action, value, name, data, onChange, uploadProps, disabled, maxCount = 1 }) {
     const [fileList, setFileList] = useState(value || []);
-    console.log('fileList', fileList);
+
     const props = {
         maxCount,
         listType: 'picture',

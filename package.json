@@ -1,6 +1,6 @@
 {
     "name": "react-easy-render",
-    "version": "0.0.17-beta.97",
+    "version": "0.0.17-beta.98",
     "description": "easy-render",
     "scripts": {
         "prettier": "prettier --write \"**/*.{js,jsx,tsx,ts,less,md,json}\"",
@@ -24,7 +24,6 @@
         ]
     },
     "dependencies": {
-        "@ant-design/icons": "^4.0.2",
         "async-validator": "^3.5.1",
         "axios": "^1.2.1",
         "color": "^3.1.2",
@@ -39,11 +38,12 @@
         "virtualizedtableforantd4": "^1.1.2"
     },
     "peerDependencies": {
+        "@ant-design/icons": "^4.0.2",
         "@ant-design/pro-components": ">=2.3.47",
-        "@umijs/max": ">=4.0.22",
-        "antd": "4.x",
-        "react": ">=16.8.0",
-        "react-dom": ">=16.8.0"
+        "antd": ">=4.23.0",
+        "rc-field-form": "^1.22.0",
+        "react": ">=16.9.0",
+        "react-dom": ">=16.9.0"
     },
     "devDependencies": {
         "babel-plugin-import": "^1.13.5",
