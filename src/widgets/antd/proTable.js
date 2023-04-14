@@ -160,6 +160,13 @@ const getValidParams = (params) => {
     }
     const payload = {...omit(params, ['pageSize', 'current'])};
     Object.keys(payload).forEach(key => {
+        // 解析 obj.x 字段，摘掉 x
+        const list = key.split('.');
+        if (list.length === 2) {
+            const val = payload[key];
+            delete payload[key];
+            payload[list[0]] = val;
+        }
         // 过滤掉 value = '' 
         if (payload[key] === '') {
             payload[key] = undefined;
@@ -167,13 +174,6 @@ const getValidParams = (params) => {
         // trim
         if (typeof payload[key] === 'string') {
             payload[key] = payload[key].trim()
-        }
-        // 解析 obj.description 字段，摘掉 description
-        const list = key.split('.');
-        if (list.length === 2) {
-            const val = payload[key];
-            delete payload[key];
-            payload[list[0]] = val;
         }
     });
     return payload;
@@ -599,7 +599,7 @@ const Pro= (props) => {
                 <Button 
                     onClick={() => {
                         if (typeof props.navsHandler?.[index] === 'function') {
-                            props.navsHandler[index](formRef.current?.getFieldsValue(), actionRef.current);
+                            props.navsHandler[index](getValidParams(formRef.current?.getFieldsValue()), actionRef.current);
                         } else {
                             console.warn(`nav ${index} is not function`);
                         }
