@@ -2,12 +2,13 @@ import React from 'react';
 import { aRequest } from '../../service';
 import {
     ProFormSelect,
-    ProFormSelectProps
+    ProFormSelectProps,
 } from "@ant-design/pro-components";
 
 type CommonProps = {
     value: string,
     onChange: (v) => void,
+    reqDisabled: boolean,
 }
 
 /**
@@ -86,16 +87,15 @@ const ProSelect: React.FC<ProFormSelectProps & CommonProps> = (props) => {
     if (props.options) {
         params.options = props.options;
     }
-    if (req && !props.disabled) {
+    if (req && !props.reqDisabled) {
         params.request = req;
     }
     if (onChange) {
         params.onChange = onChange;
     }
-    if (value !== undefined) {
-        params.value = value;
-    }
-
+    
+    params.value = value;
+    
     return (
         <div className="fr-pro-select">
             <ProFormSelect
