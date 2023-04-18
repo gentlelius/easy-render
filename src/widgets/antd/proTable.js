@@ -647,36 +647,39 @@ const Pro= (props) => {
     // 行展开内容
     const expandedRowRender = props.expandable ? (record) => {
 
-        const config = props.expandable;
+        const expandableConfig = props.expandable;
 
-        if (config.sourceDataType === 'request') {
-            const requestFn = getParsedRequest(config.request);
+        if (expandableConfig.sourceDataType === 'request') {
+            const requestFn = getParsedRequest(expandableConfig.request);
+            const updateKey = record.updateKey || 'updateKey';
             return (
                 <ProTable
+                    key={updateKey}
                     headerTitle={false}
                     search={false}
                     options={false}
                     pagination={false}
                     request={() => requestFn(record)}
-                    columns={config.tableColumn}
-                    rowKey={config.subRowKey}
+                    columns={expandableConfig.tableColumn}
+                    rowKey={expandableConfig.subRowKey}
                     scroll={{
                         x: 'max-content',
                     }}
                 />
             )
-        } else if (config.sourceDataType === 'record') {
-            const dataSource = Array.isArray(record[config.fieldName]) ? record[config.fieldName] : [];
-            if (config.tableColumn.length) {
+        } else if (expandableConfig.sourceDataType === 'record') {
+            const dataSource = Array.isArray(record[expandableConfig.fieldName]) ? record[expandableConfig.fieldName] : [];
+            if (expandableConfig.tableColumn.length) {
                 return (
                     <ProTable
+                        key={updateKey} 
                         headerTitle={false}
                         search={false}
                         options={false}
                         pagination={false}
-                        columns={config.tableColumn}
+                        columns={expandableConfig.tableColumn}
                         dataSource={dataSource}
-                        rowKey={config.subRowKey}
+                        rowKey={expandableConfig.subRowKey}
                         scroll={{
                             x: 'max-content',
                         }}
@@ -686,13 +689,14 @@ const Pro= (props) => {
                 if (dataSource[0]) {
                     return (
                         <ProTable
+                            key={updateKey}
                             headerTitle={false}
                             search={false}
                             options={false}
                             pagination={false}
                             columns={Object.keys(dataSource[0]).map(key => ({ title: key, dataIndex: key}))}
                             dataSource={dataSource}
-                            rowKey={config.subRowKey}
+                            rowKey={expandableConfig.subRowKey}
                             scroll={{
                                 x: 'max-content',
                             }}
