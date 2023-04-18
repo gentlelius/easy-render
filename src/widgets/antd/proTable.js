@@ -535,6 +535,7 @@ const Pro= (props) => {
         return res;
     }, [props])
 
+    const hasEnterBackground = useRef(false);
     // onMount
     useEffect(() => {
         // 初始化 columns
@@ -550,8 +551,10 @@ const Pro= (props) => {
 
         // 订阅 visibilityStateChange 事件
         const handleVisibilityChange = () => {
-            if (document.visibilityState === 'visible') {
+            if (document.visibilityState === 'visible' && hasEnterBackground.current) {
                 actionRef.current.reload();
+            } else {
+                hasEnterBackground.current = true;
             }
         };
         document.addEventListener('visibilitychange', handleVisibilityChange);
