@@ -651,10 +651,10 @@ const Pro= (props) => {
 
         if (expandableConfig.sourceDataType === 'request') {
             const requestFn = getParsedRequest(expandableConfig.request);
-            const updateKey = record.updateKey || 'updateKey';
+            const $updateKey = record.$updateKey || '$updateKey';
             return (
                 <ProTable
-                    key={updateKey}
+                    key={$updateKey}
                     headerTitle={false}
                     search={false}
                     options={false}
@@ -672,7 +672,7 @@ const Pro= (props) => {
             if (expandableConfig.tableColumn.length) {
                 return (
                     <ProTable
-                        key={updateKey} 
+                        key={$updateKey} 
                         headerTitle={false}
                         search={false}
                         options={false}
@@ -689,7 +689,7 @@ const Pro= (props) => {
                 if (dataSource[0]) {
                     return (
                         <ProTable
-                            key={updateKey}
+                            key={$updateKey}
                             headerTitle={false}
                             search={false}
                             options={false}
