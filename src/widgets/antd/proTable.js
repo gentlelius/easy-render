@@ -270,7 +270,7 @@ const getTextWidth = (text, font) => {
     font = font || '14px Microsoft YaHei';
     const context = getContext();
     context.font = font
-    let textmetrics = context.measureText(text)
+    let textmetrics = context.measureText(text);
     return textmetrics.width;
 }
 
@@ -535,17 +535,29 @@ const Pro= (props) => {
         return res;
     }, [props])
 
-
+    // onMount
     useEffect(() => {
+        // 初始化 columns
         reqThen();
+        
+        // 订阅 valueChange 事件
         const event = getEvent();
         const handleValueChange = () => {
             prettyCols.current = getColumn();
             forceUpdate(state => state + 1);
         }
         event.on('valueChange', handleValueChange);
+
+        // 订阅 visibilityStateChange 事件
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                actionRef.current.reload();
+            }
+        };
+        document.addEventListener('visibilitychange', handleVisibilityChange);
         return () => {
             event.off('valueChange', handleValueChange);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
         }
     }, []);
 
@@ -628,8 +640,6 @@ const Pro= (props) => {
             )
         )) : []
     }, [props.searchOptions, props.searchOptionsHandler]);
-
-    console.log('prettyCols.current', prettyCols.current);
 
     // 行展开内容
     const expandedRowRender = props.expandable ? (record) => {
@@ -756,6 +766,8 @@ const Pro= (props) => {
     }
 
     const polling = getPolling(props.polling, getAll());
+
+    // console.log('prettyCols.current', prettyCols.current);
 
     return (
         <div style={{flex: 1, overflow: 'auto'}}>
