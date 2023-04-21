@@ -8,7 +8,7 @@
         "test:coverage": "umi-test --coverage",
         "dev": "npx father-build --watch",
         "build": "npx father-build",
-        "pub": "npm run build && npm publish"
+        "pub": "npm run build && npm version prerelease && npm publish"
     },
     "main": "lib/index.js",
     "module": "es/index.js",
