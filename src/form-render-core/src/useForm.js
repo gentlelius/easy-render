@@ -4,7 +4,7 @@ import { validateAll } from './validator';
 import { useSet } from './hooks';
 import { set, sortedUniqBy } from 'lodash-es';
 import { processData, transformDataWithBind2 } from './processData';
-import { generateDataSkeleton, flattenSchema, clone, schemaContainsExpression, parseAllExpression } from './utils';
+import { generateDataSkeleton, flattenSchema, clone, schemaContainsExpression, parseAllExpression, trimObjectString } from './utils';
 
 const useForm = (props) => {
     const {
@@ -131,9 +131,9 @@ const useForm = (props) => {
         setState({ finalFlatten: newFlatten });
     }, [JSON.stringify(_flatten.current), JSON.stringify(_data.current), firstMount]);
 
-    // All form methods are down here ----------------------------------------------------------------
-    // 两个兼容 0.x 的函数
     const _setData = (data) => {
+        // trim处理
+        trimObjectString(data);
         if (typeof _onChange === 'function') {
             _onChange(data);
         } else {
@@ -180,14 +180,16 @@ const useForm = (props) => {
     };
 
     const onItemChange = (path, value) => {
+        value = trimObjectString(value);
+        console.log(value, '!');
         if (typeof path !== 'string') return;
         if (path === '#') {
             _setData({ ...value });
             return;
         }
-        // 先设置 formData[path] = value;
+        // 先设置 _data.current[path] = value;
         set(_data.current, path, value);
-        // 再通过onChange把最新的formData给开发者
+        // 再更新试图（当有 props.onChange 时，会调用 props.onChange ）
         _setData({ ..._data.current });
     };
 
