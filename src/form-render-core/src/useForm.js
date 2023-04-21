@@ -132,8 +132,6 @@ const useForm = (props) => {
     }, [JSON.stringify(_flatten.current), JSON.stringify(_data.current), firstMount]);
 
     const _setData = (data) => {
-        // trim处理
-        trimObjectString(data);
         if (typeof _onChange === 'function') {
             _onChange(data);
         } else {
@@ -180,8 +178,6 @@ const useForm = (props) => {
     };
 
     const onItemChange = (path, value) => {
-        value = trimObjectString(value);
-        console.log(value, '!');
         if (typeof path !== 'string') return;
         if (path === '#') {
             _setData({ ...value });

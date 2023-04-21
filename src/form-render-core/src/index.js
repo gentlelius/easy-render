@@ -211,7 +211,9 @@ function App({
         // 如果validation结束，submitting开始
         if (isValidating === false && isSubmitting === true) {
             endSubmitting();
-            onFinish(submitData, errorFields);
+            // trim处理
+            const finalData = trimObjectString(submitData);
+            onFinish(finalData, errorFields);
             if (typeof logOnSubmit === 'function') {
                 const start = sessionStorage.getItem('FORM_START');
                 const mount = sessionStorage.getItem('FORM_MOUNT_TIME');
