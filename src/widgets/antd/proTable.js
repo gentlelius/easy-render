@@ -154,11 +154,16 @@ const parseHideExpression4Selection = (expression, config) => {
     return parseHideExpression4Column(expression, config);
 }
 
-const getValidParams = (params) => {
+const getValidParams = (params, removePageInfo = true) => {
     if (!params) {
         return {};
     }
-    const payload = {...omit(params, ['pageSize', 'current'])};
+    let payload;
+    if (removePageInfo) {
+        payload = {...omit(params, ['pageSize', 'current'])};
+    } else {
+        payload = {...params};
+    }
     Object.keys(payload).forEach(key => {
         // 解析 obj.x 字段，摘掉 x
         const list = key.split('.');
@@ -222,7 +227,7 @@ const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => co
         'genID',
         'dayjs',
         'qs',
-        `return (${requestFnStr})(${JSON.stringify(params)},${JSON.stringify(sorter)},${JSON.stringify(filter)})`
+        `return (${requestFnStr})(${JSON.stringify(getValidParams(params, false))},${JSON.stringify(sorter)},${JSON.stringify(filter)})`
     )
     (
         aRequest,
@@ -417,25 +422,6 @@ const Pro= (props) => {
                 delete newItem.onInit;
                 return newItem;
             })
-            // 去空格
-            .map(oldItem => {
-                const item = {...oldItem};
-                // 文本框去空格
-                if (!item.valueType || ['text', 'textarea'].includes(item.valueType)) {
-                    if (item.formItemProps) {
-                        item.formItemProps['getValueFromEvent'] = (e) => {
-                            return e.target?.value.trim();
-                        };
-                    } else {
-                        item['formItemProps'] = {
-                            getValueFromEvent: (e) => {
-                                return e.target?.value.trim();
-                            },
-                        };
-                    }
-                }
-                return item;
-            });
     }
 
     const reqThen = useCallback(async res => {
