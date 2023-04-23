@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useMemo, useRef } from 'react';
-import { updateSchemaToNewVersion, msToTime, yymmdd, isObjType } from './utils';
+import { updateSchemaToNewVersion, msToTime, yymmdd, isObjType, trimObjectString } from './utils';
 import Core from './core';
 import Watcher from './Watcher';
 import { Ctx, StoreCtx, Store2Ctx } from './hooks';
