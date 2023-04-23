@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 /* eslint-disable complexity */
 /* eslint-disable no-param-reassign */
-import { get, set, cloneDeep, isEmpty, functionsIn, isString } from 'lodash-es';
+import { get, set, cloneDeep, isEmpty, functionsIn, isString, isArray } from 'lodash-es';
 
 export function getParamByName(name, url = window.location.href) {
     // eslint-disable-next-line no-useless-escape
@@ -1077,14 +1077,12 @@ export const removeDups = (arr) => {
 };
 
 export const trimObjectString = (value) => {
-    if (isObject(value)) {
+    if (isArray(value)) {
+        return value.map(item => trimObjectString(item));
+    } else if (isObject(value)) {
         let newValue = {};
         Object.keys(value).forEach((key) => {
-            if (typeof value[key] === 'string') {
-                newValue[key] = value[key].trim();
-            } else if (isObject(value[key])) {
-                newValue[key] = trimObjectString(value[key]);
-            }
+            newValue[key] = trimObjectString(value[key]);
         });
         return newValue;
     } else if (isString(value)) {
