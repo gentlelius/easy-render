@@ -3,8 +3,7 @@ import dayjs from 'dayjs';
 import { DatePicker } from 'antd';
 import { getFormat } from '../../utils';
 
-// TODO: 不要使用 dayjs，使用 dayjs
-export default ({ onChange, format, value, style, ...rest }) => {
+export default ({ onChange, format, value, style, allowStart, allowEnd, ...rest }) => {
     const dateFormat = getFormat(format);
 
     const valueObj = useMemo(() => {
@@ -47,5 +46,11 @@ export default ({ onChange, format, value, style, ...rest }) => {
         dateParams.format = format;
     }
 
-    return <DatePicker {...dateParams} {...rest} />;
+    const disabledDate = (current) => {
+        allowStart = allowStart || '1900-01-01';
+        allowEnd = allowEnd || '2100-01-01';
+        return !(current && current >= dayjs(allowStart).startOf('day') && current <= dayjs(allowEnd).endOf('day'));
+    }
+
+    return <DatePicker {...dateParams} {...rest} disabledDate={disabledDate} />;
 };
