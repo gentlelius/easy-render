@@ -165,6 +165,7 @@ const getValidParams = (params, removePageInfo = true) => {
         payload = {...params};
     }
     Object.keys(payload).forEach(key => {
+        
         // 解析 obj.x 字段，摘掉 x
         const list = key.split('.');
         if (list.length === 2) {
@@ -179,6 +180,8 @@ const getValidParams = (params, removePageInfo = true) => {
         // trim
         if (typeof payload[key] === 'string') {
             payload[key] = payload[key].trim()
+        } else if (payload[key]?._isAMomentObject || dayjs.isDayjs(payload[key])) {
+            payload[key] = payload[key].format('YYYY-MM-DD');
         }
     });
     return payload;
