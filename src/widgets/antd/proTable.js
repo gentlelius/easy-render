@@ -177,11 +177,18 @@ const getValidParams = (params, removePageInfo = true) => {
         if (payload[key] === '') {
             payload[key] = undefined;
         }
-        // trim
         if (typeof payload[key] === 'string') {
-            payload[key] = payload[key].trim()
+            // trim
+            payload[key] = payload[key].trim();
         } else if (payload[key]?._isAMomentObject || dayjs.isDayjs(payload[key])) {
             payload[key] = payload[key].format('YYYY-MM-DD');
+        } else if (Array.isArray(payload[key])) {
+            payload[key] = payload[key].map(item => {
+                if (item?._isAMomentObject || dayjs.isDayjs(item)) {
+                    return item.format('YYYY-MM-DD');
+                }
+                return item;
+            })
         }
     });
     return payload;
