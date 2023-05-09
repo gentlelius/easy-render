@@ -549,9 +549,10 @@ const Pro= (props) => {
 
         // 订阅 visibilityStateChange 事件
         const handleVisibilityChange = () => {
-            if (document.visibilityState === 'visible' && hasEnterBackground.current) {
+            if (document.visibilityState === 'visible' && hasEnterBackground.current && !props.manualRequest) {
                 actionRef.current.reload();
-            } else {
+            }
+            if (!hasEnterBackground.current) {
                 hasEnterBackground.current = true;
             }
         };
