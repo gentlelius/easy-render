@@ -3,8 +3,8 @@ import { UploadOutlined } from '@ant-design/icons';
 import { Upload, Button } from 'antd';
 import { UploadFile, UploadProps } from 'antd/es/upload/interface';
 
-export default function UploadLazy({ value, onChange, schema }) {
-    const rest = schema.props;
+export default function UploadLazy({ value, onChange, schema = {} }) {
+    const rest = (schema as any).props;
     const [fileList, setFileList] = useState<Array<UploadFile>>([]);
     const props: UploadProps = {
         onRemove: (file) => {
