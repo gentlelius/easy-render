@@ -647,10 +647,10 @@ const Pro= (props) => {
     const expandedRowRender = props.expandable ? (record) => {
 
         const expandableConfig = props.expandable;
+        const $updateKey = record.$updateKey || 'id';
 
         if (expandableConfig.sourceDataType === 'request') {
             const requestFn = getParsedRequest(expandableConfig.request);
-            const $updateKey = record.$updateKey || '$updateKey';
             return (
                 <ProTable
                     key={$updateKey}
