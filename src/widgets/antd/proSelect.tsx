@@ -4,6 +4,7 @@ import {
     ProFormSelect,
     ProFormSelectProps,
 } from "@ant-design/pro-components";
+import { getValue } from '../../storage';
 
 type CommonProps = {
     value: string,
@@ -68,9 +69,11 @@ const ProSelect: React.FC<ProFormSelectProps & CommonProps> = (props) => {
         req = (val: { keyWords: string }) => {
             return new Function(
                 'request',
+                'getValue',
                 `return (${props.request})(${JSON.stringify(val.keyWords)})`
             )(
                 aRequest,
+                getValue,
             )
         }
     }
