@@ -52,28 +52,24 @@ export default function Map({ children, title, ...rest }) {
     const toggle = () => {
         setCollapsed(collapsed => !collapsed);
     };
-    
-    const basicStyle = { 
-        transition: 'all easy-out .3s',
-        border: '1px solid #ccc', 
-        padding: 8, 
-        overflow: 'hidden',
-        marginBottom: 24,
-    };
 
-    const collapsedStyle = {
-        ...basicStyle,
-        height: 0,
-        padding: 0,
+    const basicStyle = { 
+        border: '1px solid #ccc', 
+        paddingBottom: 8, 
+        paddingTop: 8,
+        marginBottom: 24,
     };
 
     return (
         <div className="w-100">
             <div>
-                <span className="fr-label-title" style={{ fontSize: 16, fontWeight: 500 }}>{title}</span>
-                <a style={{userSelect: 'none', padding: 20,}} onClick={toggle}>{collapsed ? '展开' : '折叠'}</a>
+                <span className="fr-label-title" style={{ fontSize: 16, fontWeight: 500, marginBottom: 12 }}>{title}</span>
+                <a style={{ userSelect: 'none' }} onClick={toggle}>{collapsed ? '展开' : '折叠'}</a>
             </div>
-            <div style={collapsed ? collapsedStyle : basicStyle}>
+            <div 
+                style={basicStyle}
+                className={`fr-collapsed ${collapsed ? 'fr-collapsed-close' : ''}`} 
+            >
                 {children}
             </div>
         </div>
