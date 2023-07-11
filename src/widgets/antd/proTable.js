@@ -10,14 +10,6 @@ import qs from 'query-string';
 import jsep from 'jsep';
 import { Decimal } from 'decimal.js';
 
-// if (!window.dayjs) {
-//     // todo: 考虑占用内存情况，观察占用了多少内存
-//     window.dayjs = dayjs;
-// }
-// if (!window.qs) {
-//     window.qs = qs;
-// }
-
 Number.prototype.toFixed = function(precision) {
     return new Decimal(this).toFixed(precision);
 }
@@ -299,6 +291,10 @@ const Pro= (props) => {
     const [optionsMap, setMap] = useState({});
     const [code, forceUpdate] = useState(0);
 
+    const onLoadingChange = useCallback(() => {
+        actionRef.current?.clearSelected();
+    }, []);
+
     // 搜索表单项 options 设置
     useEffect(() => {
         // 找到改变的项，然后设置 options
@@ -338,16 +334,6 @@ const Pro= (props) => {
                 const other = newItem.otherConfig;
                 try {
                     const otherObj = accept(other);
-                    // 函数单独处理
-                    // if (typeof otherObj.fieldProps === 'function') {
-                    //     const fn = otherObj.fieldProps.toString();
-                    //     const newFieldProps = new Function('form', 'config', 
-                    //         `const request = ${aRequest};
-                    //          const getValue = ${getValue};
-                    //         return (function ${fn})(form, config)`
-                    //     );
-                    //     otherObj.fieldProps = newFieldProps;
-                    // }
                     Object.assign(newItem, otherObj);
                     if (!props.disabled) {
                         // 处理 onSearch，如果 有声明 fieldProps 为函数，则忽略 onSearch
@@ -432,8 +418,6 @@ const Pro= (props) => {
                 } catch (error) {
                     console.error('请检查 JSON 配置是否有误，借助于 JSON 格式化查看工具更有效', item, error)
                 }
-                // delete newItem.otherConfig;
-                // delete newItem.useOtherConfig;
                 delete newItem.onSearch;
                 delete newItem.onInit;
                 return newItem;
@@ -813,6 +797,7 @@ const Pro= (props) => {
                 {...rowSelectionProps}
                 request={request}
                 polling={polling}
+                onLoadingChange={onLoadingChange}
             />
         </div>
     );
