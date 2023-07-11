@@ -339,11 +339,15 @@ const Pro= (props) => {
                 try {
                     const otherObj = accept(other);
                     // 函数单独处理
-                    if (typeof otherObj.fieldProps === 'function') {
-                        const fn = otherObj.fieldProps.toString();
-                        const newFieldProps = new Function('form', 'config', `const request = ${aRequest};return (function ${fn})(form, config)`)
-                        otherObj.fieldProps = newFieldProps;
-                    }
+                    // if (typeof otherObj.fieldProps === 'function') {
+                    //     const fn = otherObj.fieldProps.toString();
+                    //     const newFieldProps = new Function('form', 'config', 
+                    //         `const request = ${aRequest};
+                    //          const getValue = ${getValue};
+                    //         return (function ${fn})(form, config)`
+                    //     );
+                    //     otherObj.fieldProps = newFieldProps;
+                    // }
                     Object.assign(newItem, otherObj);
                     if (!props.disabled) {
                         // 处理 onSearch，如果 有声明 fieldProps 为函数，则忽略 onSearch

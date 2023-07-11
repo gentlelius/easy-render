@@ -53,13 +53,6 @@ export default function Map({ children, title, ...rest }) {
         setCollapsed(collapsed => !collapsed);
     };
 
-    const basicStyle = { 
-        border: '1px solid #ccc', 
-        paddingBottom: 8, 
-        paddingTop: 8,
-        marginBottom: 24,
-    };
-
     return (
         <div className="w-100">
             <div>
@@ -67,8 +60,7 @@ export default function Map({ children, title, ...rest }) {
                 <a style={{ userSelect: 'none' }} onClick={toggle}>{collapsed ? '展开' : '折叠'}</a>
             </div>
             <div 
-                style={basicStyle}
-                className={`fr-collapsed ${collapsed ? 'fr-collapsed-close' : ''}`} 
+                className={`fr-object-container fr-collapsed ${collapsed ? 'fr-collapsed-close' : ''}`} 
             >
                 {children}
             </div>

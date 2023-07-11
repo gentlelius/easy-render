@@ -143,7 +143,7 @@ const ExtendedWidget = ({
     return (
         <Suspense fallback={<div>render error</div>}>
             <div className="fr-item-wrapper justify-center">
-                <Widget className="self-start" {...omit(finalProps, ['addons', 'schema', 'contentStyle'])}  />
+                <Widget className="self-start" {...omit(finalProps, ['schema', 'contentStyle'])}  />
             </div>
         </Suspense>
     );
