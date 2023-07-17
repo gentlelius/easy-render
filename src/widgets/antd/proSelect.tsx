@@ -61,7 +61,7 @@ type CommonProps = {
  * @returns 
  */
 const ProSelect: React.FC<ProFormSelectProps & CommonProps> = (props) => {
-    const { value, onChange, request, options } = props;
+    const { value, onChange, request } = props;
     // 解析 props.request 
     let req;
     if (request) {
@@ -77,8 +77,6 @@ const ProSelect: React.FC<ProFormSelectProps & CommonProps> = (props) => {
             )
         }
     }
-
-    console.log('options', options);
 
     const params: any = {
         fieldProps: {
