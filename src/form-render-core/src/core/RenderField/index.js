@@ -28,9 +28,11 @@ const RenderField = (props) => {
         displayType,
     } = props;
 
-    const { formData, flatten, actionsHandler, navsHandler, searchOptionsHandler, } = useStore();
+    const store = useStore();
+    const { formData, flatten, actionsHandler, navsHandler, searchOptionsHandler, } = store;
     const { debounceInput, readOnly, disabled, showValidate, validateMessages, locale, watch } = useStore2();
-    const { onValuesChange, onItemChange, setEditing, touchKey, _setErrors } = useTools();
+    const tools = useTools();
+    const { onValuesChange, onItemChange, setEditing, touchKey, _setErrors } = tools;
     const formDataRef = useRef();
     formDataRef.current = formData;
     // console.log('<renderField>', $id);
@@ -147,6 +149,8 @@ const RenderField = (props) => {
         dataPath,
         children,
         watch,
+        store,
+        tools,
     };
 
     // if (_schema && _schema.default !== undefined) {

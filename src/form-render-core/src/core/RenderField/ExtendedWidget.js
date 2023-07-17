@@ -31,6 +31,8 @@ const ExtendedWidget = ({
     actionsHandler,
     navsHandler,
     searchOptionsHandler,
+    tools,
+    store
 }) => {
     const {
         widgets,
@@ -44,9 +46,9 @@ const ExtendedWidget = ({
         resetFields,
         setErrorFields,
         removeErrorField,
-    } = useTools();
+    } = tools;
 
-    const { globalProps } = useStore();
+    const { globalProps } = store;
 
     let widgetName = getWidgetName(schema, mapping);
     const customName = schema.widget || schema['ui:widget'];
