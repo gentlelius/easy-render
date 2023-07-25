@@ -2,7 +2,7 @@ import React from 'react';
 import { UploadOutlined } from '@ant-design/icons';
 import { Upload, message, Button } from 'antd';
 
-export default function FrUpload({ action, value, name, data, onChange, uploadProps, buttonProps }) {
+export default function FrUpload({ action, value, name, data, onChange, uploadProps, buttonProps, disabled }) {
 
     const props = {
         name: name || 'data',
@@ -37,7 +37,7 @@ export default function FrUpload({ action, value, name, data, onChange, uploadPr
     return (
         <div className="fr-upload-mod">
             <Upload {...props} className="fr-upload-file">
-                <Button {...btnProps} />
+                <Button {...btnProps} disabled={disabled} />
             </Upload>
             {value && (
                 <a href={value} target="_blank" rel="noopener noreferrer" className="fr-upload-preview">

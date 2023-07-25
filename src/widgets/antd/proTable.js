@@ -291,7 +291,7 @@ const Pro= (props) => {
     const [optionsMap, setMap] = useState({});
     const [code, forceUpdate] = useState(0);
 
-    const onLoadingChange = useCallback(() => {
+    const onSubmit = useCallback(() => {
         actionRef.current?.clearSelected();
     }, []);
 
@@ -797,7 +797,7 @@ const Pro= (props) => {
                 {...rowSelectionProps}
                 request={request}
                 polling={polling}
-                onLoadingChange={onLoadingChange}
+                onSubmit={onSubmit}
             />
         </div>
     );
