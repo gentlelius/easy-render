@@ -74,7 +74,7 @@ const RenderField = (props) => {
     };
 
     // TODO: 优化一下，只有touch还是false的时候，setTouched
-    const onChange = (value) => {
+    const onChange = (value, isFirstChange) => {
         // 动过的key，算被touch了, 这里之后要考虑动的来源
         touchKey(dataPath);
         // 开始编辑，节流
@@ -90,8 +90,12 @@ const RenderField = (props) => {
             onValuesChange({ [dataPath]: value }, formDataRef.current);
         }
 
-        // TODO：校验时机应该延迟，后面研究下提 PR
+        // TODO: 校验时机应该延迟，后面研究下提 PR
         setTimeout(() => {
+            // TODO: 首次渲染会触发 onChange，不校验表单规则。这个是暂时的规则，后面看看能不能优化
+            if (isFirstChange) {
+                return;
+            }
             validateField({
                 path: dataPath,
                 formData: formDataRef.current,

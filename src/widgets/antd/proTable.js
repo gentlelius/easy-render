@@ -146,6 +146,22 @@ const parseHideExpression4Selection = (expression, config) => {
     return parseHideExpression4Column(expression, config);
 }
 
+const isDayjsOrMoment = (date) => {
+    return date?._isAMomentObject || dayjs.isDayjs(date);
+}
+
+// 检查是否有时分秒
+const getSafeDate = (date) => {
+    let newDate;
+    console.log(date);
+    if (date.format('HH:mm:ss') === '00:00:00') {
+        newDate = date.format('YYYY-MM-DD');
+    } else {
+        newDate = date.format('YYYY-MM-DD HH:mm:ss');
+    }
+    return newDate;
+}
+
 const getValidParams = (params, removePageInfo = true) => {
     if (!params) {
         return {};
@@ -172,12 +188,12 @@ const getValidParams = (params, removePageInfo = true) => {
         if (typeof payload[key] === 'string') {
             // trim
             payload[key] = payload[key].trim();
-        } else if (payload[key]?._isAMomentObject || dayjs.isDayjs(payload[key])) {
-            payload[key] = payload[key].format('YYYY-MM-DD');
+        } else if (isDayjsOrMoment(payload[key])) {
+            payload[key] = getSafeDate(payload[key]);
         } else if (Array.isArray(payload[key])) {
             payload[key] = payload[key].map(item => {
-                if (item?._isAMomentObject || dayjs.isDayjs(item)) {
-                    return item.format('YYYY-MM-DD');
+                if (isDayjsOrMoment(item)) {
+                    return getSafeDate(item);
                 }
                 return item;
             })
@@ -599,6 +615,7 @@ const Pro= (props) => {
         props.navs?.map((item, index) => (
             !parseHideExpression4Area(item.hidden, getAll()) && (
                 <Button 
+                    key={item.navName}
                     onClick={() => {
                         if (typeof props.navsHandler?.[index] === 'function') {
                             props.navsHandler[index](getValidParams(formRef.current?.getFieldsValue()), actionRef.current);

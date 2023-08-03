@@ -1,7 +1,6 @@
 /* eslint-disable complexity */
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect, useRef } from 'react';
 import { getWidgetName, extraSchemaList } from '../../mapping';
-import { useTools, useStore } from '../../hooks';
 import { transformProps } from '../../createWidget';
 
 import { isObjType, isListType, isObject } from '../../utils';
@@ -13,6 +12,24 @@ const ErrorSchema = (schema) => (
         <div>{JSON.stringify(schema)}</div>
     </div>
 );
+
+const WithExtraPropAddedWidget = (props) => {
+    const { Widget, ...rest } = props;
+    const hasSetDefaultValue = useRef(false);
+
+    useEffect(() => {
+        const { schema } = props;
+        if (schema?.props && hasSetDefaultValue.current === false) {
+            const { defaultValue } = schema.props;
+            if (defaultValue !== undefined && defaultValue !== null) {
+                hasSetDefaultValue.current = true;
+                props.onChange(defaultValue, true);
+            }
+        }
+    }, [props])
+
+    return <Widget {...rest} />;
+}
 
 const ExtendedWidget = ({
     schema,
@@ -64,6 +81,7 @@ const ExtendedWidget = ({
         return <ErrorSchema schema={schema} />;
     }
     const Widget = widgets[widgetName];
+    
     const extraSchema = extraSchemaList[widgetName];
 
     let widgetProps = {
@@ -139,17 +157,16 @@ const ExtendedWidget = ({
         delete finalProps.searchOptionsHandler;
     }
 
-    // delete finalProps.schema;
-    // delete finalProps.addons;
-
     return (
         <Suspense fallback={<div>render error</div>}>
             <div className="fr-item-wrapper justify-center">
-                <Widget className="self-start" {...omit(finalProps, ['schema', 'contentStyle'])}  />
+                <WithExtraPropAddedWidget Widget={Widget} className="self-start" {...omit(finalProps, ['contentStyle'])}  />
             </div>
         </Suspense>
     );
 };
+
+
 
 const areEqual = (prev, current) => {
     if (prev.schema && current.schema) {

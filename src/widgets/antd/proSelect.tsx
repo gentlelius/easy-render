@@ -6,10 +6,17 @@ import {
 } from "@ant-design/pro-components";
 import { getValue } from '../../storage';
 
+type SchemaType = {
+    props: {
+        defaultValue?: any
+    }
+}
+
 type CommonProps = {
     value: string,
     onChange: (v) => void,
     reqDisabled: boolean,
+    schema?: SchemaType,
 }
 
 /**
