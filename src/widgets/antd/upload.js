@@ -2,7 +2,7 @@ import React from 'react';
 import { UploadOutlined } from '@ant-design/icons';
 import { Upload, message, Button } from 'antd';
 
-export default function FrUpload({ action, value, name, data, onChange, uploadProps, buttonProps, disabled }) {
+export default function FrUpload({ action, value, name, data, onChange, uploadProps, buttonProps, disabled, schema }) {
 
     const props = {
         name: name || 'data',
@@ -22,6 +22,7 @@ export default function FrUpload({ action, value, name, data, onChange, uploadPr
         },
         withCredentials: true,
         ...uploadProps,
+        ...schema?.props,
     };
 
     const defaultBtnProps = {

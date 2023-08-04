@@ -93,9 +93,9 @@ const RenderField = (props) => {
         // TODO: 校验时机应该延迟，后面研究下提 PR
         setTimeout(() => {
             // TODO: 首次渲染会触发 onChange，不校验表单规则。这个是暂时的规则，后面看看能不能优化
-            if (isFirstChange) {
-                return;
-            }
+            // if (isFirstChange) {
+            //     return;
+            // }
             validateField({
                 path: dataPath,
                 formData: formDataRef.current,
