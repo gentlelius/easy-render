@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
     getDescriptorSimple,
-    dataToKeys,
     destructDataPath,
     getDataPath,
     isExpression,
@@ -61,7 +60,6 @@ const getRelatedPaths = (path, flatten) => {
 
 export const validateField = ({ path, formData, flatten, options }) => {
     const paths = getRelatedPaths(path, flatten);
-    // console.log('all relevant paths:', paths);
     const promiseArray = paths.map((path) => {
         const { id, dataIndex } = destructDataPath(path);
         if (flatten[id] || flatten[`${id}[]`]) {
@@ -123,10 +121,13 @@ const getAllPaths = (paths, flatten) => {
 export const validateAll = ({
     formData,
     flatten,
-    options, // {locale = 'cn', validateMessages = {}}
+    options,
 }) => {
-    const paths = dataToKeys(formData);
+    const keys = Object.keys(flatten);
+    const paths = keys;
     const allPaths = getAllPaths(paths, flatten);
+    allPaths.sort();
+    const hiddenMemory = [];
     const promiseArray = allPaths.map((path) => {
         const { id } = destructDataPath(path);
         if (flatten[id] || flatten[`${id}[]`]) {
@@ -134,7 +135,18 @@ export const validateAll = ({
             const singleData = get(formData, path);
             const schema = item.schema || {};
             const finalSchema = parseSchemaExpression(schema, formData, path);
-            return validateSingle(singleData, finalSchema, path, options, formData); // is a promise
+            // 存入 memory
+            if (finalSchema.hidden === true) {
+                hiddenMemory.push(path);
+            }
+            // 遍历 memory ，如果 path 是 memory 中的某个 path 的子集，那么也无须校验，直接返回，同时存入 memory
+            for (const p of hiddenMemory) {
+                if (path.startsWith(p)) {
+                    hiddenMemory.push(path);
+                    return Promise.resolve();
+                }
+            }
+            return validateSingle(singleData, finalSchema, path, options, formData);
         } 
         return Promise.resolve();
     });

@@ -15,7 +15,6 @@ export function getParamByName(name, url = window.location.href) {
 
 export function isUrl(string) {
     const protocolRE = /^(?:\w+:)?\/\/(\S+)$/;
-    // const domainRE = /^[^\s\.]+\.\S{2,}$/;
     if (typeof string !== 'string') return false;
     return protocolRE.test(string);
 }
@@ -97,8 +96,6 @@ export function getDataPath(id, dataIndex) {
     }
     let _id = id;
     if (Array.isArray(dataIndex)) {
-        // const matches = id.match(/\[\]/g) || [];
-        // const count = matches.length;
         dataIndex.forEach((item) => {
             _id = _id.replace(/\[\]/, `[${item}]`);
         });
@@ -930,9 +927,6 @@ export const cleanEmpty = (obj) => {
     return obj;
     
 };
-
-// const x = { a: 1, b: { c: 2 }, d: [{ e: 3, f: [{ g: 5 }] }, { e: 4 }] };
-// ['a', 'b.c', 'd[0].e', 'd[0].f[0].g', 'd[1].e']
 
 export const dataToKeys = (data, rootKey = '') => {
     let result = [];
