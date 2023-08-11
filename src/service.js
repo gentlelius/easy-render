@@ -2,7 +2,7 @@ import axios from 'axios';
 import { message } from 'antd';
 import { getBaseUrl } from './storage';
 
-axios.defaults.timeout = 6e3;
+axios.defaults.timeout = 10e3;
 axios.defaults.withCredentials = true;
 
 let specialConfig = {};

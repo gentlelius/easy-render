@@ -43,7 +43,8 @@
         "antd": "4.x",
         "rc-field-form": "^1.22.0",
         "react": ">=16.9.0",
-        "react-dom": ">=16.9.0"
+        "react-dom": ">=16.9.0",
+        "query-string": "^8.1.0"
     },
     "devDependencies": {
         "babel-plugin-import": "^1.13.5",
