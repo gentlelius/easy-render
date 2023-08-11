@@ -299,9 +299,9 @@ const getTextWidth = (text, font) => {
     return textmetrics.width;
 }
 
-const Pro= (props) => {
+const ProTable = (props) => {
     const actionRef = useRef();
-    const formRef = useRef();
+    const formRef = props.tableRef || useRef();
     const prettyCols = useRef(props.columns || []);
     const tableVisible = useRef(false);
     const [optionsMap, setMap] = useState({});
@@ -627,7 +627,7 @@ const Pro= (props) => {
                 >{item.navName}</Button>
             )
         ))
-    ), [props.navs, props.navsHandler, code])
+    ), [props.navs, props.navsHandler, code]);
 
     // 搜索表单区域的按钮组
     const getSearchOptions = useCallback(() => {

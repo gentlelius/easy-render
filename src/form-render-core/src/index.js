@@ -312,10 +312,11 @@ const Wrapper = (props) => {
     if (isProTable) {
         const { actionsHandler, navsHandler, searchOptionsHandler } = props;
         const handlers = { actionsHandler, navsHandler, searchOptionsHandler };
-        return <ProTable 
+        return <ProTable
             className="er-container" 
             {...tableProps}
             {...handlers}
+            tableRef={props.tableRef}
         />
     }
     return <App schema={_schema.current} {...rest} />;
