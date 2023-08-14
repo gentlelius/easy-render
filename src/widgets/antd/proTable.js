@@ -300,8 +300,8 @@ const getTextWidth = (text, font) => {
 }
 
 const ProTableWidget = (props) => {
-    const actionRef = useRef();
-    const formRef = props.tableRef || useRef();
+    const actionRef = props.tableRef || useRef();
+    const formRef = useRef();
     const prettyCols = useRef(props.columns || []);
     const tableVisible = useRef(false);
     const [optionsMap, setMap] = useState({});
