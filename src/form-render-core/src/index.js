@@ -8,6 +8,7 @@ import './atom.less';
 import './index.less';
 import { mapping as defaultMapping } from './mapping';
 import ProTable from '../../widgets/antd/proTable';
+import { pick } from 'lodash-es';
 
 const defaultFinish = (data, errors) => {
     console.log(data, errors);
@@ -310,13 +311,10 @@ const Wrapper = (props) => {
     }
     const [isProTable, tableProps] = getProTableConfig(_schema.current);
     if (isProTable) {
-        const { actionsHandler, navsHandler, searchOptionsHandler } = props;
-        const handlers = { actionsHandler, navsHandler, searchOptionsHandler };
         return <ProTable
             className="er-container" 
             {...tableProps}
-            {...handlers}
-            tableRef={props.tableRef}
+            {...pick(props, ['actionsHandler', 'navsHandler', 'searchOptionsHandler', 'tableAttribute'])}
         />
     }
     return <App schema={_schema.current} {...rest} />;

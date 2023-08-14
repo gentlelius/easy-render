@@ -176,7 +176,10 @@ export interface FRProps {
     actionsHandler?: Function[],
     navsHandler?: Function[],
     searchOptionsHandler?: Function[],
-    tableRef: any,
+    tableAttribute: {
+        tableRef: any,
+        formRef: any,
+    }
 }
 
 declare const FR: React.FC<FRProps>;
