@@ -299,7 +299,7 @@ const getTextWidth = (text, font) => {
     return textmetrics.width;
 }
 
-const ProTable = (props) => {
+const ProTableWidget = (props) => {
     const actionRef = useRef();
     const formRef = props.tableRef || useRef();
     const prettyCols = useRef(props.columns || []);
@@ -820,4 +820,4 @@ const ProTable = (props) => {
     );
 };
 
-export default Pro;
+export default ProTableWidget;
