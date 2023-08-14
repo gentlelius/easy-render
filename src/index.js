@@ -6,7 +6,7 @@ import { widgets as defaultWidgets } from './widgets/antd';
 
 export { setBaseUrl, setValue, setValueOnce, getValue, clearAll, destroy, getAll, } from './storage';
 export { defaultWidgets as widgets };
-export { useForm, connectForm, createWidget, mapping } from './form-render-core/src';
+export { useTable, useForm, connectForm, createWidget, mapping } from './form-render-core/src';
 
 const FR = ({ widgets, configProvider, ...rest }) => (
     <ConfigProvider locale={zhCN} {...configProvider}>

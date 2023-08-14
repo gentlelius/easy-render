@@ -300,7 +300,7 @@ const getTextWidth = (text, font) => {
 }
 
 const ProTableWidget = (props) => {
-    const { tableRef: tableRefIn, formRef: formRefIn } = props.tableAttribute || {};
+    const { tableRef: tableRefIn, formRef: formRefIn } = props.table || {};
     const actionRef = tableRefIn || useRef();
     const formRef = formRefIn || useRef();
     const prettyCols = useRef(props.columns || []);

@@ -16,6 +16,8 @@ const defaultFinish = (data, errors) => {
 };
 
 export { default as useForm } from './useForm';
+export { default as useTable } from './useTable';
+
 export { defaultMapping as mapping };
 export { default as connectForm } from './connectForm';
 
@@ -314,7 +316,7 @@ const Wrapper = (props) => {
         return <ProTable
             className="er-container" 
             {...tableProps}
-            {...pick(props, ['actionsHandler', 'navsHandler', 'searchOptionsHandler', 'tableAttribute'])}
+            {...pick(props, ['actionsHandler', 'navsHandler', 'searchOptionsHandler', 'table'])}
         />
     }
     return <App schema={_schema.current} {...rest} />;

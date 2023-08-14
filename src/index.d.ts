@@ -1,6 +1,8 @@
-import * as React from 'react';
-import { RuleItem } from 'async-validator';
-import { EvnetType } from './event';
+import type * as React from 'react';
+import type { RuleItem } from 'async-validator';
+import type { EvnetType } from './event';
+import type { ActionType } from '@ant-design/pro-table';
+import type { ProFormInstance } from '@ant-design/pro-form';
 
 interface SchemaBase {
     type: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'range' | 'html';
@@ -110,6 +112,13 @@ export interface FormInstance {
     _setErrors: (args: any) => void;
 }
 
+export interface TableInstance {
+    tableRef: React.MutableRefObject<ActionType | undefined>,
+    formRef: React.MutableRefObject<ProFormInstance | undefined>,
+    tableAction: ActionType,
+    formAction: ProFormInstance,
+}
+
 export type WatchProperties = {
     [path: string]:
     | {
@@ -176,15 +185,13 @@ export interface FRProps {
     actionsHandler?: Function[],
     navsHandler?: Function[],
     searchOptionsHandler?: Function[],
-    tableAttribute: {
-        tableRef: any,
-        formRef: any,
-    }
+    table: TableInstance
 }
 
 declare const FR: React.FC<FRProps>;
 
 export declare function useForm(params?: FormParams): FormInstance;
+export declare function useTable(params?: FormParams): TableInstance;
 
 export type ConnectedForm<T> = T & {
     form: FormInstance;
