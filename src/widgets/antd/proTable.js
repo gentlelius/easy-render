@@ -424,7 +424,7 @@ const ProTableWidget = (props) => {
                     }
                     // precision
                     if (typeof newItem.precision === 'number') {
-                        newItem.render = (text) => precision(text, newItem.precision);
+                        newItem.render = (text) => precision(text, newItem.precision, newItem.ignoreZero);
                     }
                     // percentage
                     if (newItem.percentage) {
