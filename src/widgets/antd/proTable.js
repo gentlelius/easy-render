@@ -655,6 +655,15 @@ const ProTableWidget = (props) => {
         const expandableConfig = props.expandable;
         const $updateKey = record.$updateKey || 'id';
 
+
+        let tableColumn = Array.isArray(expandableConfig.tableColumn) ? expandableConfig.tableColumn : [];
+        tableColumn = tableColumn.map(item => {
+            if (typeof item.precision === 'number') {
+                item.render = (text) => precision(text, item.precision, item.ignoreZero);
+            }
+            return item;
+        })
+
         if (expandableConfig.sourceDataType === 'request') {
             const requestFn = getParsedRequest(expandableConfig.request);
             return (
@@ -665,7 +674,7 @@ const ProTableWidget = (props) => {
                     options={false}
                     pagination={false}
                     request={() => requestFn(record)}
-                    columns={expandableConfig.tableColumn}
+                    columns={tableColumn}
                     rowKey={expandableConfig.subRowKey}
                     scroll={{
                         x: 'max-content',
@@ -674,7 +683,7 @@ const ProTableWidget = (props) => {
             )
         } else if (expandableConfig.sourceDataType === 'record') {
             const dataSource = Array.isArray(record[expandableConfig.fieldName]) ? record[expandableConfig.fieldName] : [];
-            if (expandableConfig.tableColumn.length) {
+            if (tableColumn.length) {
                 return (
                     <ProTable
                         key={$updateKey} 
@@ -682,7 +691,7 @@ const ProTableWidget = (props) => {
                         search={false}
                         options={false}
                         pagination={false}
-                        columns={expandableConfig.tableColumn}
+                        columns={tableColumn}
                         dataSource={dataSource}
                         rowKey={expandableConfig.subRowKey}
                         scroll={{
