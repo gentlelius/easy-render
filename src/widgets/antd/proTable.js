@@ -663,7 +663,7 @@ const ProTableWidget = (props) => {
         let tableColumn = Array.isArray(expandableConfig.tableColumn) ? expandableConfig.tableColumn : [];
         tableColumn = tableColumn.map(item => {
             if (typeof item.precision === 'number') {
-                item.render = (text) => precision(text, item.precision, item.ignoreZero);
+                item.render = (text) => isNaN(text) ? text : precision(text, item.precision, item.ignoreZero);
             }
             return item;
         })
