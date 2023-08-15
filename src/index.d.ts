@@ -128,7 +128,7 @@ export type WatchProperties = {
     | ((value: any) => void);
 };
 
-export interface FRProps {
+export interface ERProps {
     /** 表单 id */
     id?: string | number;
     /** 表单顶层的className */
@@ -185,10 +185,10 @@ export interface FRProps {
     actionsHandler?: Function[],
     navsHandler?: Function[],
     searchOptionsHandler?: Function[],
-    table: TableInstance
+    table?: TableInstance
 }
 
-declare const FR: React.FC<FRProps>;
+declare const ER: React.FC<ERProps>;
 
 export declare function useForm(params?: FormParams): FormInstance;
 export declare function useTable(params?: FormParams): TableInstance;
@@ -201,7 +201,7 @@ export declare function connectForm<T extends {} = any>(
     component: React.ComponentType<ConnectedForm<T>>
 ): React.ComponentType<T>;
 
-export default FR;
+export default ER;
 
 export declare function setBaseUrl(url: string): void;
 export declare function getBaseUrl(url: string): string;
