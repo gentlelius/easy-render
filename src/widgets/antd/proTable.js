@@ -153,7 +153,6 @@ const isDayjsOrMoment = (date) => {
 // 检查是否有时分秒
 const getSafeDate = (date) => {
     let newDate;
-    console.log(date);
     if (date.format('HH:mm:ss') === '00:00:00') {
         newDate = date.format('YYYY-MM-DD');
     } else {
@@ -337,7 +336,6 @@ const ProTableWidget = (props) => {
 
     const getColumn = () => {
         const config = getAll();
-        console.log('get column');
         return prettyCols.current
             // 过滤掉隐藏的
             .filter((item) => !parseHideExpression4Column(item.hidden, config))

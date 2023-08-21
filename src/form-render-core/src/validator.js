@@ -126,8 +126,6 @@ export const validateAll = ({
     options,
 }) => {
     // 这里的校验不能是 flatten，flatten 里面没法对数组具体的某一项进行校验，但也不能直接用 formData，因为 formData 里面的数据可能有多余的，会多出很多计算量
-    // const paths = dataToKeys(getUiFormData(formData));
-    // const paths = Object.keys(flatten);
     const uiFormData = getUiFormData(formData, flatten);
     const paths = dataToKeys(uiFormData);
     const allPaths = getAllPaths(paths, flatten);
@@ -184,7 +182,6 @@ const validateSingle = (data, schema = {}, path, options = {}, formData) => {
     const cn = defaultValidateMessagesCN;
     const en = defaultValidateMessages;
     const descriptor = getDescriptorSimple(schema, path, formData);
-    // console.log('descriptor, schema, path', descriptor, schema, path, data);
     // TODO: 有些情况会出现没有rules，需要看一下，先兜底
     let validator;
     try {
