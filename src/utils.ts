@@ -74,3 +74,15 @@ export function flattenObject(o, prefix = '', result = {}, keepNull = true) {
 export function flattenObjectAndMerge(o) {
     return Object.assign(o, flattenObject(o));
 }
+
+export function getUiFormData (formData, flatten) {
+    // 从 formData 里面获取 UI 的 formData，只取在 flatten 中的出现的key
+    const uiKeys = Object.keys(flatten);
+    const uiFormData = {};
+    Object.entries(formData).forEach(([key, value]) => {
+        if (uiKeys.some(uiKey => uiKey.includes(key) )) {
+            uiFormData[key] = value;
+        }
+    });
+    return uiFormData;
+}
