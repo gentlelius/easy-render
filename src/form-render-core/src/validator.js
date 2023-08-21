@@ -8,6 +8,7 @@ import {
     isObject,
     allPromiseFinish,
     removeDups,
+    dataToKeys,
 } from './utils';
 import { defaultValidateMessagesCN } from './validateMessageCN';
 import { defaultValidateMessages } from './validateMessage';
@@ -123,8 +124,21 @@ export const validateAll = ({
     flatten,
     options,
 }) => {
-    const keys = Object.keys(flatten);
-    const paths = keys;
+    // 这里的校验不能是 flatten，flatten 里面没法对数组具体的某一项进行校验，但也不能直接用 formData，因为 formData 里面的数据可能有多余的，会多出很多计算量
+    // const paths = dataToKeys(getUiFormData(formData));
+    // const paths = Object.keys(flatten);
+    const getUiFormData = (formData, flatten) => {
+        // 从 formData 里面获取 UI 的 formData，只取在 flatten 中的出现的key
+        const uiKeys = Object.keys(flatten);
+        const uiFormData = {};
+        Object.entries(formData).forEach(([key, value]) => {
+            if (uiKeys.some(uiKey => key === uiKey )) {
+                uiFormData[key] = value;
+            }
+        });
+        return uiFormData;
+    }
+    const paths = dataToKeys(getUiFormData(formData, flatten));
     const allPaths = getAllPaths(paths, flatten);
     allPaths.sort();
     const hiddenMemory = [];
