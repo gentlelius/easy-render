@@ -56,6 +56,7 @@ const TableList = ({
                         key={index.toString()}
                         id={child}
                         dataIndex={childIndex}
+                        column={1}
                     />
                 );
             },
