@@ -90,6 +90,13 @@ const TableList = ({
                             props.moreBtns?.length && props.moreBtns.map(item => <a onClick={() => {
                                 if (typeof item.action === 'function') {
                                     item.action(record);
+                                } else if (item.eventName) {
+                                    window.dispatchEvent(new CustomEvent(item.eventName, {
+                                        detail: record
+                                    }));
+                                    document.dispatchEvent(new CustomEvent(item.eventName, {
+                                        detail: record
+                                    }));
                                 }
                             }} style={{ marginLeft: 8 }}>{item.name}</a>)
                         }
