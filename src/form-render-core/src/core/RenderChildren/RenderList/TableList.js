@@ -70,7 +70,7 @@ const TableList = ({
             title: '操作',
             key: '$action',
             fixed: 'right',
-            width: 120,
+            width: props.actionsWidth || 120,
             render: (value, record) => {
                 const idx = record.index;
                 return (
