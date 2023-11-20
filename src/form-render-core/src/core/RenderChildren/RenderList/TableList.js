@@ -87,15 +87,15 @@ const TableList = ({
                             </Popconfirm>
                         )}
                         {
-                            props.moreBtns?.length && props.moreBtns.map(item => <a onClick={() => {
+                            props.moreBtns?.length && props.moreBtns.map((item, itemIdx) => <a key={item.eventName || itemIdx} onClick={() => {
                                 if (typeof item.action === 'function') {
                                     item.action(record);
                                 } else if (item.eventName) {
                                     window.dispatchEvent(new CustomEvent(item.eventName, {
-                                        detail: record
+                                        detail: displayList[idx]
                                     }));
                                     document.dispatchEvent(new CustomEvent(item.eventName, {
-                                        detail: record
+                                        detail: displayList[idx]
                                     }));
                                 }
                             }} style={{ marginLeft: 8 }}>{item.name}</a>)
