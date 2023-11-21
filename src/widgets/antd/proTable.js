@@ -795,8 +795,6 @@ const ProTableWidget = (props) => {
     
     const pureColumns = prettyCols.current.map(item => omit(item, ['otherConfig', 'useOtherConfig', 'hidden', 'precision', 'percentage', 'ignoreZero']));
 
-    console.log('pureProps', pureProps)
-
     return (
         <div style={{flex: 1, overflow: 'auto'}}>
             <ProTable
