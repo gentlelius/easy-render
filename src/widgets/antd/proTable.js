@@ -420,25 +420,34 @@ const ProTableWidget = (props) => {
                             }
                         }
                     }
-                    // 识别标题中的金额、费用、费，自动加上 precision，如果有 render 则忽略
-                    if (newItem.title && (newItem.title.endsWith('面值') || newItem.title.endsWith('费用') || newItem.title.endsWith('金额') || newItem.title.endsWith('费'))) {
-                        newItem.render = (text) => isNaN(text) ? text : precision(text, 10, true);
-                    }
-                    // precision
-                    if (typeof newItem.precision === 'number') {
-                        newItem.render = (text) => precision(text, newItem.precision, newItem.ignoreZero);
-                    }
-                    // percentage
-                    if (newItem.percentage) {
-                        const precisionCount = typeof newItem.precision === 'number' ? newItem.precision : 2;
-                        newItem.render = (text) => percentage(text, precisionCount);
-                    }
                     Object.assign(newItem, otherObj);
                 } catch (error) {
                     console.error('请检查 JSON 配置是否有误，借助于 JSON 格式化查看工具更有效', item, error)
                 }
                 delete newItem.onSearch;
                 delete newItem.onInit;
+                return newItem;
+            })
+            .map(item => {
+                // 处理 render，如果有 render 则忽略
+                if (item.render) {
+                    return item;
+                }
+
+                const newItem = { ...item };
+                // 识别标题中的金额、费用、费，自动加上 precision，如果有 render 则忽略
+                if (newItem.title && (newItem.title.endsWith('面值') || newItem.title.endsWith('费用') || newItem.title.endsWith('金额') || newItem.title.endsWith('费'))) {
+                    newItem.render = (text) => isNaN(text) ? text : precision(text, 10, true);
+                }
+                // precision
+                if (typeof newItem.precision === 'number') {
+                    newItem.render = (text) => precision(text, newItem.precision, newItem.ignoreZero);
+                }
+                // percentage
+                if (newItem.percentage) {
+                    const precisionCount = typeof newItem.precision === 'number' ? newItem.precision : 2;
+                    newItem.render = (text) => percentage(text, precisionCount);
+                }
                 return newItem;
             })
     }
