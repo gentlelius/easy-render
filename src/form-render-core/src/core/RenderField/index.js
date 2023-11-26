@@ -204,6 +204,9 @@ const RenderField = (props) => {
             </div>
         );
     }
+
+    const isHTML = _schema.widget === 'html';
+
     return (
         <>
             {_showTitle && titleElement}
@@ -211,9 +214,13 @@ const RenderField = (props) => {
                 <ExtendedWidget {...widgetProps} />
                 <Extra {...widgetProps} />
                 {
-                    hideErrorWhenNil && !hasError ? null : (
-                        <ErrorMessage {...messageProps} />
-                    )
+                    isHTML 
+                        ? <div style={{ paddingBottom: 12}}></div> 
+                        : (
+                            hideErrorWhenNil && !hasError ? null : (
+                                <ErrorMessage {...messageProps} />
+                            )
+                        )
                 }
             </div>
         </>

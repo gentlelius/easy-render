@@ -56,8 +56,8 @@ export default function Map({ children, title, ...rest }) {
     return (
         <div className="w-100">
             <div>
-                <span className="fr-label-title" style={{ fontSize: 16, fontWeight: 500, marginBottom: 12 }}>{title}</span>
-                <a style={{ userSelect: 'none' }} onClick={toggle}>{collapsed ? '展开' : '折叠'}</a>
+                <span className="fr-label-title" style={{ fontSize: 14, fontWeight: 500, marginBottom: 12 }}>{title}</span>
+                <a style={{ userSelect: 'none', fontSize: 12, }} onClick={toggle}>{collapsed ? '展开' : '折叠'}</a>
             </div>
             <div 
                 className={`fr-object-container fr-collapsed ${collapsed ? 'fr-collapsed-close' : ''}`} 
