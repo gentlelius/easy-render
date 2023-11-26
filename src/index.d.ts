@@ -1,8 +1,17 @@
 import type * as React from 'react';
 import type { RuleItem } from 'async-validator';
-import type { EvnetType } from './event';
 import type { ActionType } from '@ant-design/pro-table';
 import type { ProFormInstance } from '@ant-design/pro-form';
+
+declare class Event {
+    events: object;
+    constructor();
+    emit(name: string, ...params: any[]): void;
+    on(name: string, fn: Function): void;
+    off(name: string, fn: Function): void;
+    clear(name: string): void;
+    clearAll(): void;
+}
 
 interface SchemaBase {
     type: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'range' | 'html';
@@ -211,4 +220,4 @@ export declare function getValue(key: string): any;
 export declare function destroy(key: string): boolean;
 export declare function clearAll(): void;
 export declare function getAll(): Record<string, any>;
-export declare function getEvent(): EvnetType;
+export declare function getEvent(): typeof Event;

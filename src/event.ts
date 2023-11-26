@@ -34,5 +34,3 @@ export default class Event {
         this.events = {};
     }
 }
-
-export type EvnetType = typeof Event;
