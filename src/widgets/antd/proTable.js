@@ -839,7 +839,7 @@ const ProTableWidget = (props) => {
     }, 0);
 
     return (
-        <div style={{flex: 1, overflow: 'auto'}}>
+        <div style={{flex: 1}}>
             <ProTable
                 formRef={formRef}
                 actionRef={actionRef}
