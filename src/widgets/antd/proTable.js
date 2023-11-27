@@ -502,15 +502,23 @@ const ProTableWidget = (props) => {
         if (res?.data?.length) {
             // 智能宽度
             const autoWidth = (col) => {
-                if (col.valueType === 'option') {
-                    return col;
-                }
-                if (col.render) {
-                    return col;
-                }
+                
+               
                 if (col.width) {
                     return col;
                 }
+
+                if (col.valueType === 'option') {
+                    return col;
+                }
+                
+                if (col.render || col.valueType === 'select') {
+                    return {
+                        ...col,
+                        width: ~~(getTextWidth(col.title)+ 40)
+                    };
+                }
+                
                 const key = col.dataIndex;
                 const textList = res.data.map(item => item[key]);
                 const textWidthList = textList.map(item => getTextWidth(item));
@@ -520,7 +528,7 @@ const ProTableWidget = (props) => {
                 // const avgWidth = ~~textWidthList[0];
                 return {
                     ...col,
-                    width: Math.max(avgWidth, col.width) + 32,
+                    width: ~~(Math.max(avgWidth, getTextWidth(col.title)) + 40),
                 }
             };
             // nothing todo
@@ -529,7 +537,6 @@ const ProTableWidget = (props) => {
             cols = prettyCols.current
                 .map(props.widthDefault ? noop : autoWidth);
             
-
             // 表格 data 打平 & 合并
             if (!props.notFlatten) {
                 res.data = res.data.map(flattenObjectAndMerge)
@@ -820,7 +827,16 @@ const ProTableWidget = (props) => {
     
     const pureProps = omit(props, ['request', 'columns', 'actions', 'actionsHandler', 'navs', 'navsHandler', 'searchOptions', 'searchOptionsHandler', 'rowSelectionConfig', 'rowSelectionDisabled', 'polling', 'labelWidth', 'defaultCollapsed', 'actionsWidth', 'actionsPostion', 'notFlatten', 'disabled', 'manualRequest', 'widthDefault']);
     
-    const pureColumns = prettyCols.current.map(item => omit(item, ['otherConfig', 'useOtherConfig', 'hidden', 'precision', 'percentage', 'ignoreZero']));
+    const pureColumns = prettyCols.current.map(item => omit(item, ['fieldProps', 'otherConfig', 'useOtherConfig', 'hidden', 'precision', 'percentage', 'ignoreZero']));
+    
+    console.log(pureColumns)
+
+    const x = pureColumns.reduce((pre, cur) => {
+        if (cur.width) {
+            return pre + cur.width;
+        }
+        return pre + 100;
+    }, 0);
 
     return (
         <div style={{flex: 1, overflow: 'auto'}}>
@@ -844,7 +860,8 @@ const ProTableWidget = (props) => {
                 }}
                 toolBarRender={() => tools}
                 scroll={{
-                    x: 'max-content',
+                    // x: 'max-content',
+                    x,
                 }}
                 pagination={{
                     defaultPageSize: props.defaultPageSize || 20,
