@@ -519,13 +519,6 @@ const ProTableWidget = (props) => {
                     return col;
                 }
                 
-                if (col.render || col.valueType === 'select') {
-                    return {
-                        ...col,
-                        width: ~~(getTextWidth(col.title)+ 40)
-                    };
-                }
-                
                 const key = col.dataIndex;
                 const textList = res.data.map(item => item[key]);
                 const textWidthList = textList.map(item => getTextWidth(item));
