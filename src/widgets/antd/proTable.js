@@ -306,6 +306,7 @@ const ProTableWidget = (props) => {
     const tableVisible = useRef(false);
     const [optionsMap, setMap] = useState({});
     const [code, forceUpdate] = useState(0);
+    const [selRowKeys, setSelRowKeys] = useState(props.selectedRowKeys ?? []);
 
     const onSubmit = useCallback(() => {
         actionRef.current?.clearSelected();
@@ -540,6 +541,12 @@ const ProTableWidget = (props) => {
             // 表格 data 打平 & 合并
             if (!props.notFlatten) {
                 res.data = res.data.map(flattenObjectAndMerge)
+            }
+
+            // 是否默认全选
+            if (props.rowAllChecked === true) {
+                const keys = res.data.map(item => item[props.rowKey]);
+                setSelRowKeys(keys)
             }
         } else {
             cols = getColumn();
@@ -781,6 +788,8 @@ const ProTableWidget = (props) => {
                 // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
                 // 注释该行则默认不显示下拉选项
                 // selections: [ProTable.SELECTION_ALL, ProTable.SELECTION_INVERT],
+                selectedRowKeys: selRowKeys, // 使用 state 中的 selectedRowKeys
+                onChange: setSelRowKeys, // 更新选中行的 keys
                 getCheckboxProps(record) {
                     return {
                         disabled: getSelectionDisabled(props.rowSelectionDisabled, record, getAll()),
