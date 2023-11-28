@@ -307,6 +307,12 @@ const ProTableWidget = (props) => {
     const [optionsMap, setMap] = useState({});
     const [code, forceUpdate] = useState(0);
     const [selRowKeys, setSelRowKeys] = useState(props.selectedRowKeys ?? []);
+    const selectedRowsRef = useRef([]);
+
+    const handleRowSelectChange = useCallback((selectedRowKeys, selectedRows) => {
+        setSelRowKeys(selectedRowKeys);
+        selectedRowsRef.current = selectedRows;
+    }, [])
 
     const onSubmit = useCallback(() => {
         actionRef.current?.clearSelected();
@@ -662,7 +668,7 @@ const ProTableWidget = (props) => {
                     key={item.navName}
                     onClick={() => {
                         if (typeof props.navsHandler?.[index] === 'function') {
-                            props.navsHandler[index](getValidParams(formRef.current?.getFieldsValue()), actionRef.current, selRowKeys);
+                            props.navsHandler[index](getValidParams(formRef.current?.getFieldsValue()), actionRef.current, selectedRowsRef.current);
                         } else {
                             console.warn(`nav ${index} is not function`);
                         }
@@ -671,7 +677,7 @@ const ProTableWidget = (props) => {
                 >{item.navName}</Button>
             )
         ))
-    ), [props.navs, props.navsHandler, code, selRowKeys]);
+    ), [props.navs, props.navsHandler, code]);
 
     // 搜索表单区域的按钮组
     const getSearchOptions = useCallback(() => {
@@ -681,7 +687,7 @@ const ProTableWidget = (props) => {
                     key={item.name}
                     onClick={() => {
                         if (typeof props.searchOptionsHandler?.[index] === 'function') {
-                            props.searchOptionsHandler[index](formRef.current.getFieldsValue(), actionRef.current, selRowKeys);
+                            props.searchOptionsHandler[index](formRef.current.getFieldsValue(), actionRef.current, selectedRowsRef.current);
                         } else {
                             console.warn(`searchOptions ${index} is not function`);
                         }
@@ -690,7 +696,7 @@ const ProTableWidget = (props) => {
                 >{item.name}</Button>
             )
         )) : []
-    }, [props.searchOptions, props.searchOptionsHandler, selRowKeys]);
+    }, [props.searchOptions, props.searchOptionsHandler]);
 
     // 行展开内容
     const expandedRowRender = props.expandable ? (record) => {
@@ -789,7 +795,7 @@ const ProTableWidget = (props) => {
                 // 注释该行则默认不显示下拉选项
                 // selections: [ProTable.SELECTION_ALL, ProTable.SELECTION_INVERT],
                 selectedRowKeys: selRowKeys, // 使用 state 中的 selectedRowKeys
-                onChange: setSelRowKeys, // 更新选中行的 keys
+                onChange: handleRowSelectChange, // 更新选中行的 keys
                 getCheckboxProps(record) {
                     return {
                         disabled: getSelectionDisabled(props.rowSelectionDisabled, record, getAll()),
