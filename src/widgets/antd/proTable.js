@@ -662,7 +662,7 @@ const ProTableWidget = (props) => {
                     key={item.navName}
                     onClick={() => {
                         if (typeof props.navsHandler?.[index] === 'function') {
-                            props.navsHandler[index](getValidParams(formRef.current?.getFieldsValue()), actionRef.current);
+                            props.navsHandler[index](getValidParams(formRef.current?.getFieldsValue()), actionRef.current, selRowKeys);
                         } else {
                             console.warn(`nav ${index} is not function`);
                         }
@@ -671,7 +671,7 @@ const ProTableWidget = (props) => {
                 >{item.navName}</Button>
             )
         ))
-    ), [props.navs, props.navsHandler, code]);
+    ), [props.navs, props.navsHandler, code, selRowKeys]);
 
     // 搜索表单区域的按钮组
     const getSearchOptions = useCallback(() => {
@@ -681,7 +681,7 @@ const ProTableWidget = (props) => {
                     key={item.name}
                     onClick={() => {
                         if (typeof props.searchOptionsHandler?.[index] === 'function') {
-                            props.searchOptionsHandler[index](formRef.current.getFieldsValue(), actionRef.current);
+                            props.searchOptionsHandler[index](formRef.current.getFieldsValue(), actionRef.current, selRowKeys);
                         } else {
                             console.warn(`searchOptions ${index} is not function`);
                         }
@@ -690,7 +690,7 @@ const ProTableWidget = (props) => {
                 >{item.name}</Button>
             )
         )) : []
-    }, [props.searchOptions, props.searchOptionsHandler]);
+    }, [props.searchOptions, props.searchOptionsHandler, selRowKeys]);
 
     // 行展开内容
     const expandedRowRender = props.expandable ? (record) => {

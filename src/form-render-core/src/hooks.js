@@ -11,25 +11,6 @@ export const useStore = () => useContext(StoreCtx);
 export const useStore2 = () => useContext(Store2Ctx);
 
 export const useSet = (initState) => {
-    // setState可能是传入一个函数
-    // 比如
-    // setState((state) => {
-    //   const newState = trans(state);
-    //   return newState;
-    // })
-    // 也有可能是传入一个更加复炸的对象
-    // 比如
-    // setState({
-    //   payload: {},
-    //   action: '',
-    // })
-    // 甚至更变态，传入 一个这样的数据结构
-    // setState({
-    //   payload: (state) => {
-    //     const newState = trans(state);
-    //     return newState;
-    //   }
-    // })
     const [state, setState] = useReducer((state, newState) => {
         let action = newState;
         if (typeof newState === 'function') {
@@ -42,11 +23,6 @@ export const useSet = (initState) => {
             }
         }
         const result = { ...state, ...action };
-        // console.group(newState.action || 'action'); // TODO: give it a name
-        // console.log('%cState:', 'color: #9E9E9E; font-weight: 700;', state);
-        // console.log('%cAction:', 'color: #00A7F7; font-weight: 700;', action);
-        // console.log('%cNext:', 'color: #47B04B; font-weight: 700;', result);
-        // console.groupEnd();
         return result;
     }, initState);
     return [state, setState];
