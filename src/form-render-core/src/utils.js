@@ -890,8 +890,8 @@ const updateSingleSchema = (schema) => {
 // 检验一个string是 function（传统活箭头函数）
 export const parseFunctionString = (string) => {
     if (typeof string !== 'string') return false;
-    const reg1 = /^{{\s+(function.+)\s+}}$/;
-    const reg2 = /^{{\s+(.+=>.+)\s+}}$/;
+    const reg1 = /^{{\s*(function.+)\s*}}$/;
+    const reg2 = /^{{\s*(.+=>.+)\s*}}$/;
     if (string.match(reg1)) {
         return string.match(reg1)[1];
     }
