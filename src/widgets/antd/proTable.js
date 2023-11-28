@@ -827,7 +827,7 @@ const ProTableWidget = (props) => {
     
     const pureProps = omit(props, ['request', 'columns', 'actions', 'actionsHandler', 'navs', 'navsHandler', 'searchOptions', 'searchOptionsHandler', 'rowSelectionConfig', 'rowSelectionDisabled', 'polling', 'labelWidth', 'defaultCollapsed', 'actionsWidth', 'actionsPostion', 'notFlatten', 'disabled', 'manualRequest', 'widthDefault']);
     
-    const pureColumns = prettyCols.current.map(item => omit(item, ['fieldProps', 'otherConfig', 'useOtherConfig', 'hidden', 'precision', 'percentage', 'ignoreZero']));
+    const pureColumns = prettyCols.current.map(item => omit(item, ['otherConfig', 'useOtherConfig', 'hidden', 'precision', 'percentage', 'ignoreZero']));
     
     console.log(pureColumns)
 
