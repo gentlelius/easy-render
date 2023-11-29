@@ -126,6 +126,9 @@ export interface TableInstance {
     formRef: React.MutableRefObject<ProFormInstance | undefined>,
     tableAction: ActionType,
     formAction: ProFormInstance,
+    moreAction: {
+        getSelectedRows: () => void
+    },
 }
 
 export type WatchProperties = {

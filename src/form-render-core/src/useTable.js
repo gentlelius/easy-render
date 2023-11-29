@@ -7,6 +7,7 @@ const useTable = (props) => {
     const val = {
         tableRef,
         formRef,
+        moreAction: {}
     }
 
     Object.defineProperty(val, 'tableAction', {

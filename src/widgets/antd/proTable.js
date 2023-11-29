@@ -299,7 +299,7 @@ const getTextWidth = (text, font) => {
 }
 
 const ProTableWidget = (props) => {
-    const { tableRef: tableRefIn, formRef: formRefIn } = props.table || {};
+    const { tableRef: tableRefIn, formRef: formRefIn, moreAction } = props.table || {};
     const actionRef = tableRefIn || useRef();
     const formRef = formRefIn || useRef();
     const prettyCols = useRef(props.columns || []);
@@ -309,6 +309,14 @@ const ProTableWidget = (props) => {
     const [selRowKeys, setSelRowKeys] = useState(props.selectedRowKeys ?? []);
     const selectedRowsRef = useRef([]);
     const [dataSource, setDataSource] = useState([]);
+    
+    if (moreAction) {
+        moreAction.getSelectedRows = () => selectedRowsRef.current;
+    }
+
+    useEffect(() => {
+        selectedRowsRef.current = dataSource.filter(item => selectedRowsRef.current.find(selectedItem => selectedItem[props.rowKey] === item[props.rowKey]));
+    }, [dataSource])
 
     const handleRowSelectChange = useCallback((selectedRowKeys, selectedRows) => {
         setSelRowKeys(selectedRowKeys);
@@ -547,6 +555,7 @@ const ProTableWidget = (props) => {
             if (props.rowAllChecked === true) {
                 const keys = res.data.map(item => item[props.rowKey]);
                 setSelRowKeys(keys)
+                selectedRowsRef.current = res.data;
             }
         } else {
             cols = getColumn();
@@ -839,9 +848,7 @@ const ProTableWidget = (props) => {
     
     const pureProps = omit(props, ['request', 'columns', 'actions', 'actionsHandler', 'navs', 'navsHandler', 'searchOptions', 'searchOptionsHandler', 'rowSelectionConfig', 'rowSelectionDisabled', 'polling', 'labelWidth', 'defaultCollapsed', 'actionsWidth', 'actionsPostion', 'notFlatten', 'disabled', 'manualRequest', 'widthDefault']);
     
-    const pureColumns = prettyCols.current.map(item => omit(item, ['otherConfig', 'useOtherConfig', 'hidden', 'precision', 'percentage', 'ignoreZero']));
-    
-    console.log(pureColumns)
+    const pureColumns = prettyCols.current.map(item => omit(item, ['otherConfig', 'useOtherConfig', 'hidden', 'precision', 'percentage', 'ignoreZero']));    
 
     const x = pureColumns.reduce((pre, cur) => {
         if (cur.width) {
