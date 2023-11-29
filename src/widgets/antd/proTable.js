@@ -308,6 +308,7 @@ const ProTableWidget = (props) => {
     const [code, forceUpdate] = useState(0);
     const [selRowKeys, setSelRowKeys] = useState(props.selectedRowKeys ?? []);
     const selectedRowsRef = useRef([]);
+    const [dataSource, setDataSource] = useState([]);
 
     const handleRowSelectChange = useCallback((selectedRowKeys, selectedRows) => {
         setSelRowKeys(selectedRowKeys);
@@ -680,7 +681,10 @@ const ProTableWidget = (props) => {
                     key={item.name}
                     onClick={() => {
                         if (typeof props.searchOptionsHandler?.[index] === 'function') {
-                            props.searchOptionsHandler[index](formRef.current.getFieldsValue(), actionRef.current, selectedRowsRef.current);
+                            props.searchOptionsHandler[index](formRef.current.getFieldsValue(), {
+                                ...actionRef.current,
+                                setDataSource,
+                            }, selectedRowsRef.current);
                         } else {
                             console.warn(`searchOptions ${index} is not function`);
                         }
@@ -861,7 +865,7 @@ const ProTableWidget = (props) => {
                     optionRender: (searchConfig, formProps, dom) => (
                         [
                             ...getSearchOptions(searchConfig, formProps),
-                            ...dom,
+                            ...(props.hideSearchAndReset ? [] : dom),
                         ]
                     ),
                     className: 'search-action',
@@ -879,6 +883,7 @@ const ProTableWidget = (props) => {
                 columns={pureColumns}
                 expandable={{expandedRowRender}}
                 {...rowSelectionProps}
+                dataSource={dataSource?.length ? dataSource : undefined}
                 request={request}
                 polling={polling}
                 onSubmit={onSubmit}
