@@ -312,6 +312,7 @@ const ProTableWidget = (props) => {
     
     if (moreAction) {
         moreAction.getSelectedRows = () => selectedRowsRef.current;
+        moreAction.setDataSource = setDataSource;
     }
 
     useEffect(() => {
