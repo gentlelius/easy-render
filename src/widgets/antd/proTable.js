@@ -490,7 +490,14 @@ const ProTableWidget = (props) => {
                                 key={item.actionName}
                                 onClick={() => {
                                     if (typeof props.actionsHandler?.[index] === 'function') {
-                                        props.actionsHandler[index](record, tableRef);
+                                        props.actionsHandler[index](
+                                            record, 
+                                            {
+                                                ...tableRef,
+                                                setDataSource,
+                                            },
+                                            selectedRowsRef.current,
+                                        );
                                     } else {
                                         console.warn(`action ${index} is not function`);
                                     }
@@ -671,7 +678,14 @@ const ProTableWidget = (props) => {
                     key={item.navName}
                     onClick={() => {
                         if (typeof props.navsHandler?.[index] === 'function') {
-                            props.navsHandler[index](getValidParams(formRef.current?.getFieldsValue()), actionRef.current, selectedRowsRef.current);
+                            props.navsHandler[index](
+                                getValidParams(formRef.current?.getFieldsValue()),
+                                { 
+                                    ...actionRef.current,
+                                    setDataSource
+                                }, 
+                                selectedRowsRef.current
+                            );
                         } else {
                             console.warn(`nav ${index} is not function`);
                         }
@@ -690,10 +704,14 @@ const ProTableWidget = (props) => {
                     key={item.name}
                     onClick={() => {
                         if (typeof props.searchOptionsHandler?.[index] === 'function') {
-                            props.searchOptionsHandler[index](formRef.current.getFieldsValue(), {
-                                ...actionRef.current,
-                                setDataSource,
-                            }, selectedRowsRef.current);
+                            props.searchOptionsHandler[index](
+                                formRef.current.getFieldsValue(), 
+                                {
+                                    ...actionRef.current,
+                                    setDataSource,
+                                }, 
+                                selectedRowsRef.current
+                            );
                         } else {
                             console.warn(`searchOptions ${index} is not function`);
                         }
