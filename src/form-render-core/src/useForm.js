@@ -385,7 +385,7 @@ const useForm = (props) => {
         setEditing,
         syncStuff,
         showValidate: _showValidate,
-        // firstMount,
+        firstMount,
         setFirstMount,
         // logs
         logOnMount,
