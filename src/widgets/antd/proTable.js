@@ -308,11 +308,18 @@ const ProTableWidget = (props) => {
     const [code, forceUpdate] = useState(0);
     const [selRowKeys, setSelRowKeys] = useState(props.selectedRowKeys ?? []);
     const selectedRowsRef = useRef([]);
-    const [dataSource, setDataSource] = useState([]);
-    
+    const [dataSource, setDataSourceNative] = useState([]);
+    const dataSourceRef = useRef(dataSource);
+
+    const setDataSource = (data) => {
+        dataSourceRef.current = data;
+        setDataSourceNative(data);
+    }
+
     if (moreAction) {
         moreAction.getSelectedRows = () => selectedRowsRef.current;
         moreAction.setDataSource = setDataSource;
+        moreAction.getDataSource = () => dataSourceRef.current;
     }
 
     useEffect(() => {
@@ -524,6 +531,8 @@ const ProTableWidget = (props) => {
         }
 
         if (res?.data?.length) {
+            // 保存 dataSource
+            dataSourceRef.current = res.data;
             // 智能宽度
             const autoWidth = (col) => {
                 
@@ -577,6 +586,7 @@ const ProTableWidget = (props) => {
             prettyCols.current = cols;
             forceUpdate(state => state + 1);
         }
+
         return res;
     }, [props])
 
