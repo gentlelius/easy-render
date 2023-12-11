@@ -2,6 +2,8 @@ import React from 'react';
 import Core from '../../index';
 import { Button, Table, Popconfirm } from 'antd';
 import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
+import { parseHideExpression4Action } from '../../../../../helper';
+import { getAll } from '../../../../../storage';
 
 const FIELD_LENGTH = 170;
 
@@ -88,18 +90,30 @@ const TableList = ({
                         <a style={{ marginLeft: 8 }}>删除</a>
                     </Popconfirm>
                 ),
-                props.moreBtns?.length && props.moreBtns.map((item, itemIdx) => <a key={item.eventName || itemIdx} onClick={() => {
-                    if (typeof item.action === 'function') {
-                        item.action(record);
-                    } else if (item.eventName) {
-                        window.dispatchEvent(new CustomEvent(item.eventName, {
-                            detail: displayList[idx]
-                        }));
-                        document.dispatchEvent(new CustomEvent(item.eventName, {
-                            detail: displayList[idx]
-                        }));
-                    }
-                }} style={{ marginLeft: 8 }}>{item.name}</a>),
+                props.moreBtns?.length
+                && props.moreBtns
+                    .filter((item) => !parseHideExpression4Action(item.hidden, displayList[idx], getAll()))
+                    .map((item, itemIdx) => (
+                        <a 
+                            key={item.eventName || itemIdx}
+                            onClick={() => {
+                                if (typeof item.action === 'function') {
+                                    item.action(record);
+                                } else if (item.eventName) {
+                                    window.dispatchEvent(new CustomEvent(item.eventName, {
+                                        detail: displayList[idx]
+                                    }));
+                                    document.dispatchEvent(new CustomEvent(item.eventName, {
+                                        detail: displayList[idx]
+                                    }));
+                                }
+                            }} 
+                            style={{ marginLeft: 8 }}
+                        >
+                            {item.name}
+                        </a>
+                        )   
+                    ),
                 !props.hideMove && (
                     <div key='move'>
                         <ArrowUpOutlined

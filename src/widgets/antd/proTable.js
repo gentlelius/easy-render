@@ -7,8 +7,16 @@ import { aRequest } from '../../service';
 import { getAll, getValue, getEvent, setValue } from '../../storage';
 import { flattenObjectAndMerge, flattenObject } from '../../utils';
 import qs from 'query-string';
-import jsep from 'jsep';
 import { Decimal } from 'decimal.js';
+import { 
+    getSafeConfig, 
+    getSelectionDisabled,
+    parseHideExpression4Action,
+    parseHideExpression4Column,
+    parseHideExpression4Area,
+    parseHideExpression4Selection,
+    isDayjsOrMoment
+} from '../../helper';
 
 Number.prototype.toFixed = function(precision) {
     return new Decimal(this).toFixed(precision);
@@ -36,118 +44,6 @@ const percentage = (num, precisionCount = 2) => {
 
 const genID = (n) => {
     return Math.random().toString(36).slice(3, n + 3)
-}
-
-const getSafeConfig = (config, expression) => {
-    const ast = jsep(expression)
-    const collection = traverseAstAndGetIdentifier(ast);
-    config = collection.filter(name => !config.hasOwnProperty(name)).reduce((pre, cur) => ({...pre, [cur]: undefined}), config)
-    return config;
-}
-
-const getSelectionDisabled = (expression, record, config) => {
-    if (!expression || typeof expression !== 'string') {
-        return false;
-    }
-    if (expression.startsWith('{{') && expression.endsWith('}}')) {
-        expression = expression.slice(2, -2);
-        config = getSafeConfig(config, expression);
-        return new Function('record', 'config', `
-            let flag = false;
-            try {
-                with(config) {
-                    flag = ${expression};
-                }
-            } catch(e) {
-            }
-            return flag;
-        `
-        )(record, config);
-
-    } else {
-        return false;
-    }
-}
-
-const parseHideExpression4Action = (expression, record, config) => {
-    if (typeof expression === 'boolean') {
-        return expression;
-    }
-    if (!expression) {
-        return false;
-    }
-    if (expression.startsWith('{{') && expression.endsWith('}}')) {
-        expression = expression.slice(2, -2);
-        config = getSafeConfig(config, expression);
-        return new Function('record', 'config', `
-            let flag = false;
-            try {
-                with(config) {
-                    flag = ${expression};
-                }
-            } catch(e) {
-            }
-            return flag;
-        `
-        )(record, config);
-    }
-    return false;
-}
-
-const traverseAstAndGetIdentifier = (ast, collection = []) => {
-    if (ast.type === 'Identifier') {
-        if (collection.includes(ast.name)) {
-            return collection;
-        }
-        collection.push(ast.name);
-        return collection;
-    }
-    if (ast.type === 'BinaryExpression' || ast.type === 'LogicalExpression') {
-        traverseAstAndGetIdentifier(ast.left, collection);
-        traverseAstAndGetIdentifier(ast.right, collection);
-    } else if (ast.type === 'UnaryExpression') {
-        traverseAstAndGetIdentifier(ast.argument, collection);
-    }
-    return collection;
-}
-
-const parseHideExpression4Column = (expression, config) => {
-    if (typeof expression === 'boolean') {
-        return expression;
-    }
-    if (!expression) {
-        return false;
-    }
-    config = cloneDeep(config);
-    if (expression.startsWith('{{') && expression.endsWith('}}')) {
-        expression = expression.slice(2, -2);
-        config = getSafeConfig(config, expression);
-        return new Function('config', `
-            let flag = false;
-            try {
-                with(config) {
-                    flag = ${expression};
-                }
-            } catch(e) {
-                console.log(e);
-            }
-            return flag;
-        `
-        )(config);
-    }
-    return false;
-}
-
-const parseHideExpression4Area = (expression, config) => {
-    return parseHideExpression4Column(expression, config);
-}
-
-const parseHideExpression4Selection = (expression, config) => {
-    return parseHideExpression4Column(expression, config);
-}
-
-const isDayjsOrMoment = (date) => {
-    return date?._isAMomentObject || dayjs.isDayjs(date);
 }
 
 // 检查是否有时分秒
