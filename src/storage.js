@@ -53,6 +53,16 @@ let baseUrl;
 export function setBaseUrl(url) {
     baseUrl = url;
 }
+
 export function getBaseUrl() {
     return baseUrl;
+}
+
+let envConfig;
+export function setEnvConfig(config) {
+    envConfig = config;
+}
+
+export function getEnvConfig() {
+    return envConfig;
 }

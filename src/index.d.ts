@@ -217,6 +217,7 @@ export declare function connectForm<T extends {} = any>(
 
 export default ER;
 
+export declare function setEnvConfig(config: object): void;
 export declare function setBaseUrl(url: string): void;
 export declare function getBaseUrl(url: string): string;
 export declare function setValue(key: string, value: any): void;

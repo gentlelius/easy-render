@@ -4,7 +4,7 @@ import ProTable from '@ant-design/pro-table';
 import { omit, cloneDeep } from 'lodash-es';
 import dayjs from 'dayjs';
 import { aRequest } from '../../service';
-import { getAll, getValue, getEvent, setValue } from '../../storage';
+import { getAll, getValue, getEvent, setValue, getEnvConfig } from '../../storage';
 import { flattenObjectAndMerge, flattenObject } from '../../utils';
 import qs from 'query-string';
 import { Decimal } from 'decimal.js';
@@ -49,7 +49,10 @@ const genID = (n) => {
 // 检查是否有时分秒
 const getSafeDate = (date) => {
     let newDate;
-    if (date.format('HH:mm:ss') === '00:00:00') {
+    const envConfig = getEnvConfig();
+    if (envConfig.dateFormat === 'YYYY-MM-DD') {
+        newDate = date.format('YYYY-MM-DD');
+    } else if (date.format('HH:mm:ss') === '00:00:00') {
         newDate = date.format('YYYY-MM-DD');
     } else {
         newDate = date.format('YYYY-MM-DD HH:mm:ss');
