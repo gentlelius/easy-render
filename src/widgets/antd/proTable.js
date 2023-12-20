@@ -208,8 +208,12 @@ const getTextWidth = (text, font) => {
 
 const ProTableWidget = (props) => {
     const { tableRef: tableRefIn, formRef: formRefIn, moreAction } = props.table || {};
-    let actionRef = tableRefIn;
-    let formRef = formRefIn;
+    
+    const backupTableRef = useRef();
+    const backupFormRef = useRef();
+
+    let actionRef = tableRefIn || backupTableRef;
+    let formRef = formRefIn || backupFormRef;
     
     // 内部数据源
     const inlineValue = useRef({});
