@@ -562,8 +562,8 @@ const ProTableWidget = (props) => {
             (error) => {
                 message.error(error.response.data);
             },
-            moreAction.getInlineValue,
-            moreAction.setInlineValue,
+            moreAction?.getInlineValue,
+            moreAction?.setInlineValue,
         )
         : (
             // 没有 request 就走默认的，默认的得传url ，没有 URL则什么都不请求
@@ -593,7 +593,7 @@ const ProTableWidget = (props) => {
                     }
                 }).then(reqThen)
                 : () => Promise.resolve(({ data: [], success: true }))
-        ), [props, reqThen]);
+        ), [props, reqThen, moreAction]);
 
     // 在没有 columns 的时候得清空 request
     if (!props.columns) {
@@ -624,7 +624,7 @@ const ProTableWidget = (props) => {
                 >{item.navName}</Button>
             )
         ))
-    ), [props.navs, props.navsHandler, code]);
+    ), [props.navs, props.navsHandler, code, moreAction]);
 
     // 搜索表单区域的按钮组
     const getSearchOptions = useCallback(() => {
@@ -650,7 +650,7 @@ const ProTableWidget = (props) => {
                 >{item.name}</Button>
             )
         )) : []
-    }, [props.searchOptions, props.searchOptionsHandler]);
+    }, [props.searchOptions, props.searchOptionsHandler, moreAction]);
 
     // 行展开内容
     const expandedRowRender = props.expandable ? (record) => {
@@ -671,8 +671,9 @@ const ProTableWidget = (props) => {
             const requestFn = getParsedRequest(expandableConfig.request,
                 undefined,
                 undefined,
-                moreAction.getInlineValue,
-                moreAction.setInlineValue,);
+                moreAction?.getInlineValue,
+                moreAction?.setInlineValue
+            );
             return (
                 <ProTable
                     key={$updateKey}
