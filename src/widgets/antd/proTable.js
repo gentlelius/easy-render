@@ -135,7 +135,8 @@ const getPolling = (expression, config) => {
 const getParsedRequest = (requestFnStr, 
     thenFn = res => res,
     catchFn = res => console.error(res),
-    inlineValue = {},
+    getInlineValue,
+    setInlineValue,
 ) => (params, sorter, filter) => (
     new Function(
         'request', 
@@ -148,7 +149,8 @@ const getParsedRequest = (requestFnStr,
         'genID',
         'dayjs',
         'qs',
-        'inlineValue',
+        'getInlineValue',
+        'setInlineValue',
         `return (${requestFnStr})(${JSON.stringify(getValidParams(params, false))},${JSON.stringify(sorter)},${JSON.stringify(filter)})`
     )
     (
@@ -162,7 +164,8 @@ const getParsedRequest = (requestFnStr,
         genID,
         dayjs,
         qs,
-        inlineValue,
+        getInlineValue,
+        setInlineValue,
     ).then(thenFn, catchFn)
 );
 
@@ -559,7 +562,8 @@ const ProTableWidget = (props) => {
             (error) => {
                 message.error(error.response.data);
             },
-            inlineValue.current,
+            moreAction.getInlineValue,
+            moreAction.setInlineValue,
         )
         : (
             // 没有 request 就走默认的，默认的得传url ，没有 URL则什么都不请求
@@ -664,7 +668,11 @@ const ProTableWidget = (props) => {
         })
 
         if (expandableConfig.sourceDataType === 'request') {
-            const requestFn = getParsedRequest(expandableConfig.request, undefined, undefined, inlineValue.current);
+            const requestFn = getParsedRequest(expandableConfig.request,
+                undefined,
+                undefined,
+                moreAction.getInlineValue,
+                moreAction.setInlineValue,);
             return (
                 <ProTable
                     key={$updateKey}
