@@ -60,6 +60,7 @@ const Core = ({
 
     try {
         rootValue = getValueByPath(formData, parentPath);
+        // console.log(rootValue, parentPath, 'rootValue')
     } catch (error) {}
 
     // 节流部分逻辑，编辑时不执行
@@ -98,6 +99,7 @@ const Core = ({
         contentStyle,
         ...rest,
     };
+
     return <CoreRender {...dataProps} />;
 };
 

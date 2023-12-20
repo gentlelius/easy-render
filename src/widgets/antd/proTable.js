@@ -132,7 +132,11 @@ const getPolling = (expression, config) => {
     return undefined;
 }
 
-const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => console.error(res)) => (params, sorter, filter) => (
+const getParsedRequest = (requestFnStr, 
+    thenFn = res => res,
+    catchFn = res => console.error(res),
+    inlineValue = {},
+) => (params, sorter, filter) => (
     new Function(
         'request', 
         'percentage', 
@@ -144,6 +148,7 @@ const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => co
         'genID',
         'dayjs',
         'qs',
+        'inlineValue',
         `return (${requestFnStr})(${JSON.stringify(getValidParams(params, false))},${JSON.stringify(sorter)},${JSON.stringify(filter)})`
     )
     (
@@ -157,6 +162,7 @@ const getParsedRequest = (requestFnStr, thenFn = res => res, catchFn = res => co
         genID,
         dayjs,
         qs,
+        inlineValue,
     ).then(thenFn, catchFn)
 );
 
@@ -215,10 +221,19 @@ const ProTableWidget = (props) => {
         setDataSourceNative(data);
     }
 
+    // 内部数据源
+    const inlineValue = useRef<object>({});
+
     if (moreAction) {
         moreAction.getSelectedRows = () => selectedRowsRef.current;
         moreAction.setDataSource = setDataSource;
         moreAction.getDataSource = () => dataSourceRef.current;
+        moreAction.setInlineValue = (key, value) => {
+            inlineValue.current[key] = value;
+        }
+        moreAction.getInlineValue = (key) => {
+            return inlineValue.current[key];
+        }
     }
 
     useEffect(() => {
@@ -544,6 +559,7 @@ const ProTableWidget = (props) => {
             (error) => {
                 message.error(error.response.data);
             },
+            inlineValue.current,
         )
         : (
             // 没有 request 就走默认的，默认的得传url ，没有 URL则什么都不请求
@@ -648,7 +664,7 @@ const ProTableWidget = (props) => {
         })
 
         if (expandableConfig.sourceDataType === 'request') {
-            const requestFn = getParsedRequest(expandableConfig.request);
+            const requestFn = getParsedRequest(expandableConfig.request, undefined, undefined, inlineValue.current);
             return (
                 <ProTable
                     key={$updateKey}

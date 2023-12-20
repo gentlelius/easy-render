@@ -22,7 +22,7 @@ module.exports = {
         '@typescript-eslint',
     ],
     rules: {
-        complexity: [1, 14],
+        complexity: [1, 20],
         indent: [1, 4],
         '@typescript-eslint/indent': [1, 4],
         camelcase: [0],
@@ -32,6 +32,7 @@ module.exports = {
         "prettier/prettier": [0],
         '@typescript-eslint/naming-convention': [0],
         '@typescript-eslint/no-unused-vars': [1],
-        'no-new-func': [0]
+        'no-new-func': [0],
+        'no-undef': 'error',
     },
 };
