@@ -130,6 +130,8 @@ export interface TableInstance {
         getSelectedRows: () => void,
         getDataSource: () => any[],
         setDataSource: (data: any[]) => void,
+        setInlineValue: (key: string, value: any) => void,
+        getInlineValue: (key: string) => any
     },
 }
 
