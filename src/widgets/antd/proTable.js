@@ -205,8 +205,9 @@ const getTextWidth = (text, font) => {
 
 const ProTableWidget = (props) => {
     const { tableRef: tableRefIn, formRef: formRefIn, moreAction } = props.table || {};
-    const actionRef = useRef(tableRefIn);
-    const formRef = useRef(formRefIn);
+    let actionRef = tableRefIn;
+    let formRef = formRefIn;
+    
     // 内部数据源
     const inlineValue = useRef({});
     const prettyCols = useRef(props.columns || []);
