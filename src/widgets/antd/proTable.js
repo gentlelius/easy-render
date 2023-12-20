@@ -205,8 +205,10 @@ const getTextWidth = (text, font) => {
 
 const ProTableWidget = (props) => {
     const { tableRef: tableRefIn, formRef: formRefIn, moreAction } = props.table || {};
-    const actionRef = tableRefIn || useRef();
-    const formRef = formRefIn || useRef();
+    const actionRef = useRef(tableRefIn);
+    const formRef = useRef(formRefIn);
+    // 内部数据源
+    const inlineValue = useRef({});
     const prettyCols = useRef(props.columns || []);
     const tableVisible = useRef(false);
     const [optionsMap, setMap] = useState({});
@@ -220,9 +222,6 @@ const ProTableWidget = (props) => {
         dataSourceRef.current = data;
         setDataSourceNative(data);
     }
-
-    // 内部数据源
-    const inlineValue = useRef<object>({});
 
     if (moreAction) {
         moreAction.getSelectedRows = () => selectedRowsRef.current;
