@@ -4,7 +4,7 @@ import ProTable from '@ant-design/pro-table';
 import { omit, cloneDeep } from 'lodash-es';
 import dayjs from 'dayjs';
 import { aRequest } from '../../service';
-import { getAll, getValue, getEvent, setValue, getEnvConfig } from '../../storage';
+import { getAll as getGlobalAll, getValue, getEvent, setValue, getEnvConfig } from '../../storage';
 import { flattenObjectAndMerge, flattenObject } from '../../utils';
 import qs from 'query-string';
 import { Decimal } from 'decimal.js';
@@ -237,7 +237,17 @@ const ProTableWidget = (props) => {
         moreAction.getInlineValue = (key) => {
             return inlineValue.current[key];
         }
+        moreAction.getInlineAll = () => {
+            return inlineValue.current;
+        }
     }
+
+    const getAll = useCallback(() => {
+        return {
+            ...getGlobalAll(),
+            ...moreAction?.getInlineAll(),
+        };
+    }, [moreAction])
 
     useEffect(() => {
         selectedRowsRef.current = dataSource.filter(item => selectedRowsRef.current.find(selectedItem => selectedItem[props.rowKey] === item[props.rowKey]));
