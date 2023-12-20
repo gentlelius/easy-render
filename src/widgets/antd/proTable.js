@@ -419,7 +419,7 @@ const ProTableWidget = (props) => {
                                             record, 
                                             {
                                                 ...tableRef,
-                                                setDataSource,
+                                                ...moreAction,
                                             },
                                             selectedRowsRef.current,
                                         );
@@ -612,7 +612,7 @@ const ProTableWidget = (props) => {
                                 getValidParams(formRef.current?.getFieldsValue()),
                                 { 
                                     ...actionRef.current,
-                                    setDataSource
+                                    ...moreAction,
                                 }, 
                                 selectedRowsRef.current
                             );
@@ -638,7 +638,7 @@ const ProTableWidget = (props) => {
                                 formRef.current.getFieldsValue(), 
                                 {
                                     ...actionRef.current,
-                                    setDataSource,
+                                    ...moreAction,
                                 }, 
                                 selectedRowsRef.current
                             );
