@@ -552,22 +552,22 @@ const ProTableWidget = (props) => {
     }, []);
 
 
-    // 渲染后重新排版
-    useEffect(() => {
-        if (tableVisible.current === true) {
-            setTimeout(() => {
-                const toolBarEl = document.querySelector('.ant-pro-table-list-toolbar');
-                const innerHeight = window.innerHeight;
-                if (toolBarEl) {
-                    const topHeight = toolBarEl.getBoundingClientRect().bottom;
-                    const bottomHeight = 80;
-                    const tableHeight = innerHeight - topHeight - bottomHeight;
-                    const tableEl = document.querySelector('.ant-pro-table .ant-table-content');
-                    tableEl.style = `max-height: ${tableHeight}px; overflow: auto;`;
-                }
-            }, 10);
-        }
-    }, [tableVisible.current]);
+    // // 渲染后重新排版
+    // useEffect(() => {
+    //     if (tableVisible.current === true) {
+    //         setTimeout(() => {
+    //             const toolBarEl = document.querySelector('.ant-pro-table-list-toolbar');
+    //             const innerHeight = window.innerHeight;
+    //             if (toolBarEl) {
+    //                 const topHeight = toolBarEl.getBoundingClientRect().bottom;
+    //                 const bottomHeight = 80;
+    //                 const tableHeight = innerHeight - topHeight - bottomHeight;
+    //                 const tableEl = document.querySelector('.ant-pro-table .ant-table-content');
+    //                 tableEl.style = `max-height: ${tableHeight}px; overflow: auto;`;
+    //             }
+    //         }, 10);
+    //     }
+    // }, [tableVisible.current]);
 
     let request = useMemo(() => props.request 
         ? getParsedRequest(
