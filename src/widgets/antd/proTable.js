@@ -466,16 +466,11 @@ const ProTableWidget = (props) => {
             dataSourceRef.current = res.data;
             // 智能宽度
             const autoWidth = (col) => {
-
                 if (col.width) {
                     return col;
                 }
 
                 if (col.valueType === 'option') {
-                    return col;
-                }
-
-                if (col.render) {
                     return col;
                 }
 
@@ -488,9 +483,10 @@ const ProTableWidget = (props) => {
                 const avgWidth = textWidthList.reduce((pre, cur) => Math.max(pre, cur));
                 // or 取第一个？
                 // const avgWidth = ~~textWidthList[0];
+               
                 return {
                     ...col,
-                    width: Math.max(avgWidth, titleWidth || 0) + 32,
+                    width: Math.max(avgWidth, titleWidth || 0) + 20,
                 }
             };
             // nothing todo
