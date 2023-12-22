@@ -313,6 +313,9 @@ const Wrapper = (props) => {
     }
     const [isProTable, tableProps] = getProTableConfig(_schema.current);
     if (isProTable) {
+        if (!props.table) {
+            console.warn('table render 需要传入 table 属性 ⚡️ ⚡️ ⚡️ ')
+        }
         return <ProTable
             className="er-container" 
             {...tableProps}
