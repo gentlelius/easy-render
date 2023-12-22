@@ -537,7 +537,7 @@ const ProTableWidget = (props) => {
 
         // 订阅 visibilityStateChange 事件
         const handleVisibilityChange = () => {
-            if (document.visibilityState === 'visible' && hasEnterBackground.current && !props.manualRequest) {
+            if (document.visibilityState === 'visible' && hasEnterBackground.current && !props.manualRequest && props.forbitReload !== true) {
                 actionRef.current.reload();
             }
             if (!hasEnterBackground.current) {
