@@ -822,6 +822,13 @@ const ProTableWidget = (props) => {
     
     const pureColumns = prettyCols.current.map(item => omit(item, ['otherConfig', 'useOtherConfig', 'hidden', 'precision', 'percentage', 'ignoreZero']));    
 
+    const x = pureColumns.reduce((pre, cur) => {
+        if (cur.width) {
+            return pre + cur.width;
+        }
+        return pre + 100;
+    }, 0);
+
     return (
         <div style={{flex: 1}}>
             <ProTable
@@ -844,7 +851,9 @@ const ProTableWidget = (props) => {
                 }}
                 toolBarRender={() => tools}
                 scroll={{
-                    x: 'max-content',
+                    // x: 'max-content',
+                    // 解决 ellipsis 不生效问题
+                    x,
                 }}
                 pagination={{
                     defaultPageSize: props.defaultPageSize || 20,
