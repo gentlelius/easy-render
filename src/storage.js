@@ -1,3 +1,4 @@
+import { isPlainObject } from 'lodash-es';
 import Event from './event';
 
 const event = new Event();
@@ -58,9 +59,11 @@ export function getBaseUrl() {
     return baseUrl;
 }
 
-let envConfig;
+let envConfig = {};
 export function setEnvConfig(config) {
-    envConfig = config;
+    if (isPlainObject(config)) {
+        envConfig = config;
+    }
 }
 
 export function getEnvConfig() {
