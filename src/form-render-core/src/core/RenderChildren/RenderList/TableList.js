@@ -112,7 +112,7 @@ const TableList = ({
                         >
                             {item.name}
                         </a>
-                        )   
+                    )   
                     ),
                 !props.hideMove && (
                     <div key='move'>
@@ -131,7 +131,7 @@ const TableList = ({
             const renderer = list.filter(Boolean)
 
             return (
-                <div>
+                <div className='flex'>
                     {renderer.length ? renderer : '-'}
                 </div>
             );

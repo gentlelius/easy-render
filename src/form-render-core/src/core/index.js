@@ -245,6 +245,10 @@ const CoreRender = ({
 
     const hasChildren = item.children && item.children.length > 0;
 
+    if (schema.hideError) {
+        hideErrorWhenNil = true;
+    }
+
     const fieldProps = {
         $id: id,
         dataIndex,
