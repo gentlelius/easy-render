@@ -391,7 +391,7 @@ const ProTableWidget = (props) => {
 
                 const newItem = { ...item };
                 // 识别标题中的金额、费用、费，自动加上 precision，如果有 render 则忽略
-                if (newItem.title && (newItem.title.endsWith('面值') || newItem.title.endsWith('费用') || newItem.title.endsWith('金额') || newItem.title.endsWith('费'))) {
+                if (newItem.title && (newItem.title.endsWith('面值') || newItem.title.endsWith('费用') || newItem.title.endsWith('金额') || newItem.title.endsWith('费')) || newItem.thousand) {
                     newItem.render = (text) => isNaN(text) ? text : precision(text, 10, true);
                 }
                 // precision
