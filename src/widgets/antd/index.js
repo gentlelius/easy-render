@@ -30,9 +30,20 @@ const FrNumber = ({ style, ...rest }) => {
     if (rest.thousand) {
         delete rest.thousand;
         formatterProps = {
-            formatter: (value) => `${value}`.replace(/(?<!\.\d*)(?<=\d)(?=(\d{3})+(?!\d))/g, ','),
-            parser: (value) => value.replace(/(,*)/g, '')
+            // 使用 formatter 来格式化显示内容
+            formatter: (value) => {
+                // 将数字转换为字符串，然后用"."分割成整数和小数两部分
+                let parts = value.toString().split('.');
+                // 对整数部分进行格式化
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                // 将整数部分和小数部分重新组合
+                return parts.join('.');
+            },
+            // 在输入时去掉非数字和逗号字符
+            // @ts-ignore
+            parser: (value) => value?.replace(/\$\s?|(,*)/g, ''),
         }
+        
     }
     // max 默认为 1e14 - 1（99999999999999）
     rest.max = isNil(rest.max) ? 1e14 - 1 : rest.max;
