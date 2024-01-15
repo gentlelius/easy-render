@@ -381,6 +381,7 @@ const ProTableWidget = (props) => {
                 }
                 delete newItem.onSearch;
                 delete newItem.onInit;
+                delete newItem.onChange;
                 return newItem;
             })
             .map(item => {
