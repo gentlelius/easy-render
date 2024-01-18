@@ -804,9 +804,10 @@ const ProTableWidget = (props) => {
         }
     }
 
-    if (!tableVisible.current) {
-        return <div>loading...</div>;
-    }
+    // if (!tableVisible.current) {
+    //     debugger
+    //     return <div>loading...</div>;
+    // }
 
     if (props.disabled) {
         request = null;
