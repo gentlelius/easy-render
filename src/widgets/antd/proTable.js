@@ -217,7 +217,28 @@ const ProTableWidget = (props) => {
     
     // 内部数据源
     const inlineValue = useRef({});
-    const prettyCols = useRef(props.columns || []);
+    // 做一层安全转换
+    const safeColumns = useMemo(() => {
+        return props.columns ? props.columns.map(item => {
+            if (!item.useOtherConfig) {
+                return item;
+            }
+            try {
+                const other = item.otherConfig;
+                const otherObj = accept(other);
+                const { initialValue } = otherObj || {};
+                return {
+                    ...item,
+                    initialValue
+                }
+                debugger
+            } catch (error) {
+                console.error('请检查 JSON 配置是否有误，借助于 JSON 格式化查看工具更有效', item, error)
+            }
+        }) : [];
+    }, [props.columns]);
+
+    const prettyCols = useRef(safeColumns);
     const tableVisible = useRef(false);
     const [optionsMap, setMap] = useState({});
     const [code, forceUpdate] = useState(0);
@@ -827,6 +848,8 @@ const ProTableWidget = (props) => {
         return pre + 100;
     }, 0);
 
+    console.log(pureColumns)
+    
     return (
         <div style={{flex: 1}}>
             <ProTable
