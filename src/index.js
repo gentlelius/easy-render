@@ -15,3 +15,4 @@ const FR = ({ widgets, configProvider, ...rest }) => (
 );
 
 export default FR;
+export { setResponseInterceptor } from './service';

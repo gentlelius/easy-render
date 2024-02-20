@@ -37,3 +37,10 @@ export function aRequest(path, options, config) {
         withCredentials: true,
     });
 }
+
+export function setResponseInterceptor(callback, errorCallback) {
+    // 清除之前的拦截器
+    axios.interceptors.response.eject(0);
+    // 设置新的拦截器
+    return axios.interceptors.response.use(callback, errorCallback);
+}

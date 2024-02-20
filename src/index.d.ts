@@ -221,6 +221,7 @@ export default ER;
 
 export declare function setEnvConfig(config: object): void;
 export declare function setBaseUrl(url: string): void;
+export declare function setResponseInterceptor(callback: Function, errorCallback: Function): void;
 export declare function getBaseUrl(url: string): string;
 export declare function setValue(key: string, value: any): void;
 export declare function setValueOnce(key: string, value: any): void;
