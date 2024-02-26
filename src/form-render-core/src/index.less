@@ -2,6 +2,21 @@
   用于原有样式的覆盖
  */
 .er-container {
+    .search-action2 {
+        > form {
+            display: flex;
+            flex-direction: row !important;
+
+            .ant-form-item-control-input {
+                .ant-space-item {
+                    > div {
+                        flex-direction: column;
+                    }
+                }
+            }
+        }
+    }
+
     .fr-field {
         // 提PR
         box-sizing: border-box;

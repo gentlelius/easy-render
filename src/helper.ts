@@ -119,5 +119,5 @@ export const parseHideExpression4Selection = (expression, config) => {
 }
 
 export const isDayjsOrMoment = (date) => {
-    return date?._isAMomentObject || dayjs.isDayjs(date);
+    return date?._isAMomentObject || dayjs.isDayjs(date) || date?.$isDayjsObject;
 }

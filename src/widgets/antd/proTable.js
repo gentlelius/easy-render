@@ -18,6 +18,9 @@ import {
     isDayjsOrMoment
 } from '../../helper';
 
+const SERACH_ACTION_CLASS = 'search-action';
+const SERACH_ACTION_CLASS2 = 'search-action2';
+
 Number.prototype.toFixed = function(precision) {
     return new Decimal(this).toFixed(precision);
 }
@@ -48,6 +51,10 @@ const genID = (n) => {
 
 // 检查是否有时分秒
 const getSafeDate = (date) => {
+    if (date?.$isDayjsObject) {
+        // delete date.$isDayjsObject;
+        date = dayjs(date.$d)
+    }
     let newDate;
     const envConfig = getEnvConfig();
     if (envConfig.dateFormat === 'YYYY-MM-DD') {
@@ -231,7 +238,6 @@ const ProTableWidget = (props) => {
                     ...item,
                     initialValue
                 }
-                debugger
             } catch (error) {
                 console.error('请检查 JSON 配置是否有误，借助于 JSON 格式化查看工具更有效', item, error)
             }
@@ -463,6 +469,7 @@ const ProTableWidget = (props) => {
                                         console.warn(`action ${index} is not function`);
                                     }
                                 }}
+                                style={item.style}
                             >{item.actionName}</a>
                         )
                     ))
@@ -850,6 +857,18 @@ const ProTableWidget = (props) => {
 
     console.log(pureColumns)
     
+    useEffect(() => {
+        if (props.searchAction2 === true) {
+            const btnList = document.querySelector(`.${SERACH_ACTION_CLASS}`).lastChild.lastChild.lastChild;
+            if (btnList) {
+                btnList.className = '';
+                const collBtn = document.querySelector(`.${SERACH_ACTION_CLASS} .ant-pro-query-filter-collapse-button`)
+                collBtn.parentElement.removeChild(collBtn);
+            }
+            document.querySelector(`.${SERACH_ACTION_CLASS}`).lastChild.appendChild(btnList);
+        }
+    }, [props.c])
+    
     return (
         <div style={{flex: 1}}>
             <ProTable
@@ -858,7 +877,6 @@ const ProTableWidget = (props) => {
                 defaultCollapsed={false}
                 rowKey={'id'}
                 search={{
-                    className: 'er-search-action',
                     labelWidth: props.labelWidth || 'auto',
                     defaultCollapsed: props.defaultCollapsed || false,
                     span: props.span || 6,
@@ -868,7 +886,7 @@ const ProTableWidget = (props) => {
                             ...(props.hideSearchAndReset ? [] : dom),
                         ]
                     ),
-                    className: 'search-action',
+                    className: `${SERACH_ACTION_CLASS} ${props.searchAction2 === true ? SERACH_ACTION_CLASS2 : ''}`,
                 }}
                 toolBarRender={() => tools}
                 scroll={{
