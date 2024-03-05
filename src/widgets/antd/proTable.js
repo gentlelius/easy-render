@@ -867,7 +867,9 @@ const ProTableWidget = (props) => {
             }
             document.querySelector(`.${SERACH_ACTION_CLASS}`).lastChild.appendChild(btnList);
         }
-    }, [props.c])
+    }, [props.searchAction2])
+
+    const searchCount = pureColumns.filter(item => item.hideInSearch !== true).length;
     
     return (
         <div style={{flex: 1}}>
@@ -886,7 +888,7 @@ const ProTableWidget = (props) => {
                             ...(props.hideSearchAndReset ? [] : dom),
                         ]
                     ),
-                    className: `${SERACH_ACTION_CLASS} ${props.searchAction2 === true ? SERACH_ACTION_CLASS2 : ''}`,
+                    className: `${SERACH_ACTION_CLASS} ${props.searchAction2 === true ? SERACH_ACTION_CLASS2 : ''} ${searchCount < 4 ? 'search-action-direction-row' : ''}`,
                 }}
                 toolBarRender={() => tools}
                 scroll={{
