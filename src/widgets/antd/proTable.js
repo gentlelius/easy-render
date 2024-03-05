@@ -863,7 +863,7 @@ const ProTableWidget = (props) => {
             if (btnList) {
                 btnList.className = '';
                 const collBtn = document.querySelector(`.${SERACH_ACTION_CLASS} .ant-pro-query-filter-collapse-button`)
-                collBtn.parentElement.removeChild(collBtn);
+                collBtn?.parentElement?.removeChild(collBtn);
             }
             document.querySelector(`.${SERACH_ACTION_CLASS}`).lastChild.appendChild(btnList);
         }
