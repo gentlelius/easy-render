@@ -857,20 +857,20 @@ const ProTableWidget = (props) => {
 
     console.log(pureColumns)
     
-    useEffect(() => {
-        if (props.searchAction2 === true) {
-            const btnList = document.querySelector(`.${SERACH_ACTION_CLASS}`).lastChild.lastChild.lastChild;
-            if (btnList) {
-                btnList.className = '';
-                const collBtn = document.querySelector(`.${SERACH_ACTION_CLASS} .ant-pro-query-filter-collapse-button`)
-                collBtn?.parentElement?.removeChild(collBtn);
-            }
-            document.querySelector(`.${SERACH_ACTION_CLASS}`).lastChild.appendChild(btnList);
-        }
-    }, [props.searchAction2])
+    // useEffect(() => {
+    //     if (props.searchAction2 === true) {
+    //         const btnList = document.querySelector(`.${SERACH_ACTION_CLASS}`).lastChild.lastChild.lastChild;
+    //         if (btnList) {
+    //             btnList.className = '';
+    //             const collBtn = document.querySelector(`.${SERACH_ACTION_CLASS} .ant-pro-query-filter-collapse-button`)
+    //             collBtn?.parentElement?.removeChild(collBtn);
+    //         }
+    //         document.querySelector(`.${SERACH_ACTION_CLASS}`).lastChild.appendChild(btnList);
+    //     }
+    // }, [props.searchAction2])
 
-    const searchCount = pureColumns.filter(item => item.hideInSearch !== true).length;
-    
+    const searchCount = pureColumns.filter(item => item.hideInSearch !== true && item.valueType !== 'option').length;
+
     return (
         <div style={{flex: 1}}>
             <ProTable
@@ -881,7 +881,7 @@ const ProTableWidget = (props) => {
                 search={{
                     labelWidth: props.labelWidth || 'auto',
                     defaultCollapsed: props.defaultCollapsed || false,
-                    span: props.span || 6,
+                    // span: props.span || 6,
                     optionRender: (searchConfig, formProps, dom) => (
                         [
                             ...getSearchOptions(searchConfig, formProps),
