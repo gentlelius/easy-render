@@ -9,27 +9,29 @@
 ### 搭建表格
 表格一般用来展示 List 中的数据，同时它具备过滤器、分页等基础功能，有时候它还要定制化地展示一些内容。
 
-<video controls>
-  <source src="https://github.com/gentlelius/assets/raw/main/table-demo.mp4" type="video/mp4">
-  您的浏览器不支持视频播放。
-</video>
+https://github.com/gentlelius/easy-render/assets/17642750/03694f23-a4c5-4b20-bae9-eda8fae6853c.mp4
+
+![demo预览](https://github.com/gentlelius/assets/raw/main/table-demo2.webp)
 
 ### 代码补全
-代码提示让配置化的体验更好
 
-<video controls>
-  <source src="https://github.com/gentlelius/assets/raw/main/snippet-demo.mp4" type="video/mp4">
-  您的浏览器不支持视频播放。
-</video>
+代码提示让配置化的体验更好:
+
+
+https://github.com/gentlelius/easy-render/assets/17642750/0db6e00c-ac39-46ad-9250-541a015aaea2.mp4
+
+
+
 
 ### 搭建表单
-表单搭建要更复杂一点，里面可能会涉及到一些复杂的表单联动、表单数据变动监听等
+表单搭建要更复杂一点，里面可能会涉及到一些复杂的表单联动、表单数据变动监听等:
 
 
-<video controls>
-  <source src="https://github.com/gentlelius/assets/raw/main/form-demo.mp4" type="video/mp4">
-  您的浏览器不支持视频播放。
-</video>
+
+https://github.com/gentlelius/easy-render/assets/17642750/0570b19f-22f3-4775-9e37-261dff1d0416.mp4
+
+
+
 
 ## 特点
 1. 安全可靠，基于 `form-render`，站在巨人肩膀上增强渲染器的能力；
@@ -46,8 +48,10 @@ npm i react-easy-render
 
 ## TODO
 
-- [ ] 数据变动时的性能优化，更小颗粒度更新
-- [ ] 加入更多中后台物料
+- [x] 数据变动时的性能优化，更小颗粒度更新
+- [x] 加入更多中后台物料
 - [ ] 拓展功能，支持更多业务场景如运营活动、大屏可视化等
+
+
 
 
