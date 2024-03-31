@@ -9,17 +9,12 @@
 ### 搭建表格
 表格一般用来展示 List 中的数据，同时它具备过滤器、分页等基础功能，有时候它还要定制化地展示一些内容。
 
-https://github.com/gentlelius/easy-render/assets/17642750/03694f23-a4c5-4b20-bae9-eda8fae6853c.mp4
-
 ![demo预览](https://github.com/gentlelius/assets/raw/main/table-demo2.webp)
 
 ### 代码补全
-
 代码提示让配置化的体验更好:
 
-
-https://github.com/gentlelius/easy-render/assets/17642750/0db6e00c-ac39-46ad-9250-541a015aaea2.mp4
-
+https://github.com/gentlelius/easy-render/assets/17642750/948fc1ff-e4db-4089-a08c-f3de552b414b
 
 
 
@@ -27,8 +22,6 @@ https://github.com/gentlelius/easy-render/assets/17642750/0db6e00c-ac39-46ad-925
 表单搭建要更复杂一点，里面可能会涉及到一些复杂的表单联动、表单数据变动监听等:
 
 
-
-https://github.com/gentlelius/easy-render/assets/17642750/0570b19f-22f3-4775-9e37-261dff1d0416.mp4
 
 
 
