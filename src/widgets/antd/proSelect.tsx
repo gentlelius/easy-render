@@ -17,6 +17,7 @@ type CommonProps = {
     onChange: (v) => void,
     reqDisabled: boolean,
     schema?: SchemaType,
+    filterOption?: boolean,
 }
 
 /**
@@ -68,7 +69,7 @@ type CommonProps = {
  * @returns 
  */
 const ProSelect: React.FC<ProFormSelectProps & CommonProps> = (props) => {
-    const { value, onChange, request } = props;
+    const { value, onChange, request, filterOption } = props;
     // 解析 props.request 
     let req;
     if (request) {
@@ -77,7 +78,7 @@ const ProSelect: React.FC<ProFormSelectProps & CommonProps> = (props) => {
             return new Function(
                 'request',
                 'getValue',
-                `return (${props.request})(${JSON.stringify(val.keyWords)})`
+                `return (${request})(${JSON.stringify(val.keyWords)})`
             )(
                 aRequest,
                 getValue,
@@ -85,9 +86,15 @@ const ProSelect: React.FC<ProFormSelectProps & CommonProps> = (props) => {
         }
     }
 
+    const optionFilterFun =  
+        (input: string, option: any) => 
+            typeof option?.label === 'string' ? (
+                option?.label.toLowerCase().includes(input.trim().toLowerCase())
+            ) : false;
+
     const params: any = {
         fieldProps: {
-            filterOption: false,
+            filterOption: filterOption ?? optionFilterFun,
             placeholder: null,
         },
     };
@@ -111,13 +118,7 @@ const ProSelect: React.FC<ProFormSelectProps & CommonProps> = (props) => {
             <ProFormSelect
                 {...props}
                 {...params}
-                fieldProps={{
-                    filterOption: (input, option) => {
-                        typeof option?.label === 'string' ? (
-                            option?.label.toLowerCase().includes(input.trim().toLowerCase())
-                        ) : false
-                    }
-                }}
+                debounceTime={1e3}
             />
         </div>
     )
