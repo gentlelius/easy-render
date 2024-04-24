@@ -329,7 +329,7 @@ const ProTableWidget = (props) => {
     }, [optionsMap]);
 
     const getColumn = () => {
-        return prettyCols.current
+        let cols = prettyCols.current
             // 合并 otherConfig
             // eslint-disable-next-line complexity
             .map(item => {
@@ -441,13 +441,9 @@ const ProTableWidget = (props) => {
                     newItem.render = (text) => percentage(text, precisionCount);
                 }
                 return newItem;
-            })
-    }
+            });
 
-    const reqThen = useCallback(async res => {
         
-        let cols;
-
         const renderActions = () => {
             if (!props.actions?.length || props.hiddenActions) {
                 return;
@@ -499,6 +495,22 @@ const ProTableWidget = (props) => {
             }
         }
 
+        // 渲染 actions 区域，即添加表格右（或左）侧的操作按钮
+        renderActions();
+
+        // 解析 hideActions 表达式，隐藏操作列
+        const hideActions = parseHideExpression4Column(props.hideActions, getAll());
+        if (hideActions) {
+            cols = cols.filter(item => item.valueType !== 'option');
+        }
+        // 返回最后的列配置
+        return cols;
+    }
+
+    const reqThen = useCallback(async res => {
+        
+        let cols;
+
         if (res?.data?.length) {
             // 保存 dataSource
             dataSourceRef.current = res.data;
@@ -546,12 +558,6 @@ const ProTableWidget = (props) => {
             }
         } else {
             cols = getColumn();
-        }
-
-        const hideActions = parseHideExpression4Area(props.hideActions, getAll());
-        if (!hideActions) {
-            // 渲染 actions 区域
-            renderActions();
         }
 
         if (cols) {
