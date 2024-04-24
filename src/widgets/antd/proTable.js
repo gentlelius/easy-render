@@ -176,9 +176,10 @@ const getParsedRequest = (requestFnStr,
     ).then(thenFn, catchFn)
 );
 
-const accept = (fnstr) => {
+const accept = (fnstr, getInlineValue) => {
     return new Function(
         'getValue',
+        'getInlineValue',
         'h',
         'percentage',
         'precision',
@@ -187,6 +188,7 @@ const accept = (fnstr) => {
         `return ${fnstr}`
     )(
         getValue,
+        getInlineValue,
         React.createElement,
         percentage,
         precision,
@@ -232,7 +234,7 @@ const ProTableWidget = (props) => {
             }
             try {
                 const other = item.otherConfig;
-                const otherObj = accept(other);
+                const otherObj = accept(other, moreAction.getInlineValue);
                 const { initialValue } = otherObj || {};
                 return {
                     ...item,
@@ -330,7 +332,7 @@ const ProTableWidget = (props) => {
                 const newItem = { ...item };
                 const other = newItem.otherConfig;
                 try {
-                    const otherObj = accept(other);
+                    const otherObj = accept(other, moreAction.getInlineValue);
                     Object.assign(newItem, otherObj);
                     if (!props.disabled) {
                         // 处理 onSearch，如果 有声明 fieldProps 为函数，则忽略 onSearch
