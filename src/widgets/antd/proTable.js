@@ -234,7 +234,7 @@ const ProTableWidget = (props) => {
             }
             try {
                 const other = item.otherConfig;
-                const otherObj = accept(other, moreAction.getInlineValue);
+                const otherObj = accept(other, moreAction?.getInlineValue);
                 const { initialValue } = otherObj || {};
                 return {
                     ...item,
@@ -244,7 +244,7 @@ const ProTableWidget = (props) => {
                 console.error('请检查 JSON 配置是否有误，借助于 JSON 格式化查看工具更有效', item, error)
             }
         }) : [];
-    }, [props.columns]);
+    }, [props.columns, moreAction?.getInlineValue]);
 
     const prettyCols = useRef(safeColumns);
     const tableVisible = useRef(false);
@@ -332,7 +332,7 @@ const ProTableWidget = (props) => {
                 const newItem = { ...item };
                 const other = newItem.otherConfig;
                 try {
-                    const otherObj = accept(other, moreAction.getInlineValue);
+                    const otherObj = accept(other, moreAction?.getInlineValue);
                     Object.assign(newItem, otherObj);
                     if (!props.disabled) {
                         // 处理 onSearch，如果 有声明 fieldProps 为函数，则忽略 onSearch
