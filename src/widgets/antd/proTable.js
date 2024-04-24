@@ -548,8 +548,10 @@ const ProTableWidget = (props) => {
             cols = getColumn();
         }
 
-        // 渲染 actions 区域
-        renderActions();
+        if (!props.hideActions) {
+            // 渲染 actions 区域
+            renderActions();
+        }
 
         if (cols) {
             tableVisible.current = true;
