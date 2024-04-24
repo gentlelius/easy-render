@@ -319,7 +319,10 @@ const ProTableWidget = (props) => {
     }, [optionsMap]);
 
     const getColumn = () => {
-        const config = getAll();
+        const config = {
+            ...getAll(),
+            ...moreAction?.getInlineAll(),
+        };
         return prettyCols.current
             // 过滤掉隐藏的
             .filter((item) => !parseHideExpression4Column(item.hidden, config))
