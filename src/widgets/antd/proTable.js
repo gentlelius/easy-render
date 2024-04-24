@@ -260,12 +260,22 @@ const ProTableWidget = (props) => {
         setDataSourceNative(data);
     }
 
+    const timeout = useRef(null);
     if (moreAction) {
         moreAction.getSelectedRows = () => selectedRowsRef.current;
         moreAction.setDataSource = setDataSource;
         moreAction.getDataSource = () => dataSourceRef.current;
         moreAction.setInlineValue = (key, value) => {
             inlineValue.current[key] = value;
+
+            const event = getEvent();
+            if (timeout.current) {
+                clearTimeout(timeout.current);
+                timeout.current = null;
+            }
+            timeout.current = setTimeout(() => {
+                event.emit('valueChange', inlineValue.current);
+            }, 20);
         }
         moreAction.getInlineValue = (key) => {
             return inlineValue.current[key];
@@ -319,13 +329,7 @@ const ProTableWidget = (props) => {
     }, [optionsMap]);
 
     const getColumn = () => {
-        const config = {
-            ...getAll(),
-            ...moreAction?.getInlineAll(),
-        };
         return prettyCols.current
-            // 过滤掉隐藏的
-            .filter((item) => !parseHideExpression4Column(item.hidden, config))
             // 合并 otherConfig
             // eslint-disable-next-line complexity
             .map(item => {
@@ -850,8 +854,15 @@ const ProTableWidget = (props) => {
 
     
     const pureProps = omit(props, ['request', 'columns', 'actions', 'actionsHandler', 'navs', 'navsHandler', 'searchOptions', 'searchOptionsHandler', 'rowSelectionConfig', 'rowSelectionDisabled', 'polling', 'labelWidth', 'defaultCollapsed', 'actionsWidth', 'actionsPostion', 'notFlatten', 'disabled', 'manualRequest', 'widthDefault']);
-    
-    const pureColumns = prettyCols.current.map(item => omit(item, ['otherConfig', 'useOtherConfig', 'hidden', 'precision', 'percentage', 'ignoreZero']));    
+    const config = getAll();
+    const pureColumns = prettyCols.current
+        // 过滤掉隐藏的
+        .filter((item) => {
+            if (item.dataIndex === 'subOrderNo') {
+            }
+            const res = !parseHideExpression4Column(item.hidden, config)
+            return res;
+        }).map(item => omit(item, ['otherConfig', 'useOtherConfig', 'hidden', 'precision', 'percentage', 'ignoreZero']));  
 
     const x = pureColumns.reduce((pre, cur) => {
         if (cur.width) {
