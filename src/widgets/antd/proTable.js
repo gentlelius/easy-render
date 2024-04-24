@@ -548,7 +548,8 @@ const ProTableWidget = (props) => {
             cols = getColumn();
         }
 
-        if (!props.hideActions) {
+        const hideActions = parseHideExpression4Area(props.hideActions, getAll());
+        if (!hideActions) {
             // 渲染 actions 区域
             renderActions();
         }
