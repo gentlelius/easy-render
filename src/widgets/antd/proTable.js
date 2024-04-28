@@ -372,7 +372,7 @@ const ProTableWidget = (props) => {
                             }
                         }
                         // 处理 onInit
-                        if (typeof otherObj.onInit === 'function') {
+                        if (typeof otherObj.onInit === 'function' && !newItem.initHasDone) {
                             // 暂时给它设置 options，避免控制台报错
                             let fn = otherObj.onInit.toString();
                             fn = fn.replace(/\s*(async)?\s*onInit/, 'async function');
@@ -393,6 +393,7 @@ const ProTableWidget = (props) => {
                                     }
                                 });
                             }
+                            newItem.initHasDone = true;
                         }
                         // 处理 onChange
                         if (typeof otherObj.onChange === 'function') {
