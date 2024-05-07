@@ -66,77 +66,79 @@ const TableList = ({
         };
     });
 
+    const hideActions = props.hideActions;
+    if (!hideActions) {
+        columns.push({
+            title: '操作',
+            key: '$action',
+            fixed: 'right',
+            width: props.actionsWidth || 120,
+            render: (value, record) => {
+                const idx = record.index;
 
-    columns.push({
-        title: '操作',
-        key: '$action',
-        fixed: 'right',
-        width: props.actionsWidth || 120,
-        render: (value, record) => {
-            const idx = record.index;
-
-            const list = [
-                !props.hideAdd && !props.hideCopy && (
-                    <a key='copy' onClick={() => copyItem(idx)}>复制</a>
-                ),
-                !props.hideDelete && (
-                    <Popconfirm
-                        title="确定删除?"
-                        onConfirm={() => deleteItem(idx)}
-                        okText="确定"
-                        cancelText="取消"
-                        key='delete'
-                    >
-                        <a style={{ marginLeft: 8 }}>删除</a>
-                    </Popconfirm>
-                ),
-                props.moreBtns?.length
-                && props.moreBtns
-                    .filter((item) => !parseHideExpression4Action(item.hidden, displayList[idx], getAll()))
-                    .map((item, itemIdx) => (
-                        <a 
-                            key={item.eventName || itemIdx}
-                            onClick={() => {
-                                if (typeof item.action === 'function') {
-                                    item.action(record);
-                                } else if (item.eventName) {
-                                    window.dispatchEvent(new CustomEvent(item.eventName, {
-                                        detail: displayList[idx]
-                                    }));
-                                    document.dispatchEvent(new CustomEvent(item.eventName, {
-                                        detail: displayList[idx]
-                                    }));
-                                }
-                            }} 
-                            style={{ marginLeft: 8 }}
-                        >
-                            {item.name}
-                        </a>
-                    )   
+                const list = [
+                    !props.hideAdd && !props.hideCopy && (
+                        <a key='copy' onClick={() => copyItem(idx)}>复制</a>
                     ),
-                !props.hideMove && (
-                    <div key='move'>
-                        <ArrowUpOutlined
-                            style={{ color: '#1890ff', fontSize: 16, marginLeft: 8 }}
-                            onClick={() => moveItemUp(idx)}
-                        />
-                        <ArrowDownOutlined
-                            style={{ color: '#1890ff', fontSize: 16, marginLeft: 8 }}
-                            onClick={() => moveItemDown(idx)}
-                        />
+                    !props.hideDelete && (
+                        <Popconfirm
+                            title="确定删除?"
+                            onConfirm={() => deleteItem(idx)}
+                            okText="确定"
+                            cancelText="取消"
+                            key='delete'
+                        >
+                            <a style={{ marginLeft: 8 }}>删除</a>
+                        </Popconfirm>
+                    ),
+                    props.moreBtns?.length
+                    && props.moreBtns
+                        .filter((item) => !parseHideExpression4Action(item.hidden, displayList[idx], getAll()))
+                        .map((item, itemIdx) => (
+                            <a 
+                                key={item.eventName || itemIdx}
+                                onClick={() => {
+                                    if (typeof item.action === 'function') {
+                                        item.action(record);
+                                    } else if (item.eventName) {
+                                        window.dispatchEvent(new CustomEvent(item.eventName, {
+                                            detail: displayList[idx]
+                                        }));
+                                        document.dispatchEvent(new CustomEvent(item.eventName, {
+                                            detail: displayList[idx]
+                                        }));
+                                    }
+                                }} 
+                                style={{ marginLeft: 8 }}
+                            >
+                                {item.name}
+                            </a>
+                        )   
+                        ),
+                    !props.hideMove && (
+                        <div key='move'>
+                            <ArrowUpOutlined
+                                style={{ color: '#1890ff', fontSize: 16, marginLeft: 8 }}
+                                onClick={() => moveItemUp(idx)}
+                            />
+                            <ArrowDownOutlined
+                                style={{ color: '#1890ff', fontSize: 16, marginLeft: 8 }}
+                                onClick={() => moveItemDown(idx)}
+                            />
+                        </div>
+                    )
+                ]
+
+                const renderer = list.filter(Boolean)
+
+                return (
+                    <div className='flex'>
+                        {renderer.length ? renderer : '-'}
                     </div>
-                )
-            ]
-
-            const renderer = list.filter(Boolean)
-
-            return (
-                <div className='flex'>
-                    {renderer.length ? renderer : '-'}
-                </div>
-            );
-        },
-    });
+                );
+            },
+        });
+    }
 
     return (
         <>
