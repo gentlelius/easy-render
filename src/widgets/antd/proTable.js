@@ -336,10 +336,13 @@ const ProTableWidget = (props) => {
                 if (!item.useOtherConfig) {
                     return item;
                 }
+                const other = item.otherConfig;
                 const newItem = { ...item };
-                const other = newItem.otherConfig;
+                delete newItem.useOtherConfig;
+
                 try {
                     const otherObj = accept(other, moreAction?.getInlineValue);
+                    // otherObj 打平后合并到 newItem，然后对 newItem 进行处理
                     Object.assign(newItem, otherObj);
                     if (!props.disabled) {
                         // 处理 onSearch，如果 有声明 fieldProps 为函数，则忽略 onSearch
@@ -372,7 +375,11 @@ const ProTableWidget = (props) => {
                             }
                         }
                         // 处理 onInit
-                        if (typeof otherObj.onInit === 'function' && !newItem.initHasDone) {
+                        if (typeof otherObj.onInit === 'function') {
+                            if (newItem.initHasDone) {
+                                newItem.fieldProps.options = optionsMap[newItem.dataIndex];
+                                return newItem;
+                            }
                             // 暂时给它设置 options，避免控制台报错
                             let fn = otherObj.onInit.toString();
                             fn = fn.replace(/\s*(async)?\s*onInit/, 'async function');
@@ -382,8 +389,8 @@ const ProTableWidget = (props) => {
                             `.trim();
                             const newOnInit = new Function('request', 'getValue', funstr);
                             const p = newOnInit(aRequest, getValue);
-                
                             if (p instanceof Promise) {
+                                newItem.initHasDone = true;
                                 p.then((res) => {
                                     if (Array.isArray(res)) {
                                         setMap((optionsMap) => ({
@@ -391,9 +398,10 @@ const ProTableWidget = (props) => {
                                             [newItem.dataIndex]: res,
                                         }));
                                     }
+                                }).catch(() => {
+                                    newItem.initHasDone = false;
                                 });
                             }
-                            newItem.initHasDone = true;
                         }
                         // 处理 onChange
                         if (typeof otherObj.onChange === 'function') {
@@ -868,8 +876,6 @@ const ProTableWidget = (props) => {
     const pureColumns = prettyCols.current
         // 过滤掉隐藏的
         .filter((item) => {
-            if (item.dataIndex === 'subOrderNo') {
-            }
             const res = !parseHideExpression4Column(item.hidden, config)
             return res;
         }).map(item => omit(item, ['otherConfig', 'useOtherConfig', 'hidden', 'precision', 'percentage', 'ignoreZero']));  
@@ -881,7 +887,6 @@ const ProTableWidget = (props) => {
         return pre + 100;
     }, 0);
 
-    console.log(pureColumns)
     
     // useEffect(() => {
     //     if (props.searchAction2 === true) {
