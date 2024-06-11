@@ -338,7 +338,6 @@ const ProTableWidget = (props) => {
                 }
                 const other = item.otherConfig;
                 const newItem = { ...item };
-                delete newItem.useOtherConfig;
 
                 try {
                     const otherObj = accept(other, moreAction?.getInlineValue);
@@ -587,7 +586,7 @@ const ProTableWidget = (props) => {
         // 订阅 valueChange 事件
         const event = getEvent();
         const handleValueChange = () => {
-            prettyCols.current = getColumn();
+            prettyCols.current = getColumn(1);
             forceUpdate(state => state + 1);
         }
         event.on('valueChange', handleValueChange);
