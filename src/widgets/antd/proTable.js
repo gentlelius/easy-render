@@ -328,6 +328,8 @@ const ProTableWidget = (props) => {
 
     }, [optionsMap]);
 
+    const optionsMapRef = useRef(optionsMap);
+    optionsMapRef.current = optionsMap;
     const getColumn = () => {
         let cols = prettyCols.current
             // 合并 otherConfig
@@ -376,7 +378,7 @@ const ProTableWidget = (props) => {
                         // 处理 onInit
                         if (typeof otherObj.onInit === 'function') {
                             if (newItem.initHasDone) {
-                                newItem.fieldProps.options = optionsMap[newItem.dataIndex];
+                                newItem.fieldProps.options = optionsMapRef.current?.[newItem.dataIndex];
                                 return newItem;
                             }
                             // 暂时给它设置 options，避免控制台报错
