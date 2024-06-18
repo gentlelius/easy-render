@@ -218,8 +218,11 @@ const getTextWidth = (text, font) => {
 const ProTableWidget = (props) => {
     const { tableRef: tableRefIn, formRef: formRefIn, moreAction } = props.table || {};
     
-    const actionRef = useRef(tableRefIn);
-    const formRef = useRef(formRefIn);
+    const backupTableRef = useRef();
+    const backupFormRef = useRef();
+
+    let actionRef = tableRefIn || backupTableRef;
+    let formRef = formRefIn || backupFormRef;
     
     // 内部数据源
     const inlineValue = useRef({});
@@ -246,9 +249,7 @@ const ProTableWidget = (props) => {
     const prettyCols = useRef(safeColumns);
     const tableVisible = useRef(false);
     const [optionsMap, setMap] = useState({});
-    const [, forceUpdate] = useState(0);
-    const forceUpdateRef = useRef(forceUpdate);
-    forceUpdateRef.current = forceUpdate;
+    const [code, forceUpdate] = useState(0);
     const [selRowKeys, setSelRowKeys] = useState(props.selectedRowKeys ?? []);
     const selectedRowsRef = useRef([]);
     const [dataSource, setDataSourceNative] = useState([]);
@@ -293,7 +294,7 @@ const ProTableWidget = (props) => {
 
     useEffect(() => {
         selectedRowsRef.current = dataSource.filter(item => selectedRowsRef.current.find(selectedItem => selectedItem[props.rowKey] === item[props.rowKey]));
-    }, [dataSource, props])
+    }, [dataSource])
 
     const handleRowSelectChange = useCallback((selectedRowKeys, selectedRows) => {
         setSelRowKeys(selectedRowKeys);
@@ -323,13 +324,13 @@ const ProTableWidget = (props) => {
             }
             return newItem;
         });
-        forceUpdateRef.current(state => state + 1);
+        forceUpdate(state => state + 1);
 
     }, [optionsMap]);
 
-    // const optionsMapRef = useRef(optionsMap);
-    // optionsMapRef.current = optionsMap;
-    const getColumn = useCallback(() => {
+    const optionsMapRef = useRef(optionsMap);
+    optionsMapRef.current = optionsMap;
+    const getColumn = () => {
         let cols = prettyCols.current
             // 合并 otherConfig
             // eslint-disable-next-line complexity
@@ -377,7 +378,7 @@ const ProTableWidget = (props) => {
                         // 处理 onInit
                         if (typeof otherObj.onInit === 'function') {
                             if (newItem.initHasDone) {
-                                newItem.fieldProps.options = optionsMap[newItem.dataIndex];
+                                newItem.fieldProps.options = optionsMapRef.current?.[newItem.dataIndex];
                                 return newItem;
                             }
                             // 暂时给它设置 options，避免控制台报错
@@ -514,7 +515,7 @@ const ProTableWidget = (props) => {
         }
         // 返回最后的列配置
         return cols;
-    }, [props, getAll, moreAction, optionsMap]);
+    }
 
     const reqThen = useCallback(async res => {
         
@@ -572,11 +573,11 @@ const ProTableWidget = (props) => {
         if (cols) {
             tableVisible.current = true;
             prettyCols.current = cols;
-            forceUpdateRef.current(state => state + 1);
+            forceUpdate(state => state + 1);
         }
 
         return res;
-    }, [props, getColumn])
+    }, [props])
 
     const hasEnterBackground = useRef(false);
     // onMount
@@ -588,7 +589,7 @@ const ProTableWidget = (props) => {
         const event = getEvent();
         const handleValueChange = () => {
             prettyCols.current = getColumn(1);
-            forceUpdateRef.current(state => state + 1);
+            forceUpdate(state => state + 1);
         }
         event.on('valueChange', handleValueChange);
 
@@ -606,7 +607,7 @@ const ProTableWidget = (props) => {
             event.off('valueChange', handleValueChange);
             document.removeEventListener('visibilitychange', handleVisibilityChange);
         }
-    }, [props, getColumn, reqThen]);
+    }, []);
 
 
     // // 渲染后重新排版
@@ -639,7 +640,7 @@ const ProTableWidget = (props) => {
         : (
             // 没有 request 就走默认的，默认的得传url ，没有 URL则什么都不请求
             props.url 
-                ? (params) => aRequest(
+                ? (params, sorter) => aRequest(
                     props.url,
                     {
                         method: props.method ? 'get' : props.method.toLowerCase(),
@@ -695,7 +696,7 @@ const ProTableWidget = (props) => {
                 >{item.navName}</Button>
             )
         ))
-    ), [props, getAll, moreAction]);
+    ), [props.navs, props.navsHandler, code, moreAction]);
 
     // 搜索表单区域的按钮组
     const getSearchOptions = useCallback(() => {
@@ -721,7 +722,7 @@ const ProTableWidget = (props) => {
                 >{item.name}</Button>
             )
         )) : []
-    }, [props, moreAction, getAll]);
+    }, [props.searchOptions, props.searchOptionsHandler, moreAction]);
 
     // 行展开内容
     const expandedRowRender = props.expandable ? (record) => {
@@ -832,7 +833,6 @@ const ProTableWidget = (props) => {
                     }
                 },
             },
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             tableAlertRender: ({ selectedRowKeys, selectedRows, onCleanSelected }) => (
                 <Space size={24}>
                     <span>
