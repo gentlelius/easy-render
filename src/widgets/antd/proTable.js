@@ -902,17 +902,50 @@ const ProTableWidget = (props) => {
     // }, [props.searchAction2])
 
     const searchCount = pureColumns.filter(item => item.hideInSearch !== true && item.valueType !== 'option').length;
+    const [y, setY] = useState('calc(50vh)');
+    const containerRef = useRef();
+    
+    const rerenderScorll = useCallback(() => {
+        setTimeout(() => {
+            const container = containerRef.current;
+            if (container) {
+                const parentElement = container.parentElement;
+                if (parentElement) {
+                    const height = parentElement.getBoundingClientRect().height;
+                    const pageHeight = window.innerHeight;
+                    const qiankun = document.querySelector('.qiankun-micro-app-container');
+                    if (qiankun) {
+                        const qiankunHeight = qiankun.getBoundingClientRect().height;
+                        const deltHeight = pageHeight - height - qiankunHeight;
+                        setY(`calc(50vh + ${deltHeight}px)`)
+                    } else {
+                        const deltHeight = pageHeight - height;
+                        setY(`calc(50vh + ${deltHeight}px)`)
+                    }
+                }
+            }
+        });
+    }, []);
+
+
+    const onLoadingChange = useCallback((loading) => {
+        if (loading === false) {
+            rerenderScorll();
+        }
+    }, [rerenderScorll])
 
     return (
-        <div style={{flex: 1}}>
+        <div style={{flex: 1}} ref={containerRef}>
             <ProTable
                 formRef={formRef}
                 actionRef={actionRef}
-                defaultCollapsed={false}
+                onLoadingChange={onLoadingChange}
                 rowKey={'id'}
                 search={{
                     labelWidth: props.labelWidth || 'auto',
-                    defaultCollapsed: props.defaultCollapsed || false,
+                    // defaultCollapsed: props.defaultCollapsed || false,
+                    defaultCollapsed: false,
+                    collapseRender: () => null,
                     // span: props.span || 6,
                     optionRender: (searchConfig, formProps, dom) => (
                         [
@@ -927,6 +960,7 @@ const ProTableWidget = (props) => {
                     // x: 'max-content',
                     // 解决 ellipsis 不生效问题
                     x,
+                    y,
                 }}
                 pagination={{
                     defaultPageSize: props.defaultPageSize || 20,

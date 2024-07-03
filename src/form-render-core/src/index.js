@@ -317,7 +317,7 @@ const Wrapper = (props) => {
             console.warn('table render 需要传入 table 属性 ⚡️ ⚡️ ⚡️ ')
         }
         return <ProTable
-            className="er-container" 
+            className="er-container"
             {...tableProps}
             {...pick(props, ['actionsHandler', 'navsHandler', 'searchOptionsHandler', 'table'])}
         />
