@@ -927,9 +927,10 @@ const ProTableWidget = (props) => {
         });
     }, []);
 
-
+    const hasRerenderScorll = useRef(false);
     const onLoadingChange = useCallback((loading) => {
-        if (loading === false) {
+        if (loading === false && !hasRerenderScorll.current) {
+            hasRerenderScorll.current = true;
             rerenderScorll();
         }
     }, [rerenderScorll])
