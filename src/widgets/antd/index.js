@@ -17,7 +17,7 @@ import slider from './slider';
 import upload from './upload';
 import proTable from './proTable';
 import proSelect from './proSelect';
-import codeEdit from './codeEdit';
+// import codeEdit from './codeEdit';
 import uploadLazy from './upload-lazy';
 import uploadImg from './upload-img';
 import { isNil } from 'lodash-es';
@@ -91,7 +91,7 @@ export const widgets = {
     treeSelect: FrTreeSelect,
     proTable,
     proSelect,
-    codeEdit,
+    // codeEdit,
     uploadLazy,
     uploadImg,
 };

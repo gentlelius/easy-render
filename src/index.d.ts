@@ -121,6 +121,8 @@ export interface FormInstance {
     _setErrors: (args: any) => void;
 }
 
+type LocaleType = 'zh-CN' | 'en-US';
+
 export interface TableInstance {
     tableRef: React.MutableRefObject<ActionType | undefined>,
     formRef: React.MutableRefObject<ProFormInstance | undefined>,
@@ -176,7 +178,8 @@ export interface ERProps {
     debug?: boolean;
     /** 显示css布局提示线 */
     debugCss?: boolean;
-    locale?: 'cn' | 'en';
+    locale?: LocaleType;
+    localeMessages?: Record<LocaleType, any>;
     column?: number;
     debounceInput?: boolean;
     size?: string;

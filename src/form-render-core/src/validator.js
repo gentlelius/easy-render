@@ -178,7 +178,7 @@ const validateSingle = (data, schema = {}, path, options = {}, formData) => {
         return Promise.resolve();
     }
 
-    const { validateMessages = {}, locale = 'cn' } = options;
+    const { validateMessages = {}, locale = 'zh-CN' } = options;
     const cn = defaultValidateMessagesCN;
     const en = defaultValidateMessages;
     const descriptor = getDescriptorSimple(schema, path, formData);
@@ -189,7 +189,7 @@ const validateSingle = (data, schema = {}, path, options = {}, formData) => {
     } catch (error) {
         return Promise.resolve();
     }
-    const messageFeed = locale === 'en' ? en : cn;
+    const messageFeed = locale === 'en-US' ? en : cn;
     merge(messageFeed, validateMessages);
     validator.messages(messageFeed);
     const trimData = typeof data === 'string' ? data.trim() : data;

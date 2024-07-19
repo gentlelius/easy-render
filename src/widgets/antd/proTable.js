@@ -17,13 +17,14 @@ import {
     parseHideExpression4Selection,
     isDayjsOrMoment
 } from '../../helper';
+import getLocaleMessage from '../../form-render-core/locales/index';
 
 const SERACH_ACTION_CLASS = 'search-action';
 const SERACH_ACTION_CLASS2 = 'search-action2';
 
-Number.prototype.toFixed = function(precision) {
-    return new Decimal(this).toFixed(precision);
-}
+// Number.prototype.toFixed = function(precision) {
+// return new Decimal(this).toFixed(precision);
+// }
 
 const precision = (num, precision = 2, ignoreZero = false) => {
     if (isNaN(num)) {
@@ -460,7 +461,7 @@ const ProTableWidget = (props) => {
             }
             const config = getAll();
             const dispatch = (method) => cols[method]({
-                title: '操作',
+                title: getLocaleMessage(props.locale, '操作'),
                 valueType: 'option',
                 key: 'option',
                 width: props.actionsWidth || 100,

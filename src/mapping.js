@@ -9,7 +9,7 @@ export const mapping = {
     html: 'html',
     proTable: 'proTable',
     proSelect: 'proSelect',
-    codeEdit: 'codeEdit',
+    // codeEdit: 'codeEdit',
     uploadLazy: 'uploadLazy',
     'string:upload': 'upload',
     'string:url': 'url',

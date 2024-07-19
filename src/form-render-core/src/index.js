@@ -9,6 +9,7 @@ import './index.less';
 import { mapping as defaultMapping } from './mapping';
 import ProTable from '../../widgets/antd/proTable';
 import { pick } from 'lodash-es';
+import { translateJson } from '../../utils';
 
 const defaultFinish = (data, errors) => {
     console.log(data, errors);
@@ -36,7 +37,7 @@ function App({
     schema,
     debug,
     debugCss,
-    locale = 'cn', // 'cn'/'en'
+    locale = 'zh-CN',
     debounceInput = false,
     size,
     configProvider,
@@ -82,6 +83,8 @@ function App({
         firstMount,
     } = valuesThatWillChange;
 
+    const localeRef = useRef(locale);
+    localeRef.current = locale;
     useEffect(() => {
         // Schema最外层的type是object来判断，没有的话，认为schema没有传
         if (schema?.type) {
@@ -306,7 +309,11 @@ const getProTableConfig = (obj) => {
 }
 
 const Wrapper = (props) => {
-    const { isOldVersion = true, schema, ...rest } = props || {};
+    const { isOldVersion = true, schema: nativeSchema, locale, localeMessages = {}, ...rest } = props || {};
+    const translationMap = useMemo(() => localeMessages[locale], [localeMessages, locale]);
+    console.time('translate schema');
+    const schema = useMemo(() => translateJson(nativeSchema, translationMap), [nativeSchema, translationMap]);
+    console.timeEnd('translate schema');
     const _schema = useRef(schema);
     if (isOldVersion) {
         _schema.current = updateSchemaToNewVersion(schema);
@@ -317,12 +324,13 @@ const Wrapper = (props) => {
             console.warn('table render 需要传入 table 属性 ⚡️ ⚡️ ⚡️ ')
         }
         return <ProTable
+            locale={locale}
             className="er-container"
             {...tableProps}
             {...pick(props, ['actionsHandler', 'navsHandler', 'searchOptionsHandler', 'table'])}
         />
     }
-    return <App schema={_schema.current} {...rest} />;
+    return <App schema={_schema.current} {...rest} locale={locale} />;
 };
 
 export default Wrapper;

@@ -1,4 +1,4 @@
-import { isString, isNumber, isBoolean, isNull, isPlainObject, isArray, isEmpty } from 'lodash-es';
+import { isString, isNumber, isBoolean, isNull, isPlainObject, isArray, isEmpty, isNil } from 'lodash-es';
 
 export function isUrl(string) {
     const protocolRE = /^(?:\w+:)?\/\/(\S+)$/;
@@ -85,4 +85,32 @@ export function getUiFormData (formData, flatten) {
         }
     });
     return uiFormData;
+}
+
+export function translateJson(jsonObj, translationMap) {
+    if (isNil(translationMap)) {
+        return jsonObj;
+    }
+    if (typeof jsonObj === 'object' && jsonObj !== null) {
+        if (Array.isArray(jsonObj)) {
+            return jsonObj.map((item) => translateJson(item, translationMap));
+        } else {
+            const translatedObj = {};
+            for (const key in jsonObj) {
+                if (jsonObj.hasOwnProperty(key)) {
+                    const translatedKey = translationMap[key] || key;
+                    translatedObj[translatedKey] = translateJson(jsonObj[key], translationMap);
+                }
+            }
+            return translatedObj;
+        }
+    } else if (typeof jsonObj === 'string') {
+        return translateString(jsonObj, translationMap);
+    } else {
+        return jsonObj;
+    }
+}
+
+function translateString(str, translationMap) {
+    return str.replace(/[\u4e00-\u9fa5]+/g, (match) => translationMap[match] || match);
 }
