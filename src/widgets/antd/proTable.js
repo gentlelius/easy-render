@@ -907,14 +907,35 @@ const ProTableWidget = (props) => {
     const containerRef = useRef();
     
     const rerenderScorll = useCallback(() => {
+        const getOpHeight = () => {
+            // toolbar
+            const tool = document.querySelector('.ant-pro-table-list-toolbar'); 
+            const toolHeight = tool?.getBoundingClientRect().height ?? 0;
+            // search
+            const search = document.querySelector('.ant-pro-table-search-query-filter');
+            const searchHeight = search?.getBoundingClientRect().height ?? 0;
+            const marginBottom = search ? parseInt(getComputedStyle(search).marginBottom, 10) || 0 : 0;
+            // pagation
+            const pagination = document.querySelector('.ant-table-pagination');
+            const paginationHeight = pagination?.getBoundingClientRect().height ?? 0;
+            const marginBottom2 = pagination ? parseInt(getComputedStyle(pagination).marginBottom, 10) || 0 : 0;
+
+            // table header
+            const tableHeader = document.querySelector('.ant-table-header');
+            const tableHeaderHeight = tableHeader?.getBoundingClientRect().height ?? 0;
+
+            return toolHeight + searchHeight + marginBottom + paginationHeight + marginBottom2 + tableHeaderHeight + 18;
+        }
         setTimeout(() => {
             const envConfig = getEnvConfig();
             const pageHeight = window.innerHeight;
             const header = document.querySelector('.ant-layout-header')
             const headerHeight = envConfig.headerHeight ?? header?.getBoundingClientRect().height ?? 0;
             const extraHeight = envConfig.extraHeight ?? 0;
-            setY(pageHeight - extraHeight - headerHeight);
-        });
+
+            const opHeight = getOpHeight();
+            setY(pageHeight - extraHeight - headerHeight - opHeight);
+        }, 4);
     }, []);
 
     const hasRerenderScorll = useRef(false);
