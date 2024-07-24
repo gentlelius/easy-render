@@ -914,10 +914,10 @@ const ProTableWidget = (props) => {
                 if (parentElement) {
                     const height = parentElement.getBoundingClientRect().height;
                     const pageHeight = window.innerHeight;
-                    const qiankun = document.querySelector('.qiankun-micro-app-container');
-                    if (qiankun) {
-                        const qiankunHeight = qiankun.getBoundingClientRect().height;
-                        const deltHeight = pageHeight - height - qiankunHeight;
+                    const header = document.querySelector('.ant-layout-header')
+                    if (header) {
+                        const headerHeight = header.getBoundingClientRect().height;
+                        const deltHeight = pageHeight - height - headerHeight;
                         setY(`calc(50vh + ${deltHeight}px)`)
                     } else {
                         const deltHeight = pageHeight - height;
