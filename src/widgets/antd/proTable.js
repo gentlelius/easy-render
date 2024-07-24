@@ -911,7 +911,7 @@ const ProTableWidget = (props) => {
             const envConfig = getEnvConfig();
             const pageHeight = window.innerHeight;
             const header = document.querySelector('.ant-layout-header')
-            const headerHeight = envConfig.headerHeight ?? header?.getBoundingClientRect().height;
+            const headerHeight = envConfig.headerHeight ?? header?.getBoundingClientRect().height ?? 0;
             const extraHeight = envConfig.extraHeight ?? 0;
             setY(pageHeight - extraHeight - headerHeight);
         });
