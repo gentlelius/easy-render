@@ -22,9 +22,9 @@ import getLocaleMessage from '../../form-render-core/locales/index';
 const SERACH_ACTION_CLASS = 'search-action';
 const SERACH_ACTION_CLASS2 = 'search-action2';
 
-// Number.prototype.toFixed = function(precision) {
-// return new Decimal(this).toFixed(precision);
-// }
+Number.prototype.toFixed = function(precision) {
+    return new Decimal(this).toFixed(precision);
+}
 
 const precision = (num, precision = 2, ignoreZero = false) => {
     if (isNaN(num)) {
@@ -908,23 +908,12 @@ const ProTableWidget = (props) => {
     
     const rerenderScorll = useCallback(() => {
         setTimeout(() => {
-            const container = containerRef.current;
-            if (container) {
-                const parentElement = container.parentElement;
-                if (parentElement) {
-                    const height = parentElement.getBoundingClientRect().height;
-                    const pageHeight = window.innerHeight;
-                    const header = document.querySelector('.ant-layout-header')
-                    if (header) {
-                        const headerHeight = header.getBoundingClientRect().height;
-                        const deltHeight = pageHeight - height - headerHeight;
-                        setY(`calc(50vh + ${deltHeight}px)`)
-                    } else {
-                        const deltHeight = pageHeight - height;
-                        setY(`calc(50vh + ${deltHeight}px)`)
-                    }
-                }
-            }
+            const envConfig = getEnvConfig();
+            const pageHeight = window.innerHeight;
+            const header = document.querySelector('.ant-layout-header')
+            const headerHeight = envConfig.headerHeight ?? header?.getBoundingClientRect().height;
+            const extraHeight = envConfig.extraHeight ?? 0;
+            setY(pageHeight - extraHeight - headerHeight);
         });
     }, []);
 
