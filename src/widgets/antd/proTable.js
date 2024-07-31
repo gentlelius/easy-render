@@ -378,7 +378,7 @@ const ProTableWidget = (props) => {
                         }
                         // 处理 onInit
                         if (typeof otherObj.onInit === 'function') {
-                            if (newItem.initHasDone) {
+                            if (newItem.initHasDone && newItem.fieldProps) {
                                 newItem.fieldProps.options = optionsMapRef.current?.[newItem.dataIndex];
                                 return newItem;
                             }
@@ -438,10 +438,7 @@ const ProTableWidget = (props) => {
                 }
 
                 const newItem = { ...item };
-                // 识别标题中的金额、费用、费，自动加上 precision，如果有 render 则忽略
-                if (newItem.title && (newItem.title.endsWith('面值') || newItem.title.endsWith('费用') || newItem.title.endsWith('金额') || newItem.title.endsWith('费')) || newItem.thousand) {
-                    newItem.render = (text) => isNaN(text) ? text : precision(text, 10, true);
-                }
+                
                 // precision
                 if (typeof newItem.precision === 'number') {
                     newItem.render = (text) => precision(text, newItem.precision, newItem.ignoreZero);
