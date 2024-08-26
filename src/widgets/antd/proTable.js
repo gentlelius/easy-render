@@ -264,6 +264,10 @@ const ProTableWidget = (props) => {
     const timeout = useRef(null);
     if (moreAction) {
         moreAction.getSelectedRows = () => selectedRowsRef.current;
+        moreAction.setSelRowKeys = (keys) => {
+            setSelRowKeys(keys);
+            selectedRowsRef.current = keys.map(key => dataSourceRef.current.find(item => item[props.rowKey] === key));
+        }
         moreAction.setDataSource = setDataSource;
         moreAction.getDataSource = () => dataSourceRef.current;
         moreAction.setInlineValue = (key, value) => {

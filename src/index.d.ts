@@ -129,6 +129,7 @@ export interface TableInstance {
     tableAction: ActionType,
     formAction: ProFormInstance,
     moreAction: {
+        setSelRowKeys: (keys: any[]) => void,
         getSelectedRows: () => void,
         getDataSource: () => any[],
         setDataSource: (data: any[]) => void,

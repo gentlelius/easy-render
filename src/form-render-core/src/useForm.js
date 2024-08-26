@@ -247,7 +247,7 @@ const useForm = (props) => {
 
     const getSchemaByPath = (path) => {
         try {
-            return _flatten.current[path].schema;
+            return _flatten.current[path]?.schema;
         } catch (error) {
             console.log(error, 'getSchemaByPath');
             return {};
